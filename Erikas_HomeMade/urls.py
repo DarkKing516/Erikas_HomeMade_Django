@@ -23,4 +23,7 @@ urlpatterns = [
     path('', include('home.urls')),
     # path('hello/', viewsUsuarios.hello),
     path('configuracion/', include('usuarios.urls')),
+    path('reservas/', include('reservas.urls')),
+    path('pedidos/', include('pedidos.urls')),
+    path('ventas/', include('ventas.urls')),
 ]

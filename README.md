@@ -27,7 +27,7 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
    Una vez que el entorno virtual se haya creado con éxito, actívalo con el siguiente comando:
    
    ```
-   .\vnev\Scripts\activate
+   .\venv\Scripts\activate
    ```
 
 3. **Instalar Django y las Dependencias:**
