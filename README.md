@@ -12,7 +12,7 @@ Después de clonar este repositorio desde GitHub, sigue estos pasos para recrear
    ```
     pip install virtualenv
    ```
-   
+
    ```
    virtualenv vnev
    ```
@@ -20,7 +20,7 @@ Después de clonar este repositorio desde GitHub, sigue estos pasos para recrear
 
 Una vez que el entorno virtual se haya creado, actívalo con el siguiente comando:
    ```
-   source vnev/bin/activate
+   .\vnev\Scripts\activate
    ```
 
 3. **Instalar las Dependencias:**
