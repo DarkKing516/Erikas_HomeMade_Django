@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Roles</title>
 </head>
 <body>
-    <h1>Lista de Roles</h1>
+    <h1>Listado de Roles</h1>
     <ul>
         {% for rol in roles %}
-            <li>{{ rol.nombre_rol }}</li>
+            <li>{{ rol.nombre_rol }} - <a href="{% url 'editar_rol' rol.id %}">Editar</a> | <a href="{% url 'eliminar_rol' rol.id %}">Eliminar</a></li>
         {% endfor %}
     </ul>
+    <a href="{% url 'crear_rol' %}">Crear Nuevo Rol</a>
 </body>
 </html>

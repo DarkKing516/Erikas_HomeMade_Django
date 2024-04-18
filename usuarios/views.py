@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import *
 from .forms import RolForm
@@ -31,3 +31,10 @@ def editar_rol(request, id_rol):
     else:
         form = RolForm(instance=rol)
     return render(request, 'editar_rol.html', {'form': form})
+
+def eliminar_rol(request, id_rol):
+    rol = get_object_or_404(Rol, pk=id_rol)
+    if request.method == 'POST':
+        rol.delete()
+        return redirect('listar_roles')
+    return render(request, 'eliminar_rol.html', {'rol': rol})
