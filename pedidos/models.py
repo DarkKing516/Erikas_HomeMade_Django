@@ -19,7 +19,7 @@ class Servicio(models.Model):
     descripcion = models.CharField(max_length=255)
     precio_servicio = models.DecimalField(max_digits=10, decimal_places=2)
     estado_servicio = models.CharField(max_length=1)
-    estado_catalogo = models.CharField(max_length=1)
+    estado_catalogo = models.BooleanField(default=False)
     img = models.ImageField(upload_to='servicio_imgs/')  # Ajusta la ruta según tu estructura de carpetas
 
     def __str__(self):
@@ -47,7 +47,7 @@ class Producto(models.Model):
     imagen = models.ImageField(upload_to='producto_imgs/')  # Ajusta la ruta según tu estructura de carpetas
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     estado_producto = models.CharField(max_length=1)
-    estado_catalogo = models.CharField(max_length=1)
+    estado_catalogo = models.BooleanField(default=False)
     cantidad = models.IntegerField()
 
     def __str__(self):
