@@ -10,6 +10,10 @@ Después de clonar este repositorio desde GitHub, sigue estos pasos para recrear
 
    Utiliza la herramienta que prefieras para crear un nuevo entorno virtual. Por ejemplo, con `virtualenv`, puedes ejecutar el siguiente comando en tu terminal:
    ```
+    pip install virtualenv
+   ```
+   
+   ```
    virtualenv vnev
    ```
 2. **Activar el Entorno Virtual:**
