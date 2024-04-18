@@ -33,3 +33,4 @@ class RolxPermiso(models.Model):
 
     def __str__(self):
         return f"{self.rol} - {self.permiso}"
+ 
