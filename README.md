@@ -1,6 +1,6 @@
 ---
 
-# Nombre del Proyecto
+# Erikas Home Made
 
 Este proyecto se trata de [Breve descripción o introducción del proyecto].
 
