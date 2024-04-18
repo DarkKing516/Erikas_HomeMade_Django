@@ -54,6 +54,7 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
    ```
    python manage.py makemigrations
    ```
+   ```
    python manage.py migrate
    ```
 
