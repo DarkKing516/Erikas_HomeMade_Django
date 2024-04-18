@@ -23,13 +23,20 @@ Una vez que el entorno virtual se haya creado, actívalo con el siguiente comand
    .\vnev\Scripts\activate
    ```
 
-3. **Instalar las Dependencias:**
+3. **Instalar Django y las Dependencias:**
 
 Con el entorno virtual activado, navega hasta la raíz de tu proyecto (donde se encuentra el archivo `requirements.txt` si tienes uno) y luego instala las dependencias utilizando `pip`:
+   ```
+   pip install django
+   ```
    ```
    pip install -r requirements.txt
    ```
 
 Si tienes un archivo `requirements.txt` que contiene todas las dependencias de tu proyecto, esto instalará todas las dependencias necesarias en tu entorno virtual.
 
-Después de seguir estos pasos, tendrás un entorno virtual nuevo y activo con todas las dependencias instaladas, y estarás listo para trabajar en tu proyecto localmente.
+Si quieres actualizar las dependecias porque agregaste más puedes usar:
+
+   ```
+   pip freeze > requirements.txt
+   ```
