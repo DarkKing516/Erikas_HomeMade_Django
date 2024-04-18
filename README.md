@@ -49,5 +49,11 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
    ```
    pip freeze > requirements.txt
    ```
+   
+   MIGRACIONES
+   ```
+python manage.py makemigrations
+python manage.py migrate
+   ```
 
 ---
