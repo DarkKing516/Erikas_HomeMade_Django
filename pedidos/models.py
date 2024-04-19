@@ -4,7 +4,7 @@ from usuarios.models import Usuario  # Importa el modelo de usuarios
 class TipoServicio(models.Model):
     idTipo_Servicio = models.AutoField(primary_key=True)
     nombre_tipoServicio = models.CharField(max_length=50)
-    estado_tipoServicio = models.CharField(max_length=80, default="Por hacer")
+    estado_tipoServicio = models.CharField(max_length=80)
 
     def __str__(self):
         return self.nombre_tipoServicio
@@ -31,7 +31,7 @@ class Servicio(models.Model):
 class TipoProducto(models.Model):
     idTipo_Producto = models.AutoField(primary_key=True)
     nombre_producto = models.CharField(max_length=50)
-    estado_producto = models.CharField(max_length=1)
+    estado_producto = models.CharField(max_length=80)
 
     def __str__(self):
         return self.nombre_producto
@@ -67,7 +67,7 @@ class Pedido(models.Model):
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     evidencia_pago = models.ImageField(upload_to='evidencia_pago/')  # Ajusta la ruta según tu estructura de carpetas
-    estado_pedido = models.CharField(max_length=1)
+    estado_pedido = models.CharField(max_length=80, default="Por hacer")
 
     def __str__(self):
         return f"Pedido {self.idPedido}"
