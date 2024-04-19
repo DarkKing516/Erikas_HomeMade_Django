@@ -16,7 +16,7 @@ def crear_rol(request):
         form = RolForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('listar_roles')
+            return redirect('usuarios:listar_roles')
     else:
         form = RolForm()
     return render(request, 'crear_rol.html', {'form': form})
@@ -27,7 +27,7 @@ def editar_rol(request, id_rol):
         form = RolForm(request.POST, instance=rol)
         if form.is_valid():
             form.save()
-            return redirect('listar_roles')
+            return redirect('usuarios:listar_roles')
     else:
         form = RolForm(instance=rol)
     return render(request, 'editar_rol.html', {'form': form})
@@ -36,5 +36,5 @@ def eliminar_rol(request, id_rol):
     rol = get_object_or_404(Rol, pk=id_rol)
     if request.method == 'POST':
         rol.delete()
-        return redirect('listar_roles')
+        return redirect('usuarios:listar_roles')
     return render(request, 'eliminar_rol.html', {'rol': rol})
