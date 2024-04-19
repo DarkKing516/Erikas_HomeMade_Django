@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Permiso),
 admin.site.register(Rol),
 admin.site.register(RolxPermiso),
+admin.site.register(Usuario),
