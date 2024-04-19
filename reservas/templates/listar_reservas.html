@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+    <title>Listar Reservas</title>
     {% extends 'layouts/navbar.html' %}
 
 </head>
 <body>
     {% block content %}
-    <h1>Index</h1>
-    <a href="{% url 'usuarios:listar_roles' %}">
-        <button>Listar Usuarios</button>
-    </a>
-
+    <h1>Listar Reservas</h1>
+    <a href="{% url 'reservas:crear_reserva' %}">Crear Nueva reserva</a>
     {% endblock %}
 
 </body>
