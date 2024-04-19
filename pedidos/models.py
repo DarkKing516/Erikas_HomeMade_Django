@@ -59,7 +59,7 @@ class Producto(models.Model):
 class Pedido(models.Model):
     idPedido = models.AutoField(primary_key=True)
     id_Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    id_Cliente = models.IntegerField()  # Agrega el campo de acuerdo a tu modelo de Cliente
+    # id_Cliente = models.IntegerField()  # Agrega el campo de acuerdo a tu modelo de Cliente
     fechaCreacion_pedido = models.DateTimeField(auto_now_add=True)
     fecha_pedido = models.DateField()
     descripcion_pedido = models.CharField(max_length=255)
