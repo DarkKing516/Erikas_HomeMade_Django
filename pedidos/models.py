@@ -4,7 +4,7 @@ from usuarios.models import Usuario  # Importa el modelo de usuarios
 class TipoServicio(models.Model):
     idTipo_Servicio = models.AutoField(primary_key=True)
     nombre_tipoServicio = models.CharField(max_length=50)
-    estado_tipoServicio = models.CharField(max_length=1)
+    estado_tipoServicio = models.CharField(max_length=80, default="Por hacer")
 
     def __str__(self):
         return self.nombre_tipoServicio
