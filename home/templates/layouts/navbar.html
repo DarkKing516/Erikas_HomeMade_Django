@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navegacion provisional</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li>
+                <a href="{% url 'usuarios:listar_roles' %}">
+                    <button>Usuarios</button>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'reservas:listar_reserva' %}">
+                    <button>Reservas</button>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'usuarios:listar_roles' %}">
+                    <button>Listar Usuarios</button>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'usuarios:listar_roles' %}">
+                    <button>Listar Usuarios</button>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
+
