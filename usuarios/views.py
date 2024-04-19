@@ -9,7 +9,7 @@ def hello(request):
 
 def listar_roles(request):
     roles = Rol.objects.all()
-    return render(request, 'listar_roles.html', {'roles': roles})
+    return render(request, 'roles/listar_roles.html', {'roles': roles})
 
 def crear_rol(request):
     if request.method == 'POST':
@@ -19,7 +19,7 @@ def crear_rol(request):
             return redirect('usuarios:listar_roles')
     else:
         form = RolForm()
-    return render(request, 'crear_rol.html', {'form': form})
+    return render(request, 'roles/crear_rol.html', {'form': form})
 
 def editar_rol(request, id_rol):
     rol = get_object_or_404(Rol, pk=id_rol)
@@ -30,11 +30,11 @@ def editar_rol(request, id_rol):
             return redirect('usuarios:listar_roles')
     else:
         form = RolForm(instance=rol)
-    return render(request, 'editar_rol.html', {'form': form})
+    return render(request, 'roles/editar_rol.html', {'form': form})
 
 def eliminar_rol(request, id_rol):
     rol = get_object_or_404(Rol, pk=id_rol)
     if request.method == 'POST':
         rol.delete()
         return redirect('usuarios:listar_roles')
-    return render(request, 'eliminar_rol.html', {'rol': rol})
+    return render(request, 'roles/eliminar_rol.html', {'rol': rol})
