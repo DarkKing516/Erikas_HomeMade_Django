@@ -1,3 +1,6 @@
+from django.views.decorators.http import require_http_methods
+import requests
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from .models import *
@@ -65,19 +68,33 @@ def editar_rol(request, id_rol):
         form = RolForm(instance=rol)
     return render(request, 'roles/editar_rol.html', {'form': form})
 
+# def eliminar_rol(request, id_rol):
+#     rol = get_object_or_404(Rol, pk=id_rol)
+#     try:
+#         if request.method == 'POST':
+#             rol.delete()
+#             return redirect('usuarios:listar_roles')
+#         return render(request, 'roles/eliminar_rol.html', {'rol': rol})
+#     except PermissionDenied:
+#         return render(request, 'roles/error_permiso.html')
 def eliminar_rol(request, id_rol):
     rol = get_object_or_404(Rol, pk=id_rol)
-    if request.method == 'POST':
-        rol.delete()
-        return redirect('usuarios:listar_roles')
-    return render(request, 'roles/eliminar_rol.html', {'rol': rol})
-
+    try:
+        if request.method == 'POST':
+            rol.delete()
+            return redirect('usuarios:listar_roles')
+        return render(request, 'roles/eliminar_rol.html', {'rol': rol})
+    except PermissionDenied:
+        # Redirige al usuario a la API de gatos con el código de estado HTTP 403
+        response = requests.get('https://http.cat/403')
+        image_url = response.url
+        return redirect(image_url)
 
 
 # =================================================================
 def listar_usuarios(request):
     usuarios = Usuario.objects.all()
-    return render(request, 'usuarios/listar_usuarios.html', {'usuarios': usuarios})
+    return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios})
 
 def crear_usuario(request):
     if request.method == 'POST':
@@ -90,7 +107,7 @@ def crear_usuario(request):
     return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
 def editar_usuario(request, id_usuario):
-    usuario = get_object_or_404(usuario, pk=id_usuario)
+    usuario = get_object_or_404(Usuario, pk=id_usuario)  # Corrected variable name
     if request.method == 'POST':
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
@@ -100,9 +117,19 @@ def editar_usuario(request, id_usuario):
         form = UsuarioForm(instance=usuario)
     return render(request, 'usuarios/editar_usuario.html', {'form': form})
 
+# def eliminar_usuario(request, id_usuario):
+#     usuario = get_object_or_404(Usuario, pk=id_usuario)
+#     print("Eliminar usuario llamado")  # Agregar mensaje de registro
+#     if request.method == 'POST':
+#         usuario.delete()
+#         return redirect('usuarios:listar_usuarios')
+#     return render(request, 'usuarios/eliminar_usuario.html', {'usuario': usuario})
+
+@require_http_methods(["POST", "DELETE"])
 def eliminar_usuario(request, id_usuario):
-    usuario = get_object_or_404(usuario, pk=id_usuario)
-    if request.method == 'POST':
+    print("Eliminar usuario llamado")  # Agregar mensaje de registro
+    usuario = get_object_or_404(Usuario, pk=id_usuario)
+    if request.method == 'POST' or request.method == 'DELETE':
         usuario.delete()
-        return redirect('usuarios:listar_usuarios')
-    return render(request, 'usuarios/eliminar_usuario.html', {'usuario': usuario})
+        return JsonResponse({'message': 'Usuario eliminado correctamente'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)

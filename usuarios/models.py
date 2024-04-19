@@ -21,7 +21,7 @@ class Permiso(models.Model):
 
 
 class Usuario(models.Model):
-    idRol = models.ForeignKey(Rol, on_delete=models.CASCADE)
+    idRol = models.ForeignKey(Rol, on_delete=models.SET_DEFAULT, default=1)
     nombre = models.CharField(max_length=50)
     telefono = models.CharField(max_length=15)
     documento = models.CharField(max_length=15)

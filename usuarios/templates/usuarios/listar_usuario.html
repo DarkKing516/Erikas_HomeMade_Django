@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Permisos</title>
+    <title>Listar Usuarios</title>
 </head>
 
 <body>
@@ -13,45 +13,44 @@
 
     {% block content %}
 
-    <a href="{% url 'usuarios:crear_permiso' %}">Crear Nuevo Permiso</a>
-    <h1>Listado de Permisos</h1>
+    <a href="{% url 'usuarios:crear_usuario' %}">Crear Nuevo Usuario</a>
+    <h1>Listado de Usuarios</h1>
     <ul>
-        {% for permiso in permisos %}
-        <li>{{ permiso.nombre_permiso }} - <a href="{% url 'usuarios:editar_permiso' permiso.id %}">Editar</a>
-            <a href="#" onclick="confirmarEliminar('{{ permiso.id }}')">Eliminar</a>
+        {% for usuario in usuarios %}
+        <li>{{ usuario.nombre }} - <a href="{% url 'usuarios:editar_usuario' usuario.id %}">Editar</a>
+            <a href="#" onclick="confirmarEliminar('{{ usuario.id }}')">Eliminar</a>
+            <a href="{% url 'usuarios:eliminar_usuario' usuario.id %}">Eliminar</a>
         </li>
         {% endfor %}
     </ul>
     <a href="{% url 'home:index' %}">Atrás</a>
 
     <script>
-        function confirmarEliminar(permisoId) {
-            if (confirm('¿Estás seguro que deseas eliminar este permiso?')) {
-                eliminarPermiso(permisoId);
+        function confirmarEliminar(usuarioId) {
+            if (confirm('¿Estás seguro que deseas eliminar este usuario?')) {
+                // Realizar una solicitud DELETE directamente desde JavaScript
+                fetch('/configuracion/eliminar_usuario/' + usuarioId + '/', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Eliminación exitosa
+                        location.reload(); // Recargar la página
+                    } else {
+                        // Manejar errores de eliminación si es necesario
+                        console.error('Error al eliminar el usuario');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error de red:', error);
+                });
             }
         }
-
-        function eliminarPermiso(permisoId) {
-            fetch('/configuracion/eliminar_permiso/' + permisoId + '/', {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Eliminación exitosa
-                    location.reload(); // Recargar la página
-                } else {
-                    // Manejar errores de eliminación si es necesario
-                    console.error('Error al eliminar el permiso');
-                }
-            })
-            .catch(error => {
-                console.error('Error de red:', error);
-            });
-        }
     </script>
+    
 
     {% endblock %}
 </body>
