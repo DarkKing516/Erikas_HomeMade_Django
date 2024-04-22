@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Permiso</title>
-</head>
-<body>
-    <h1>Editar Permiso</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar Cambios</button>
-    </form>
+<title>Editar Permiso</title>
+{% extends 'layouts/navbarUsuarios.html' %}
+{% block contentConfiguracion %}
 
-</body>
-</html>
+<h1>Editar Permiso</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar Cambios</button>
+</form>
+{% endblock %}
