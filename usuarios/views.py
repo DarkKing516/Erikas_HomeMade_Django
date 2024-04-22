@@ -1,5 +1,5 @@
 from django.views.decorators.http import require_http_methods
-import requests
+import requests # type: ignore
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -57,6 +57,7 @@ def crear_rol(request):
         form = RolForm()
     return render(request, 'roles/crear_rol.html', {'form': form})
 
+
 def editar_rol(request, id_rol):
     rol = get_object_or_404(Rol, pk=id_rol)
     if request.method == 'POST':
@@ -67,6 +68,7 @@ def editar_rol(request, id_rol):
     else:
         form = RolForm(instance=rol)
     return render(request, 'roles/editar_rol.html', {'form': form})
+
 
 # def eliminar_rol(request, id_rol):
 #     rol = get_object_or_404(Rol, pk=id_rol)

@@ -1,28 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
+<title>Listar Roles</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Roles</title>
-</head>
+{% extends 'layouts/navbarUsuarios.html' %}
 
-<body>
+{% block content %}
 
-    {% extends 'layouts/navbarUsuarios.html' %}
-
-    {% block content %}
-
-    <a href="{% url 'usuarios:crear_rol' %}">Crear Nuevo Rol</a>
-    <h1>Listado de Roles</h1>
-    <ul>
-        {% for rol in roles %}
-        <li>{{ rol.nombre_rol }} - <a href="{% url 'usuarios:editar_rol' rol.id %}">Editar</a> | <a
-                href="{% url 'usuarios:eliminar_rol' rol.id %}">Eliminar</a></li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'home:index' %}">Atrás</a>
-    {% endblock %}
-</body>
-
-</html>
+<a href="{% url 'usuarios:crear_rol' %}">Crear Nuevo Rol</a>
+<h1>Listado de Roles</h1>
+<ul>
+    {% for rol in roles %}
+    <li>{{ rol.nombre_rol }} - 
+        <a href="{% url 'usuarios:editar_rol' rol.id %}">Editar</a> | 
+        <a href="{% url 'usuarios:eliminar_rol' rol.id %}">Eliminar</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'home:index' %}">Atrás</a>
+{% endblock %}
