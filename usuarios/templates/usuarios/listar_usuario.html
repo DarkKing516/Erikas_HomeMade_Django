@@ -9,7 +9,7 @@
     {% for usuario in usuarios %}
     <li>{{ usuario.nombre }} - <a href="{% url 'usuarios:editar_usuario' usuario.id %}">Editar</a>
         <a href="#" onclick="confirmarEliminar('{{ usuario.id }}')">Eliminar</a>
-        <a href="{% url 'usuarios:eliminar_usuario' usuario.id %}">Eliminar</a>
+        {% comment %} <a href="{% url 'usuarios:eliminar_usuario' usuario.id %}">Eliminar</a> {% endcomment %}
     </li>
     {% endfor %}
 </ul>
