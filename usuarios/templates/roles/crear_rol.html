@@ -25,7 +25,9 @@
     </script>
     <script>
     $(document).ready(function() {
-        $('#id_permisos').select2();
+        $('#id_permisos').select2({
+            placeholder: 'Selecciona los permisos'
+        });
     });
     </script>
 {% endblock %}
