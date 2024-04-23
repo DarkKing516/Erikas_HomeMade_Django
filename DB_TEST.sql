@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 -- Insertar 20 permisos de ejemplo
 INSERT INTO permisos (nombre_permiso, estado_permiso) VALUES
 ('Crear usuarios', 'activo'),
@@ -22,12 +24,13 @@ INSERT INTO permisos (nombre_permiso, estado_permiso) VALUES
 ('Ver historial de actividad', 'inactivo');
 
 -- Insertar roles
-INSERT INTO roles (id, nombre_rol, estado_rol) VALUES
-(0, 'Administrador', 'activo'),
-(1, 'Cliente', 'activo'),
-(2, 'Moderador', 'activo'),
-(3, 'Analista', 'activo'),
-(4, 'Soporte Técnico', 'inactivo');
+INSERT INTO roles (nombre_rol, estado_rol) VALUES
+('Administrador', 'activo'),
+('Cliente', 'activo'),
+('Moderador', 'activo'),
+('Analista', 'activo'),
+('Soporte Técnico', 'inactivo');
+
 
 -- Insertar usuarios de ejemplo
 INSERT INTO usuarios (nombre, telefono, documento, correo, usuario, contraseña, estado, idRol_id) VALUES
@@ -69,3 +72,5 @@ INSERT INTO detalle_pedido_productos (cant_productos, nombre_productos, descripc
 (3, 'Camiseta', 'Camiseta de algodón de color blanco', 19.99, 59.97, 2, 1),
 (1, 'Arroz', 'Arroz blanco de grano largo', 2.99, 2.99, 3, 2),
 (2, 'Lámpara', 'Lámpara de mesa con pantalla de tela', 39.99, 79.98, 4, 2);
+
+COMMIT;
