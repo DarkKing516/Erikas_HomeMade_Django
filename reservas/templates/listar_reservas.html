@@ -9,8 +9,17 @@
 </head>
 <body>
     {% block content %}
+    
+
     <h1>Listar Reservas</h1>
     <a href="{% url 'reservas:crear_reserva' %}">Crear Nueva reserva</a>
+
+    <ul>
+        {% for reserva in reservas %}
+            <li>{{ reserva.descripcion }} - <a href="{% url 'reservas:editar_reserva' reserva.id %}">Editar</a> | <a href="{% url 'reservas:eliminar_reserva' reserva.id %}">Eliminar</a></li>
+        {% endfor %}
+    </ul>
+
     {% endblock %}
 
 </body>

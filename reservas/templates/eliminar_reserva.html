@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Reserva</title>
+    <title>Eliminar Reserva</title>
 </head>
 <body>
-    <h1>Crear Nueva Reserva</h1>
+    <h1>¿Estás seguro que deseas eliminar el Reserva "{{ reserva.descripcion }}"?</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
+        <button type="submit">Confirmar Eliminación</button>
     </form>
 </body>
 </html>
