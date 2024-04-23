@@ -17,7 +17,25 @@ def crear_reserva(request):
         form = ReservaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('reservas:listar_reserva')  # Cambia 'pagina_de_exito' por la URL de la página a la que quieres redirigir después de crear la reserva
+            return redirect('reservas:listar_reserva') 
     else:
         form = ReservaForm()
     return render(request, 'crear_reserva.html', {'form': form})
+
+def editar_reserva(request, id_reserva):
+    reserva = get_object_or_404(Reserva, pk=id_reserva)
+    if request.method == 'POST':
+        form = ReservaForm(request.POST, instance=reserva)
+        if form.is_valid():
+            form.save()
+            return redirect('reservas:listar_reserva')
+    else:
+        form = ReservaForm(instance=reserva)
+    return render(request, 'editar_reserva.html', {'form': form})
+
+def eliminar_reserva(request, id_reserva):
+    reserva = get_object_or_404(Reserva, pk=id_reserva)
+    if request.method == 'POST':
+        reserva.delete()
+        return redirect('reservas:listar_reserva')
+    return render(request, 'eliminar_reserva.html', {'reserva': reserva})
