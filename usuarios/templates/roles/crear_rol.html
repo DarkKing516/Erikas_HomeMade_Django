@@ -1,16 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Rol</title>
-</head>
-<body>
-    <h1>Crear Nuevo Rol</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
-    </form>
-</body>
-</html>
+<title>Crear Nuevo Rol</title>
+{% extends 'layouts/navbarUsuarios.html' %}
+{% block contentConfiguracion %}
+
+
+
+<h1>Crear Nuevo Rol</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar</button>
+</form>
+
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({ // Inicializar Select2 para todos los elementos con la clase 'select2'
+        theme: 'bootstrap4', // Opcional: cambia el tema a Bootstrap 4 para que coincida con tu estilo
+        width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+        placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
+        closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+        });
+    });
+    
+    </script>
+    <script>
+    $(document).ready(function() {
+        $('#id_permisos').select2({
+            placeholder: 'Selecciona los permisos'
+        });
+    });
+    </script>
+{% endblock %}
