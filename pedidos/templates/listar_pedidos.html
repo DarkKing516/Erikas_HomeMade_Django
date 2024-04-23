@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Pedidos</title>
+    {% extends 'layouts/navbar.html' %}
+</head>
+<body>
+    {% block content %}
+    <a href="{% url 'pedidos:crear_pedido' %}">Crear Nuevo Pedido</a>
+    <h1>Listar Pedidos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID Pedido</th>
+                <th>Fecha de Creación</th>
+                <th>Fecha de Pedido</th>
+                <th>Descripción</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>Evidencia de Pago</th>
+                <th>Estado del Pedido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.idPedido }}</td>
+                <td>{{ pedido.fechaCreacion_pedido }}</td>
+                <td>{{ pedido.fecha_pedido }}</td>
+                <td>{{ pedido.descripcion_pedido }}</td>
+                <td>{{ pedido.subtotal }}</td>
+                <td>{{ pedido.iva }}</td>
+                <td>{{ pedido.total }}</td>
+                <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100px;"></td>
+                <td>{{ pedido.estado_pedido }}</td>
+                {% comment %} <td>
+                    <a href="{% url 'editar_pedido' pedido.idPedido %}">Editar</a> | 
+                    <a href="{% url 'eliminar_pedido' pedido.idPedido %}">Eliminar</a>
+                </td> {% endcomment %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endblock %}
+</body>
+</html>
