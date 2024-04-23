@@ -44,11 +44,7 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
 
    Si tienes un archivo `requirements.txt` que contiene todas las dependencias de tu proyecto, este comando instalará todas las dependencias necesarias en tu entorno virtual.
 
-   Para actualizar el archivo `requirements.txt` con las nuevas dependencias que hayas añadido, puedes utilizar el siguiente comando:
-   
-   ```
-   pip freeze > requirements.txt
-   ```
+   Para actualizar el archivo `requirements.txt` con las nuevas dependencias que hayas añadido, puedes utilizar el siguiente comando: `pip freeze > requirements.txt`
 
    MIGRACIONES
    ```

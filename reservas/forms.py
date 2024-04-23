@@ -8,4 +8,6 @@ class ReservaForm(forms.ModelForm):
         widgets = {
             'fecha': forms.DateInput(attrs={'type': 'date'}),
             'fecha_cita': forms.DateInput(attrs={'type': 'date'})
+            # 'descripcion': forms.Textarea(attrs={'type': 'textarea'})
+
         }
