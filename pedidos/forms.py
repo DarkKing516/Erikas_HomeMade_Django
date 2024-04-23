@@ -6,7 +6,6 @@ class PedidoForm(forms.ModelForm):
         model = Pedido
         fields = [
     'idPedido',
-    'fechaCreacion_pedido',
     'fecha_pedido',
     'descripcion_pedido',
     'subtotal',
