@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Reserva
-from .forms import ReservaForm
+from .forms import *
 
 
 # Create your views here.
@@ -25,12 +25,12 @@ def crear_reserva(request):
 def editar_reserva(request, id_reserva):
     reserva = get_object_or_404(Reserva, pk=id_reserva)
     if request.method == 'POST':
-        form = ReservaForm(request.POST, instance=reserva)
+        form = ReservaFormEditar(request.POST, instance=reserva)
         if form.is_valid():
             form.save()
             return redirect('reservas:listar_reserva')
     else:
-        form = ReservaForm(instance=reserva)
+        form = ReservaFormEditar(instance=reserva)
     return render(request, 'editar_reserva.html', {'form': form})
 
 def eliminar_reserva(request, id_reserva):
