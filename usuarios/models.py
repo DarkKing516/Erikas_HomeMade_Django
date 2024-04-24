@@ -20,7 +20,7 @@ class Rol(models.Model):
         db_table = 'roles'  # Personalizando el nombre de la tabla
 
 class Usuario(models.Model):
-    idRol = models.ForeignKey(Rol, on_delete=models.SET_DEFAULT, default=1)
+    idRol = models.ForeignKey(Rol, on_delete=models.SET_DEFAULT, default=2)
     nombre = models.CharField(max_length=50)
     telefono = models.CharField(max_length=15)
     documento = models.CharField(max_length=15)
