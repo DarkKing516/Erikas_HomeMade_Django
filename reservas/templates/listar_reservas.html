@@ -1,26 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Reservas</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
     {% extends 'layouts/navbar.html' %}
-
 </head>
+
 <body>
     {% block content %}
-    
 
-    <h1>Listar Reservas</h1>
-    <a href="{% url 'reservas:crear_reserva' %}">Crear Nueva reserva</a>
-
-    <ul>
-        {% for reserva in reservas %}
-            <li>{{ reserva.descripcion }} - <a href="{% url 'reservas:editar_reserva' reserva.id %}">Editar</a> | <a href="{% url 'reservas:eliminar_reserva' reserva.id %}">Eliminar</a></li>
-        {% endfor %}
-    </ul>
-
+    <div class="container-fluid page-body-wrapper">
+        <!-- Contenido principal -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <a href="{% url 'reservas:crear_reserva' %}" class="btn btn-primary">Crear Nueva reserva</a>
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Reservas</h4>
+                                <div class="table-responsive">
+                                    <table class="table reserva-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Usuario</th>
+                                                <th>Fecha Reserva</th>
+                                                <th>descripcion</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for reserva in reservas %}
+                                            <tr>
+                                                <td>{{ reserva.usuario.nombre }}</td>
+                                                <td>{{ reserva.fecha_cita }}</td>
+                                                <td>{{ reserva.descripcion }}</td>
+                                                <td>{{ reserva.estado }}</td>
+                                                <td>
+                                                    <a href="{% url 'reservas:editar_reserva' reserva.id %}"
+                                                        class="btn btn-info">Editar</a>
+                                                    <a href="{% url 'reservas:eliminar_reserva' reserva.id %}"
+                                                        class="btn btn-danger">Eliminar</a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin del contenido principal -->
+    </div>
     {% endblock %}
-
 </body>
+
 </html>

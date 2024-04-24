@@ -1,0 +1,41 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.reserva-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reserva-table th, .reserva-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.reserva-table th {
+    background-color: #f2f2f2;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}

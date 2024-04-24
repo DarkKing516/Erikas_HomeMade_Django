@@ -20,13 +20,17 @@ class ReservaForm(forms.ModelForm):
             # Opcionalmente, si deseas mostrar la fecha de reserva pero sin ser editable:
             # self.fields['fecha'].widget.attrs['readonly'] = True
 
+
+
+
 class ReservaFormEditar(forms.ModelForm):
     class Meta:
         model = Reserva
         fields = ['usuario', 'fecha', 'fecha_cita', 'descripcion', 'estado']
         widgets = {
-            'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'fecha_cita': forms.DateTimeInput(attrs={'type': 'datetime-local'})
-            # 'descripcion': forms.Textarea(attrs={'type': 'textarea'})
-
+            'fecha': forms.DateTimeInput(attrs={'readonly': 'readonly'}),
+            # 'usuario': forms.TextInput(attrs={'readonly': 'readonly'}),
+             'estado': forms.Select(choices=[('Pendiente', 'Pendiente'), ('En Proceso', 'En Proceso'), ('Completada', 'Completada')])
         }
+
+        
