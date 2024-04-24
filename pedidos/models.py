@@ -1,4 +1,7 @@
 from django.db import models
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from usuarios.models import Usuario  # Importa el modelo de usuarios
 
 class TipoServicio(models.Model):
@@ -60,17 +63,21 @@ class Pedido(models.Model):
     idPedido = models.AutoField(primary_key=True)
     id_Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     # id_Cliente = models.IntegerField()  # Agrega el campo de acuerdo a tu modelo de Cliente
-    fechaCreacion_pedido = models.DateTimeField(auto_now_add=True)
-    fecha_pedido = models.DateField()
+    fechaCreacion_pedido = models.DateTimeField(default=timezone.now)
+    fecha_pedido = models.DateTimeField()
     descripcion_pedido = models.CharField(max_length=255)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
-    evidencia_pago = models.ImageField(upload_to='evidencia_pago/')  # Ajusta la ruta según tu estructura de carpetas
+    evidencia_pago = models.BinaryField(blank=True)  # Permitir valores nulos
     estado_pedido = models.CharField(max_length=80, default="Por hacer")
 
     def __str__(self):
         return f"Pedido {self.idPedido}"
+    
+    # def clean(self):
+    #     if self.fecha_pedido < self.fechaCreacion_pedido:
+    #         raise ValidationError(_("La fecha de la cita no puede ser anterior a la fecha de la reserva."))
 
     class Meta:
         db_table = 'pedidos'  # Personalizando el nombre de la tabla

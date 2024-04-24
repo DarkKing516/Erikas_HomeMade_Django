@@ -11,10 +11,13 @@ def listar_pedidos(request):
 
 def crear_pedido(request):
     if request.method == 'POST':
-        form = PedidoForm(request.POST)
+        form = PedidoForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('pedidos:listar_pedidos')  # Cambia 'pagina_de_exito' por la URL de la página a la que quieres redirigir después de crear la pedido
+            pedido = form.save(commit=False)
+            if 'evidencia_pago' in request.FILES:
+                pedido.evidencia_pago = request.FILES['evidencia_pago'].read()
+            pedido.save()
+            return redirect('pedidos:listar_pedidos')
     else:
         form = PedidoForm()
     return render(request, 'crear_pedido.html', {'form': form})

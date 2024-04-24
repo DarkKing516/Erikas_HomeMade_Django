@@ -35,7 +35,7 @@
                 <td>{{ pedido.subtotal }}</td>
                 <td>{{ pedido.iva }}</td>
                 <td>{{ pedido.total }}</td>
-                <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100px;"></td>
+                <td><img src="data:image/jpeg;base64,{{ pedido.evidencia_pago|base64 }}" alt="Evidencia de Pago"></td>
                 <td>{{ pedido.estado_pedido }}</td>
                 {% comment %} <td>
                     <a href="{% url 'editar_pedido' pedido.idPedido %}">Editar</a> | 
