@@ -380,7 +380,7 @@
                             </a>
                             <div class="collapse" id="users">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_usuarios' %}">
                                             Usuarios </a>
                                     </li>
                                     <!-- <li class="nav-item"> <a class="nav-link" href="clientes_dash.html"> Clientes </a></li> -->
@@ -424,7 +424,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="ventas.html">
+                            <a class="nav-link" href="{% url 'ventas:listar_ventas' %}">
                                 <i class="mdi mdi-tag-outline menu-icon"></i>
                                 <span class="menu-title"> Ventas </span>
                             </a>

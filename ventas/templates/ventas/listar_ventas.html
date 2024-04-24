@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Ventas</title>
+    {% extends 'layouts/navbar.html' %}
+</head>
+<body>
+    {% block content %}
+    <h1>Listar Ventas</h1>
+    <a href="{% url 'ventas:crear_venta' %}">Crear Nueva Venta</a>
+
+    <ul>
+        {% for venta in ventas %}
+            <li>{{ venta.idVenta }} - <a href="#">Editar</a> | <a href="#">Eliminar</a></li>
+        {% endfor %}
+    </ul>
+    {% endblock %}
+</body>
+</html>
