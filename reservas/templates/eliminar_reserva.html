@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eliminar Reserva</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <h1>¿Estás seguro que deseas eliminar el Reserva "{{ reserva.descripcion }}"?</h1>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Confirmar Eliminación</button>
-    </form>
+    <div class="container">
+        <h1>¿Estás seguro que deseas eliminar la Reserva "{{ reserva.descripcion }}"?</h1>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+        </form>
+    </div>
 </body>
 </html>
