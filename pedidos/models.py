@@ -69,7 +69,7 @@ class Pedido(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
-    evidencia_pago = models.BinaryField(blank=True)  # Permitir valores nulos
+    evidencia_pago = models.BinaryField(null=True, blank=True)
     estado_pedido = models.CharField(max_length=80, default="Por hacer")
 
     def __str__(self):
