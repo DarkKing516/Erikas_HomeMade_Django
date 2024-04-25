@@ -23,4 +23,6 @@ urlpatterns = [
     path('editar_usuario/<int:id_usuario>/', viewsUsuarios.editar_usuario, name='editar_usuario'),
     path('eliminar_usuario/<int:id_usuario>/', viewsUsuarios.eliminar_usuario, name='eliminar_usuario'),
 
+    path('iniciar_sesion/', viewsUsuarios.iniciar_sesion, name='login'),
+
 ]

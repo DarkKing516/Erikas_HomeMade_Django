@@ -48,3 +48,8 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['idRol', 'nombre', 'telefono', 'documento', 'correo', 'usuario', 'contraseña', 'estado']
+
+
+class LoginForm(forms.Form):
+    correo = forms.EmailField(label='Correo electrónico')
+    contraseña = forms.CharField(widget=forms.PasswordInput, label='Contraseña')

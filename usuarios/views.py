@@ -1,8 +1,10 @@
 from django.views.decorators.http import require_http_methods
-import requests # type: ignore
+import requests
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from .models import *
 from .forms import *
 
@@ -135,3 +137,25 @@ def eliminar_usuario(request, id_usuario):
         usuario.delete()
         return JsonResponse({'message': 'Usuario eliminado correctamente'})
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+def iniciar_sesion(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            correo = form.cleaned_data['correo']
+            contraseña = form.cleaned_data['contraseña']
+            usuario = authenticate(request, correo=correo, contraseña=contraseña)
+            if usuario is not None:
+                login(request, usuario)
+                return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
+            else:
+                # Comprobación para mensajes de error específicos
+                user_exists = Usuario.objects.filter(correo=correo).exists()
+                if user_exists:
+                    messages.error(request, 'La contraseña es incorrecta.', extra_tags='contraseña')
+                else:
+                    messages.error(request, 'El correo electrónico no está registrado.', extra_tags='correo')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})

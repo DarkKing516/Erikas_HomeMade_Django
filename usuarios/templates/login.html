@@ -1,0 +1,22 @@
+{% extends 'layouts/navbarUsuarios.html' %}
+
+{% block contentConfiguracion %}
+{% if user.is_authenticated %}
+<p>Bienvenido, {{ user.nombre }}!</p>
+{% else %}
+<p>Bienvenido, invitado.</p>
+<h2>Iniciar Sesión</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Iniciar Sesión</button>
+</form>
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endif %}
+{% endblock %}
