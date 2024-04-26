@@ -127,8 +127,8 @@
 })(jQuery);
 
 $(document).ready(function () {
-  // Agrega evento clic para el botón de cierre de sesión
-  $('.close-session').on('click', function () {
+  // Agregar evento clic para el botón de cierre de sesión
+  $('#logout-link').on('click', function () {
       // Mostrar SweetAlert de confirmación
       Swal.fire({
           title: 'Cerrar Sesión',
@@ -140,10 +140,8 @@ $(document).ready(function () {
           confirmButtonText: 'Sí, cerrar sesión'
       }).then((result) => {
           if (result.isConfirmed) {
-              // Lógica de cierre de sesión aquí (si es necesario)
-              
-              // Redirigir al index
-              window.location.href = 'index.html';
+              // Redirigir al punto de entrada de la aplicación después de cerrar sesión
+              window.location.href = '{% url "usuarios:logout" %}';
           }
       });
   });

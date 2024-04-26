@@ -6,7 +6,7 @@ class CustomBackend(BaseBackend):
     def authenticate(self, request, correo=None, contraseña=None):
         try:
             usuario = Usuario.objects.get(correo=correo)
-            if usuario.check_password(contraseña):
+            if usuario.verificar_contraseña(contraseña):
                 return usuario
         except Usuario.DoesNotExist:
             return None
