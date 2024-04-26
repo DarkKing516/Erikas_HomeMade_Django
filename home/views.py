@@ -9,5 +9,5 @@ from reservas.forms import *
 #     return HttpResponse("Pagina principal")
 
 def index(request):
-    form = ReservaForm()
+    form = ReservaFormIndex()
     return render(request, 'index.html', {'form': form})
