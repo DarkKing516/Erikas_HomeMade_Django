@@ -120,16 +120,13 @@
                             </a>
                         </div>
                     </li> -->
+                    {% if not request.session.usuario_id %}
                     <li class="nav-item">
-                        <a class="nav-link" href="../views/signin.html">
+                        <a class="nav-link" href="{% url 'usuarios:login' %}">
                             <i class="icon-head menu-icon"></i>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./pages/samples/login.html">
-                            <i class="icon-head menu-icon"></i>
-                        </a>
-                    </li>
+                    {% else %}
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                             <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg" alt="profile" />
@@ -140,12 +137,14 @@
                                 <i class="ti-settings text-primary"></i>
                                 Settings
                             </a> -->
-                            <a class="dropdown-item close-session">
+                            <a id="logout-link" class="dropdown-item close-session">
                                 <i class="ti-power-off text-primary"></i>
                                 Cerrar sesion
                             </a>
                         </div>
                     </li>
+                    {% endif %}
+
                     <!-- <li class="nav-item nav-settings d-none d-lg-flex">
                         <a class="nav-link" href="#">
                             <i class="icon-ellipsis"></i>
@@ -380,7 +379,8 @@
                             </a>
                             <div class="collapse" id="users">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_usuarios' %}">
+                                    <li class="nav-item"> <a class="nav-link"
+                                            href="{% url 'usuarios:listar_usuarios' %}">
                                             Usuarios </a>
                                     </li>
                                     <!-- <li class="nav-item"> <a class="nav-link" href="clientes_dash.html"> Clientes </a></li> -->
@@ -475,5 +475,26 @@
             </div>
         </div>
 </body>
-
+<script>
+    $(document).ready(function () {
+  // Agregar evento clic para el botón de cierre de sesión
+  $('#logout-link').on('click', function () {
+      // Mostrar SweetAlert de confirmación
+      Swal.fire({
+          title: 'Cerrar Sesión',
+          text: '¿Estás seguro de cerrar sesión?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, cerrar sesión'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // Redirigir al punto de entrada de la aplicación después de cerrar sesión
+              window.location.href = '{% url "usuarios:logout" %}';
+          }
+      });
+  });
+});
+</script>
 </html>

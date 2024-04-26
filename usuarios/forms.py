@@ -51,5 +51,5 @@ class UsuarioForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    correo = forms.EmailField(label='Correo electrónico')
-    contraseña = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
+    correo = forms.EmailField(label='Correo electrónico', widget=forms.EmailInput(attrs={'class': 'inputField', 'id': 'email', 'placeholder': 'Email'}))
+    contraseña = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'inputField', 'id': 'password', 'placeholder': 'Contraseña'}), label='Contraseña')

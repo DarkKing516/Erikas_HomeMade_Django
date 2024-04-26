@@ -1,3 +1,5 @@
+from django.http import HttpResponseRedirect
+from django.contrib.auth.hashers import make_password  # Importa make_password
 from django.views.decorators.http import require_http_methods
 import requests
 from django.core.exceptions import PermissionDenied
@@ -5,6 +7,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login as auth_login
+from django.contrib.sessions.models import Session
+from .backends import *
 from .models import *
 from .forms import *
 
@@ -104,23 +109,26 @@ def crear_usuario(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST)
         if form.is_valid():
-            form.save()
+            usuario = form.save(commit=False)  # Guarda el formulario pero no lo persiste en la base de datos todavía
+            usuario.contraseña = make_password(form.cleaned_data['contraseña'])  # Encripta la contraseña antes de guardarla
+            usuario.save()  # Ahora guarda el usuario en la base de datos
             return redirect('usuarios:listar_usuarios')
     else:
         form = UsuarioForm()
     return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
 def editar_usuario(request, id_usuario):
-    usuario = get_object_or_404(Usuario, pk=id_usuario)  # Corrected variable name
+    usuario = get_object_or_404(Usuario, pk=id_usuario)
     if request.method == 'POST':
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
-            form.save()
+            usuario = form.save(commit=False)  # Guarda el formulario pero no lo persiste en la base de datos todavía
+            usuario.contraseña = make_password(form.cleaned_data['contraseña'])  # Encripta la contraseña antes de guardarla
+            usuario.save()  # Ahora guarda el usuario en la base de datos
             return redirect('usuarios:listar_usuarios')
     else:
         form = UsuarioForm(instance=usuario)
     return render(request, 'usuarios/editar_usuario.html', {'form': form})
-
 # def eliminar_usuario(request, id_usuario):
 #     usuario = get_object_or_404(Usuario, pk=id_usuario)
 #     print("Eliminar usuario llamado")  # Agregar mensaje de registro
@@ -145,9 +153,19 @@ def iniciar_sesion(request):
         if form.is_valid():
             correo = form.cleaned_data['correo']
             contraseña = form.cleaned_data['contraseña']
-            usuario = authenticate(request, correo=correo, contraseña=contraseña)
+            
+            # Autenticación manual
+            backend = CustomBackend()
+            usuario = backend.authenticate(request, correo=correo, contraseña=contraseña)
+            
             if usuario is not None:
-                login(request, usuario)
+                
+                # Establecer manualmente la sesión del usuario
+                request.session['usuario_id'] = usuario.id
+                request.session['nombre_usuario'] = usuario.nombre
+                request.session['correo_usuario'] = usuario.correo
+                # print(request.session)  # Imprimir el contenido de la sesión para depuración
+                # print(usuario.nombre)  # Imprime el nombre del usuario en la consola
                 return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
             else:
                 # Comprobación para mensajes de error específicos
@@ -159,3 +177,8 @@ def iniciar_sesion(request):
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
+
+def cerrar_sesion(request):
+    # Eliminar todas las claves de la sesión para cerrarla
+    request.session.flush()
+    return redirect('usuarios:login')  # Redirige a la página de inicio de sesión

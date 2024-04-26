@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import check_password
 from django.db import models
 
 class Permiso(models.Model):
@@ -29,6 +30,8 @@ class Usuario(models.Model):
     contraseña = models.CharField(max_length=255)
     estado = models.CharField(max_length=1, default='A')
 
+    def verificar_contraseña(self, contraseña):
+        return check_password(contraseña, self.contraseña)
     def __str__(self):
         return self.nombre
     class Meta:
