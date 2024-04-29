@@ -4,18 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Ventas</title>
+    <link rel="stylesheet" type="text/css" href="styles.css"> <!-- Agregamos el archivo de estilos -->
     {% extends 'layouts/navbar.html' %}
 </head>
 <body>
     {% block content %}
-    <h1>Listar Ventas</h1>
-    <a href="{% url 'ventas:crear_venta' %}">Crear Nueva Venta</a>
-
-    <ul>
-        {% for venta in ventas %}
-            <li>{{ venta.idVenta }} - <a href="#">Editar</a> | <a href="#">Eliminar</a></li>
-        {% endfor %}
-    </ul>
+    <div class="container-fluid page-body-wrapper">
+        <!-- Contenido principal -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <h1>Listar Ventas</h1>
+                <a href="{% url 'ventas:crear_venta' %}" class="btn btn-primary">Crear Nueva Venta</a> <!-- Aplicamos la clase de botón -->
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table reserva-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de venta</th>
+                                                <th>Metodo de pago</th>
+                                                <th>Subtotal</th>
+                                                <th>Descuento</th>
+                                                <th>Iva</th>
+                                                <th>Total Final</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for venta in ventas %}
+                                                <tr>
+                                                    <td>{{ venta.fecha }}</td>
+                                                    <td>{{ venta.metodo_pago }}</td>
+                                                    <td>{{ venta.idPedido.subtotal }}</td>
+                                                    <td>{{ venta.descuento }}</td>
+                                                    <td>{{ venta.idPedido.iva }}</td>
+                                                    <td>{{ venta.total }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin del contenido principal -->
+    </div>
     {% endblock %}
 </body>
 </html>
