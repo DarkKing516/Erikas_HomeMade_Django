@@ -14,6 +14,7 @@
             <th>Total</th>
             <th>Estado del Pedido</th>
             <th>Evidencia de Pago</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -31,8 +32,36 @@
                     <img src="data:image/jpeg;base64,{{ pedido.evidencia_pago|base64_encode }}" alt="Evidencia de Pago">
                 {% endif %}
             </td>
+            <td>
+                <a href="#" onclick="confirmarEliminar('{{ pedido.idPedido }}')">Eliminar</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<script>
+    function confirmarEliminar(idPedido) {
+        if (confirm('¿Estás seguro que deseas eliminar este usuario?')) {
+            // Realizar una solicitud DELETE directamente desde JavaScript
+            fetch('/pedidos/eliminar_pedido/' + idPedido + '/', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Eliminación exitosa
+                    location.reload(); // Recargar la página
+                } else {
+                    // Manejar errores de eliminación si es necesario
+                    console.error('Error al eliminar el usuario');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+        }
+    }
+</script>
 {% endblock %}
