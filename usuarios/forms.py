@@ -43,8 +43,14 @@ class UsuarioForm(forms.ModelForm):
         ('I', 'Inactivo'),
     )
 
-    estado = forms.ChoiceField(choices=ESTADOS_USUARIO, label='Estado')
-
+    estado = forms.ChoiceField(choices=ESTADOS_USUARIO, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))
+    nombre = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
+    telefono = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Teléfono'}))
+    documento = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Documento'}))
+    correo = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo'}))
+    usuario = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Usuario'}))
+    contraseña = forms.CharField(max_length=100, widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'}))
+    idRol = forms.ModelChoiceField(queryset=Rol.objects.all(), empty_label=None, label='Rol', widget=forms.Select(attrs={'class': 'form-control'}))
     class Meta:
         model = Usuario
         fields = ['idRol', 'nombre', 'telefono', 'documento', 'correo', 'usuario', 'contraseña', 'estado']

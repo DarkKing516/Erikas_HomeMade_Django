@@ -70,9 +70,11 @@
                                 <td>
                                     <!-- Aquí puedes acceder al estado del usuario -->
                                     {% if usuario.estado == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status">Activo</label>
+                                    <label class="badge btn-inverse-success hover-cursor change-status"
+                                    data-usuario-id="{{ usuario.id }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status">Inactivo</label>
+                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    data-usuario-id="{{ usuario.id }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -97,6 +99,8 @@
 </div>
 <!-- Fin del contenido principal -->
 
+
+<!-- Modal Crear Usuario -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -108,34 +112,35 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del formulario con Bootstrap grid system -->
-                <form class="forms-sample" onsubmit="return validateForm()">
+                <form class="forms-sample" method="post" onsubmit="return validateForm()">
+                    {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+                                {{ formCreate.nombre }}
                             </div>
                             <div class="form-group">
                                 <label for="documento">Documento</label>
-                                <input type="text" class="form-control" id="documento" placeholder="Documento">
+                                {{ formCreate.documento }}
                             </div>
                             <div class="form-group">
                                 <label for="usuario">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" placeholder="Usuario">
+                                {{ formCreate.usuario }}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="telefono">Teléfono</label>
-                                <input type="text" class="form-control" id="telefono" placeholder="Teléfono">
+                                {{ formCreate.telefono }}
                             </div>
                             <div class="form-group">
                                 <label for="correo">Correo</label>
-                                <input type="email" class="form-control" id="correo" placeholder="Correo">
+                                {{ formCreate.correo }}
                             </div>
                             <div class="form-group">
                                 <label for="contrasena">Contraseña</label>
-                                <input type="password" class="form-control" id="contrasena" placeholder="Contraseña">
+                                {{ formCreate.contraseña }}
                             </div>
                         </div>
                     </div>
@@ -144,11 +149,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             <label for="rol">Rol</label>
-                            <select class="form-control" id="rol">
-                                <option value="trabajador">Trabajador</option>
-                                <option value="administrador">Administrador</option>
-                                <option value="cliente">Cliente</option>
-                            </select>
+                            {{ formCreate.idRol }}
                         </div>
                     </div>
 
@@ -351,7 +352,7 @@
                     var estadoLabel = row.find('.change-status');
 
                     // Realizar la solicitud fetch para cambiar el estado del usuario
-                    fetch("{% url 'usuarios:cambiar_estado' %}", {
+                    return fetch("{% url 'usuarios:cambiar_estado' %}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -440,9 +441,13 @@
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Obtener el valor seleccionado del select
+                    var nuevoRol = $('#rolSelect').val();
+
+                    // Actualizar el contenido del label con el nuevo rol
+                    //row.find('.change-rol').text(nuevoRol);
                     // Mostrar SweetAlert de éxito
                     Swal.fire('¡Rol cambiado!', 'El rol se ha cambiado correctamente.', 'success').then(() => {
-                        // Recargar la página después de cerrar el SweetAlert
                         location.reload();
                     });
                 }
