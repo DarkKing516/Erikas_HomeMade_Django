@@ -41,6 +41,13 @@
         {% endfor %}
     </tbody>
 </table>
+
+<h1>Crear Nuevo Pedido</h1>
+<form action="{% url 'pedidos:listar_pedidos' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ uwu.as_p }}
+    <button type="submit">Crear Pedido</button>
+</form>
 <script>
     function confirmarEliminar(idPedido) {
         if (confirm('¿Estás seguro que deseas eliminar este pedido?')) {
@@ -67,3 +74,4 @@
     }
 </script>
 {% endblock %}
+

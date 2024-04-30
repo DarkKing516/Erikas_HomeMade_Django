@@ -10,3 +10,4 @@ class PedidoForm(forms.ModelForm):
             'descripcion_pedido': forms.Textarea(attrs={'type': 'textarea'}),
             'evidencia_pago': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
         }
+

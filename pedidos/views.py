@@ -10,7 +10,15 @@ import json
 
 def listar_pedidos(request):
     pedidos = Pedido.objects.all()
-    return render(request, 'listar_pedidos.html', {'pedidos': pedidos})
+    if request.method == 'POST':
+        form = PedidoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_pedidos')
+    else:
+        form = PedidoForm()
+    return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'uwu': form})
+
 
 
 
@@ -19,7 +27,7 @@ def crear_pedido(request):
         form = PedidoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('pedidos:listar_pedidos')
+            return redirect('listar_pedidos')
     else:
         form = PedidoForm()
     return render(request, 'crear_pedido.html', {'form': form})
