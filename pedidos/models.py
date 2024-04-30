@@ -68,7 +68,7 @@ class Pedido(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
-    evidencia_pago = models.BinaryField(blank=True, null=True, editable=True) 
+    evidencia_pago = models.ImageField(upload_to='pedidos/')
     estado_pedido = models.CharField(max_length=80, default="Por hacer")
 
     def __str__(self):
