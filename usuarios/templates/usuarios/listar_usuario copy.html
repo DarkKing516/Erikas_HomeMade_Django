@@ -1,0 +1,43 @@
+<title>Listar Usuarios</title>
+{% extends 'layouts/navbarUsuarios.html' %}
+
+{% block contentConfiguracion %}
+
+<a href="{% url 'usuarios:crear_usuario' %}">Crear Nuevo Usuario</a>
+<h1>Listado de Usuarios</h1>
+<ul>
+    {% for usuario in usuarios %}
+    <li>{{ usuario.nombre }} - <a href="{% url 'usuarios:editar_usuario' usuario.id %}">Editar</a>
+        <a href="#" onclick="confirmarEliminar('{{ usuario.id }}')">Eliminar</a>
+        {% comment %} <a href="{% url 'usuarios:eliminar_usuario' usuario.id %}">Eliminar</a> {% endcomment %}
+    </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'home:index' %}">Atrás</a>
+
+<script>
+    function confirmarEliminar(usuarioId) {
+        if (confirm('¿Estás seguro que deseas eliminar este usuario?')) {
+            // Realizar una solicitud DELETE directamente desde JavaScript
+            fetch('/configuracion/eliminar_usuario/' + usuarioId + '/', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Eliminación exitosa
+                    location.reload(); // Recargar la página
+                } else {
+                    // Manejar errores de eliminación si es necesario
+                    console.error('Error al eliminar el usuario');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
+        }
+    }
+</script>
+{% endblock %}
