@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password  # Importa make_password
 from django.views.decorators.http import require_http_methods
@@ -103,7 +104,48 @@ def eliminar_rol(request, id_rol):
 # =================================================================
 def listar_usuarios(request):
     usuarios = Usuario.objects.all()
-    return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios})
+    roles = Rol.objects.all()  # Obtener todos los roles
+    return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios, 'roles': roles})
+
+def cambiar_rol(request):
+    if request.method == 'POST':
+        usuario_id = request.POST.get('usuario_id')
+        nuevo_rol_id = request.POST.get('rol_id')
+        
+        print("Usuario ID:", usuario_id)
+        print("Rol ID:", nuevo_rol_id)
+
+        data = json.loads(request.body)
+        usuario_id = data.get('usuario_id')
+        nuevo_rol_id = data.get('rol_id')
+        
+        print("Usuario ID:", usuario_id)
+        print("Rol ID:", nuevo_rol_id)
+        usuario = Usuario.objects.get(pk=usuario_id)
+        usuario.idRol_id = nuevo_rol_id
+        usuario.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+
+def cambiar_estado(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        usuario_id = data.get('usuario_id')
+        print("Usuario ID:", usuario_id)
+        usuario_id = request.POST.get('usuario_id')
+        print("Usuario ID:", usuario_id)
+        # Cambiar el estado del usuario según el estado actual
+        usuario = Usuario.objects.get(pk=usuario_id)
+        if usuario.estado == 'A':
+            usuario.estado = 'I'
+        else:
+            usuario.estado = 'A'
+        usuario.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+
 
 def crear_usuario(request):
     if request.method == 'POST':
