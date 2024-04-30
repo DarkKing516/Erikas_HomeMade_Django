@@ -104,7 +104,7 @@ def eliminar_rol(request, id_rol):
 # =================================================================
 def listar_usuarios(request):
     if request.method == 'POST':
-        form = UsuarioForm(request.POST)
+        form = CreateUsuario(request.POST)
         if form.is_valid():
             usuario = form.save(commit=False)
             usuario.contraseña = make_password(form.cleaned_data['contraseña'])
