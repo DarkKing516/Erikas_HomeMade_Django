@@ -53,3 +53,19 @@ class UsuarioForm(forms.ModelForm):
 class LoginForm(forms.Form):
     correo = forms.EmailField(label='Correo electrónico', widget=forms.EmailInput(attrs={'class': 'inputField', 'id': 'email', 'placeholder': 'Email'}))
     contraseña = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'inputField', 'id': 'password', 'placeholder': 'Contraseña'}), label='Contraseña')
+
+
+
+
+class RegistroForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['nombre', 'telefono', 'documento', 'correo', 'usuario', 'contraseña']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'inputField', 'placeholder': 'Nombre'}),
+            'telefono': forms.TextInput(attrs={'class': 'inputField', 'placeholder': 'Teléfono'}),
+            'documento': forms.TextInput(attrs={'class': 'inputField', 'placeholder': 'Documento'}),
+            'correo': forms.EmailInput(attrs={'class': 'inputField', 'placeholder': 'Correo'}),
+            'usuario': forms.TextInput(attrs={'class': 'inputField', 'placeholder': 'Usuario'}),
+            'contraseña': forms.PasswordInput(attrs={'class': 'inputField', 'placeholder': 'Contraseña'}),
+        }

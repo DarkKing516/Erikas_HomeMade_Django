@@ -25,7 +25,7 @@ class Usuario(models.Model):
     nombre = models.CharField(max_length=50)
     telefono = models.CharField(max_length=15)
     documento = models.CharField(max_length=15)
-    correo = models.EmailField(max_length=50)
+    correo = models.EmailField(max_length=50, unique=True)
     usuario = models.CharField(max_length=20)
     contraseña = models.CharField(max_length=255)
     estado = models.CharField(max_length=1, default='A')

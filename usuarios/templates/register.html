@@ -21,18 +21,36 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="{% static 'css/signin.css' %}" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{% static 'js/signin.js' %}"></script>
 </head>
 
 <body>
     <div class="body">
-        <form method="post" class="form_main" id="loginForm">
+        <form method="post" style="min-width: 400px;" class="form_main" id="registerForm">
             {% csrf_token %}
-            <p class="heading">Iniciar Sesión</p>
+            <p class="heading">Registrarse</p>
+            <div class="inputContainer">
+                <i class="bi bi-person inputIcon"></i>
+                {{ form.nombre }}
+            </div>
+
+            <div class="inputContainer">
+                <i class="bi bi-telephone inputIcon"></i>
+                {{ form.telefono }}
+            </div>
+
+            <div class="inputContainer">
+                <i class="bi bi-card-text inputIcon"></i>
+                {{ form.documento }}
+            </div>
+
             <div class="inputContainer">
                 <i class="bi bi-envelope inputIcon"></i>
                 {{ form.correo }}
+            </div>
+
+            <div class="inputContainer">
+                <i class="bi bi-person-fill inputIcon"></i>
+                {{ form.usuario }}
             </div>
 
             <div class="inputContainer">
@@ -40,11 +58,9 @@
                 {{ form.contraseña }}
             </div>
 
-            <button type="submit" id="button">Ingresar</button>
+            <button type="submit" id="button">Registrarse</button>
             <div style="z-index: 5; text-align: center">
-                <a class="forgotLink" href="./forgot.html">Olvidé mi contraseña</a>
-                <a class="forgotLink" href="{% url 'usuarios:register' %}">Registrarme</a>
-                <a class="btn btn-secondary" href="{% url 'home:index' %}">Atrás</a>
+                <a class="forgotLink" href="{% url 'usuarios:login' %}">Ya tengo una cuenta</a>
             </div>
         </form>
     </div>
@@ -54,7 +70,7 @@
     // Espera a que el documento esté cargado completamente
     document.addEventListener('DOMContentLoaded', function () {
         // Agrega un listener al formulario de inicio de sesión
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
             // Evita que el formulario se envíe normalmente
             event.preventDefault();
 
@@ -66,36 +82,34 @@
                     'X-CSRFToken': '{{ csrf_token }}'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Muestra una alerta de éxito con SweetAlert2
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Inicio de sesión exitoso',
-                        // showConfirmButton: false,
-                        // timer: 1500
-                    }).then(() => {
-                        // Redirige a la página deseada después del inicio de sesión exitoso
-                        window.location.href = "{% url 'home:index' %}";
-                    });
-                } else {
-                    // Muestra una alerta de error con SweetAlert2 y el mensaje personalizado
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de inicio de sesión',
-                        text: data.message,
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Muestra una alerta de éxito con SweetAlert2
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registro exitoso',
+                            // showConfirmButton: false,
+                            // timer: 1500
+                        }).then(() => {
+                            // Redirige a la página deseada después del inicio de sesión exitoso
+                            window.location.href = "{% url 'usuarios:login' %}";
+                        });
+                    } else {
+                        // Muestra una alerta de error con SweetAlert2 y el mensaje personalizado
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de registro',
+                            text: data.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         });
     });
 </script>
-
-
 
 </html>

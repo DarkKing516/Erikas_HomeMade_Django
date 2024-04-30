@@ -166,14 +166,17 @@ def iniciar_sesion(request):
                 request.session['correo_usuario'] = usuario.correo
                 # print(request.session)  # Imprimir el contenido de la sesión para depuración
                 # print(usuario.nombre)  # Imprime el nombre del usuario en la consola
-                return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
+                # return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
+                return JsonResponse({'success': True})
             else:
                 # Comprobación para mensajes de error específicos
                 user_exists = Usuario.objects.filter(correo=correo).exists()
                 if user_exists:
-                    messages.error(request, 'La contraseña es incorrecta.', extra_tags='contraseña')
+                    # messages.error(request, 'La contraseña es incorrecta.', extra_tags='contraseña')
+                    return JsonResponse({'success': False, 'message': 'La contraseña es incorrecta.'})
                 else:
-                    messages.error(request, 'El correo electrónico no está registrado.', extra_tags='correo')
+                    # messages.error(request, 'El correo electrónico no está registrado.', extra_tags='correo')
+                    return JsonResponse({'success': False, 'message': 'El correo electrónico no está registrado.'})
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -182,3 +185,19 @@ def cerrar_sesion(request):
     # Eliminar todas las claves de la sesión para cerrarla
     request.session.flush()
     return redirect('usuarios:login')  # Redirige a la página de inicio de sesión
+
+def registrarse(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        correo = request.POST.get('correo')  # Obtén el valor del correo electrónico del POST
+        if Usuario.objects.filter(correo=correo).exists():
+            return JsonResponse({'success': False, 'message': 'Correo ya en uso'})
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            contraseña = form.cleaned_data['contraseña']
+            usuario.contraseña = make_password(contraseña)
+            usuario.save()
+            return JsonResponse({'success': True})
+    else:
+        form = RegistroForm()
+    return render(request, 'register.html', {'form': form})

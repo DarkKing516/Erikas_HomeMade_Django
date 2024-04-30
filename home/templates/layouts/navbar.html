@@ -143,6 +143,7 @@
                             </a>
                         </div>
                     </li>
+                    
                     {% endif %}
 
                     <!-- <li class="nav-item nav-settings d-none d-lg-flex">
@@ -366,7 +367,8 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
                                             Roles </a></li>
-                                    <!-- <li class="nav-item"> <a class="nav-link" href="permisos.html"> Permisos </a></li> -->
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
+                                            Permisos </a></li>
                                 </ul>
                             </div>
                         </li>
@@ -474,27 +476,29 @@
 
             </div>
         </div>
+    </div>
 </body>
 <script>
     $(document).ready(function () {
-  // Agregar evento clic para el botón de cierre de sesión
-  $('#logout-link').on('click', function () {
-      // Mostrar SweetAlert de confirmación
-      Swal.fire({
-          title: 'Cerrar Sesión',
-          text: '¿Estás seguro de cerrar sesión?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#3085d6',
-          confirmButtonText: 'Sí, cerrar sesión'
-      }).then((result) => {
-          if (result.isConfirmed) {
-              // Redirigir al punto de entrada de la aplicación después de cerrar sesión
-              window.location.href = '{% url "usuarios:logout" %}';
-          }
-      });
-  });
-});
+        // Agregar evento clic para el botón de cierre de sesión
+        $('#logout-link').on('click', function () {
+            // Mostrar SweetAlert de confirmación
+            Swal.fire({
+                title: 'Cerrar Sesión',
+                text: '¿Estás seguro de cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, cerrar sesión'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir al punto de entrada de la aplicación después de cerrar sesión
+                    window.location.href = '{% url "usuarios:logout" %}';
+                }
+            });
+        });
+    });
 </script>
+
 </html>
