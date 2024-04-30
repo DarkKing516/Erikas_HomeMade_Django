@@ -103,9 +103,20 @@ def eliminar_rol(request, id_rol):
 
 # =================================================================
 def listar_usuarios(request):
-    usuarios = Usuario.objects.all()
-    roles = Rol.objects.all()  # Obtener todos los roles
-    return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios, 'roles': roles})
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            usuario.contraseña = make_password(form.cleaned_data['contraseña'])
+            usuario.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        formCreate = UsuarioForm()
+        usuarios = Usuario.objects.all()
+        roles = Rol.objects.all()  # Obtener todos los roles
+        return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios, 'roles': roles, 'formCreate': formCreate})
 
 def cambiar_rol(request):
     if request.method == 'POST':
@@ -130,12 +141,12 @@ def cambiar_rol(request):
 
 def cambiar_estado(request):
     if request.method == 'POST':
+        usuario_id = request.POST.get('usuario_id')
+        print("Usuario ID:", usuario_id)
+        
         data = json.loads(request.body)
         usuario_id = data.get('usuario_id')
         print("Usuario ID:", usuario_id)
-        usuario_id = request.POST.get('usuario_id')
-        print("Usuario ID:", usuario_id)
-        # Cambiar el estado del usuario según el estado actual
         usuario = Usuario.objects.get(pk=usuario_id)
         if usuario.estado == 'A':
             usuario.estado = 'I'
@@ -144,7 +155,7 @@ def cambiar_estado(request):
         usuario.save()
         return JsonResponse({'success': True})
     else:
-        return JsonResponse({'success': False})
+        return JsonResponse({'warning': False})
 
 
 def crear_usuario(request):
