@@ -1,8 +1,7 @@
 {% extends 'layouts/navbar.html' %}
-
 {% block content %}
-<h1>Editar Pedido</h1>
-<form method="post">
+<h2>Editar Pedido</h2>
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Guardar Cambios</button>
