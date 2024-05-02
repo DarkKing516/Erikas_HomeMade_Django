@@ -120,9 +120,10 @@ def listar_usuarios(request):
             return JsonResponse({'success': False, 'errors': errors})
     else:
         formCreate = UsuarioForm()
+        formEdit = EditarUsuario()
         usuarios = Usuario.objects.all()
         roles = Rol.objects.all()  # Obtener todos los roles
-        return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios, 'roles': roles, 'formCreate': formCreate})
+        return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios, 'roles': roles, 'formCreate': formCreate, 'formEdit': formEdit})
 
 def cambiar_rol(request):
     if request.method == 'POST':
@@ -188,6 +189,15 @@ def editar_usuario(request, id_usuario):
     else:
         form = UsuarioForm(instance=usuario)
     return render(request, 'usuarios/editar_usuario.html', {'form': form})
+
+def editar_usuario_(request, id_usuario):
+    usuario = get_object_or_404(Usuario, pk=id_usuario)
+    if request.method == 'POST':
+        form = EditarUsuario(request.POST, instance=usuario)
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            usuario.save()
+            return redirect('usuarios:listar_usuarios')
 # def eliminar_usuario(request, id_usuario):
 #     usuario = get_object_or_404(Usuario, pk=id_usuario)
 #     print("Eliminar usuario llamado")  # Agregar mensaje de registro

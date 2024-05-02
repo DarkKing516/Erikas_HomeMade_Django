@@ -1,65 +1,193 @@
-<!DOCTYPE html>
-<html lang="es">
+<title>Listar Reservas</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listar Reservas</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    {% extends 'layouts/navbar.html' %}
-</head>
+{% extends 'layouts/navbar.html' %}
+{% load static %}
+{% block content %}
+<!-- Estilos CSS -->
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- Plugin CSS -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- Estilos propios -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<!-- Bibliotecas JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+<script src="{% static 'js/reservas.js' %}"></script>
 
-<body>
-    {% block content %}
-
-    <div class="container-fluid page-body-wrapper">
-        <!-- Contenido principal -->
-        <div class="main-panel">
-            <div class="content-wrapper">
-                <a href="{% url 'reservas:crear_reserva' %}" class="btn btn-primary">Crear Nueva reserva</a>
-                <div class="row">
-                    <div class="col-lg-12 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Reservas</h4>
-                                <div class="table-responsive">
-                                    <table class="table reserva-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Usuario</th>
-                                                <th>Fecha Reserva</th>
-                                                <th>descripcion</th>
-                                                <th>Estado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for reserva in reservas %}
-                                            <tr>
-                                                <td>{{ reserva.usuario.nombre }}</td>
-                                                <td>{{ reserva.fecha_cita }}</td>
-                                                <td>{{ reserva.descripcion }}</td>
-                                                <td>{{ reserva.estado }}</td>
-                                                <td>
-                                                    <a href="{% url 'reservas:editar_reserva' reserva.id %}"
-                                                        class="btn btn-info">Editar</a>
-                                                    <a href="{% url 'reservas:eliminar_reserva' reserva.id %}"
-                                                        class="btn btn-danger">Eliminar</a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!-- Contenido principal -->
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Reservas</h4>
+                <div class="table-responsive">
+                    <table id="reservaTable" class="table table hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Usuario</th>
+                                <th>Fecha Reserva</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reserva in reservas %}
+                            <tr>
+                                <td>{{ reserva.usuario.nombre }}</td>
+                                <td>{{ reserva.fecha_cita }}</td>
+                                <td>{{ reserva.descripcion }}</td>
+                                <td>{{ reserva.estado }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <a href="{% url 'reservas:editar_reserva' reserva.id %}"
+                                            class="btn btn-inverse-warning edit-user btn btn-info">
+                                            <i class="mdi mdi-pencil"></i> Editar
+                                        </a>
+                                        <a href="{% url 'reservas:eliminar_reserva' reserva.id %}"
+                                            class="btn btn-inverse-danger delete-user btn btn-danger">
+                                            <i class="mdi mdi-delete"></i> Eliminar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <!-- Fin del contenido principal -->
     </div>
-    {% endblock %}
-</body>
+</div>
 
-</html>
+<!-- Modal Crear Reserva -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro de Reserva</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm()">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#reservaTable')) {
+            $('#reservaTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            // "pagingType": "full_numbers",
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#reservaTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#reservaTable_filter").detach().appendTo(".top");
+
+        // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#reservaTable_filter input").addClass("form-control form-control-sm");
+
+        // Puedes agregar más personalizaciones según tus necesidades
+
+
+
+    });
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#reservaTable')) {
+            $('#reservaTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            // "pagingType": "full_numbers",
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#reservaTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#reservaTable_filter").detach().appendTo(".top");
+
+        // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#reservaTable_filter input").addClass("form-control form-control-sm");
+
+        // Puedes agregar más personalizaciones según tus necesidades
+
+
+
+    });
+</script>
+
+{% endblock %}
