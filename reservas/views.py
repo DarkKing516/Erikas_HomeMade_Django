@@ -10,7 +10,8 @@ def hello(request):
 
 def listar_reservas(request):
     reservas = Reserva.objects.all()
-    return render(request, 'listar_reservas.html', {'reservas': reservas})
+    form = ReservaForm()
+    return render(request, 'listar_reservas.html', {'reservas': reservas, 'form': form})
 
 def crear_reserva(request):
     if request.method == 'POST':
