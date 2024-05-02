@@ -114,3 +114,29 @@ class CreateUsuario(forms.ModelForm):
         if not telefono.isdigit():
             raise forms.ValidationError("El teléfono debe contener solo números.")
         return telefono
+    
+
+class EditarUsuario(forms.ModelForm):
+    nombre = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
+    telefono = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Teléfono'}))
+    documento = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Documento'}))
+    correo = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo'}))
+    usuario = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Usuario'}))
+    idRol = forms.ModelChoiceField(queryset=Rol.objects.all(), empty_label=None, label='Rol', widget=forms.Select(attrs={'class': 'form-control'}))
+    class Meta:
+        model = Usuario
+        fields = ['idRol', 'nombre', 'telefono', 'documento', 'correo', 'usuario']
+        
+    def clean_documento(self):
+        documento = self.cleaned_data['documento']
+        # Validar si el documento contiene solo números
+        if not documento.isdigit():
+            raise forms.ValidationError("El documento debe contener solo números.")
+        return documento
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data['telefono']
+        # Validar si el teléfono contiene solo números
+        if not telefono.isdigit():
+            raise forms.ValidationError("El teléfono debe contener solo números.")
+        return telefono
