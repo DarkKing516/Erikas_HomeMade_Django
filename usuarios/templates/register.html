@@ -95,6 +95,17 @@
                             // Redirige a la página deseada después del inicio de sesión exitoso
                             window.location.href = "{% url 'usuarios:login' %}";
                         });
+                    } else if (data.errors) { // Si hay errores de validación
+                        let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                        for (const key in data.errors) {
+                            errorMessage += `${data.errors[key]}<br>`;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de registro',
+                            html: errorMessage,
+                            confirmButtonText: 'Aceptar'
+                        });
                     } else {
                         // Muestra una alerta de error con SweetAlert2 y el mensaje personalizado
                         Swal.fire({

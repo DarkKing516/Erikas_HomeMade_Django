@@ -79,16 +79,75 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-inverse-warning edit-user"
-                                            data-toggle="modal" data-target="#editUserModal">
+                                        <button type="button" class="btn btn-inverse-warning edit-user" data-toggle="modal" data-target="#editUserModal{{ usuario.id }}" data-nombre="{{ usuario.nombre }}" data-documento="{{ usuario.documento }}" data-telefono="{{ usuario.telefono }}" data-correo="{{ usuario.correo }}" data-rol="{{ usuario.idRol.id }}">
                                             <i class="mdi mdi-pencil"></i>
-                                        </button>
+                                        </button>                                
                                         <button type="button" class="btn btn-inverse-danger delete-user">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Modal para editar usuario -->
+                            <div class="modal fade" id="editUserModal{{ usuario.id }}" tabindex="-1" role="dialog" aria-labelledby="editUserModal{{ usuario.id }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editUserModal{{ usuario.id }}Label">Editar Usuario</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="myForm" class="forms-sample" onsubmit="return validateForm()">
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="nombre">Nombre</label>
+                                                            <input type="text" class="form-control" id="nombre" value="Datos de Usuario">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="documento">Documento</label>
+                                                            <input type="text" class="form-control" id="documento" value="Datos de Usuario">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="usuario">Usuario</label>
+                                                            <input type="text" class="form-control" id="usuario" value="Datos de Usuario">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="telefono">Teléfono</label>
+                                                            <input type="text" class="form-control" id="telefono" value="Datos de Usuario">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="correo">Correo</label>
+                                                            <input type="email" class="form-control" id="correo" value="Datos@Usuario">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="rol">Rol</label>
+                                                            <select class="form-control" id="rol">
+                                                                <option value="trabajador">Trabajador</option>
+                                                                <option value="administrador">Administrador</option>
+                                                                <option value="cliente">Cliente</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -98,6 +157,9 @@
     </div>
 </div>
 <!-- Fin del contenido principal -->
+
+
+
 
 
 <!-- Modal Crear Usuario -->
@@ -169,66 +231,7 @@
 
 
 
-<!-- Modal para editar usuario -->
-<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="myForm" class="forms-sample" onsubmit="return validateForm()">
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" value="Datos de Usuario">
-                            </div>
-                            <div class="form-group">
-                                <label for="documento">Documento</label>
-                                <input type="text" class="form-control" id="documento" value="Datos de Usuario">
-                            </div>
-                            <div class="form-group">
-                                <label for="usuario">Usuario</label>
-                                <input type="text" class="form-control" id="usuario" value="Datos de Usuario">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="telefono">Teléfono</label>
-                                <input type="text" class="form-control" id="telefono" value="Datos de Usuario">
-                            </div>
-                            <div class="form-group">
-                                <label for="correo">Correo</label>
-                                <input type="email" class="form-control" id="correo" value="Datos@Usuario">
-                            </div>
-                            <div class="form-group">
-                                <label for="rol">Rol</label>
-                                <select class="form-control" id="rol">
-                                    <option value="trabajador">Trabajador</option>
-                                    <option value="administrador">Administrador</option>
-                                    <option value="cliente">Cliente</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Botones -->
-                    <div class="form-row">
-                        <div class="col-md-12">
-                            <button class="btn btn-primary mr-2">Editar</button>
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
 
@@ -250,43 +253,58 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            // Verificar si la solicitud fue exitosa
-            if (data.success) {
-                // Mostrar SweetAlert de éxito
-                Swal.fire({
-                    title: '¡Registro exitoso!',
-                    text: 'El usuario se ha registrado correctamente.',
-                    icon: 'success',
-                    onClose: () => {
-                        // Recargar la página
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'El usuario se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página
+                            location.reload();
+                        }
+                    }).then(() => {
                         location.reload();
-                    }
-                }).then(() => {
-                    location.reload();
-                });
-                //Swal.fire('Registro exitoso!', 'El usuario se ha registrado correctamente.', 'success').then(() => {
+                    });
+                    //Swal.fire('Registro exitoso!', 'El usuario se ha registrado correctamente.', 'success').then(() => {
                     //location.reload();
-                //});
-            } else {
-                // Mostrar SweetAlert de error con los mensajes de error
+                    //});
+                } else if (data.message) { // Check if a message is provided in the response
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
                     icon: 'error'
                 });
-            }
-        })
-        .catch(error => {
-            // Mostrar SweetAlert de error en caso de un fallo en la solicitud
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
-                icon: 'error'
+                console.error('Error:', errors);
             });
-            console.error('Error:', error);
-        });
     }
     
 
