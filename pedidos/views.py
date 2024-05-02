@@ -5,13 +5,23 @@ from .forms import PedidoForm
 from django.http import JsonResponse
 import base64
 import json
-
+from .forms import CreatePedidoForm
 
 
 def listar_pedidos(request):
-    pedidos = Pedido.objects.all()
-    return render(request, 'listar_pedidos.html', {'pedidos': pedidos})
-
+    if request.method == 'POST':
+        form = CreatePedidoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        formCreate = CreatePedidoForm()
+        pedidos = Pedido.objects.all()
+        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'formCreate': formCreate})
 
 
 

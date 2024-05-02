@@ -1,72 +1,372 @@
+<title>Listar Pedidos</title>
 {% extends 'layouts/navbar.html' %}
-{% load pedidos_extras %}
+
+{% load static %}
+
 {% block content %}
-<a href="{% url 'pedidos:crear_pedido' %}">Crear Nuevo Pedido</a>
-<h1>Lista de Pedidos</h1>
-<table>
-    <thead>
-        <tr>
-            <th>ID Pedido</th>
-            <th>Fecha de Pedido</th>
-            <th>Descripción</th>
-            <th>Subtotal</th>
-            <th>IVA</th>
-            <th>Total</th>
-            <th>Estado del Pedido</th>
-            <th>Evidencia de Pago</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pedido in pedidos %}
-        <tr>
-            <td>{{ pedido.idPedido }}</td>
-            <td>{{ pedido.fecha_pedido }}</td>
-            <td>{{ pedido.descripcion_pedido }}</td>
-            <td>{{ pedido.subtotal }}</td>
-            <td>{{ pedido.iva }}</td>
-            <td>{{ pedido.total }}</td>
-            <td>{{ pedido.estado_pedido }}</td>
-            <td>
-                {% if pedido.evidencia_pago %}s
-                <img src="{{ pedido.evidencia_pago.url }}"  alt="Evidencia de pago" style="max-width: 200px; max-height: 200px;">
-                {% else %}
-                Sin evidencia de pago
-                {% endif %}
-            </td>
-            <td>
-                <a href="#" onclick="confirmarEliminar('{{ pedido.idPedido }}')">Eliminar</a>
-                <a href="{% url 'pedidos:editar_pedido' pk=pedido.pk %}">Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- endinject -->
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- End plugin css for this page -->
+<!-- inject:css -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+
+<!-- endinject -->
+<script src="{% static 'js/pedidos.js' %}"></script>
+
+
+<!-- Contenido principal -->
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Pedidos</h4>
+                <div class="table-responsive">
+                    <table id="pedidoTable" class="table table-hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>ID de Pedido</th>
+                                <th>Usuario</th>
+                                <th>Fecha de Creación</th>
+                                <th>Fecha de Pedido</th>
+                                <th>Descripción</th>
+                                <th>Total</th>
+                                <th>Evidencia de Pago</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pedido in pedidos %}
+                            <tr class="pedido-row">
+                                <td>{{ pedido.idPedido }}</td>
+                                <td>{{ pedido.id_Usuario }}</td>
+                                <td>{{ pedido.fechaCreacion_pedido }}</td>
+                                <td>{{ pedido.fecha_pedido }}</td>
+                                <td>{{ pedido.descripcion_pedido }}</td>
+                                <td>{{ pedido.total }}</td>
+                                <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td>
+                                <td>{{ pedido.estado_pedido }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-inverse-warning edit-pedido" data-toggle="modal" data-target="#editPedidoModal{{ pedido.idPedido }}" data-cliente="{{ pedido.id_Usuario }}" data-producto="{{ pedido.producto }}" data-cantidad="{{ pedido.cantidad }}" data-fecha="{{ pedido.fecha_pedido }}">
+                                            <i class="mdi mdi-pencil"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-inverse-danger delete-pedido">
+                                            <i class="mdi mdi-delete"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                    
+                            <!-- Modal para editar pedido -->
+                            <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="pedidoForm{{ pedido.idPedido }}" class="forms-sample" onsubmit="return validatePedidoForm({{ pedido.idPedido }})">
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="usuario">Usuario</label>
+                                                            <input type="text" class="form-control" id="usuario{{ pedido.idPedido }}" value="{{ pedido.id_Usuario }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fecha_creacion">Fecha de Creación</label>
+                                                            <input type="datetime-local" class="form-control" id="fecha_creacion{{ pedido.idPedido }}" value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fecha_pedido">Fecha de Pedido</label>
+                                                            <input type="datetime-local" class="form-control" id="fecha_pedido{{ pedido.idPedido }}" value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="descripcion">Descripción</label>
+                                                            <input type="text" class="form-control" id="descripcion{{ pedido.idPedido }}" value="{{ pedido.descripcion_pedido }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="subtotal">Subtotal</label>
+                                                            <input type="number" step="0.01" class="form-control" id="subtotal{{ pedido.idPedido }}" value="{{ pedido.subtotal }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="iva">IVA</label>
+                                                            <input type="number" step="0.01" class="form-control" id="iva{{ pedido.idPedido }}" value="{{ pedido.iva }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="total">Total</label>
+                                                            <input type="number" step="0.01" class="form-control" id="total{{ pedido.idPedido }}" value="{{ pedido.total }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="evidencia_pago">Evidencia de Pago</label>
+                                                            <input type="file" class="form-control-file" id="evidencia_pago{{ pedido.idPedido }}" accept="image/*">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="estado_pedido">Estado del Pedido</label>
+                                                            <select class="form-control" id="estado_pedido{{ pedido.idPedido }}">
+                                                                <option value="Por hacer" {% if pedido.estado_pedido == 'Por hacer' %}selected{% endif %}>Por hacer</option>
+                                                                <option value="Pendiente" {% if pedido.estado_pedido == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                                                                <option value="Completado" {% if pedido.estado_pedido == 'Completado' %}selected{% endif %}>Completado</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin del contenido principal -->
+
+<!-- Modal Crear Pedido -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro de Pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="pedidoForm" class="forms-sample" method="post" enctype="multipart/form-data" action="{% url 'pedidos:crear_pedido' %}" >
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_usuario">Usuario</label>
+                                {{ formCreate.id_Usuario }}
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_pedido">Fecha de Pedido</label>
+                                {{ formCreate.fecha_pedido }}
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion_pedido">Descripción del Pedido</label>
+                                {{ formCreate.descripcion_pedido }}
+                            </div>
+                            <div class="form-group">
+                                <label for="subtotal">Subtotal</label>
+                                {{ formCreate.subtotal }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="iva">IVA</label>
+                                {{ formCreate.iva }}
+                            </div>
+                            <div class="form-group">
+                                <label for="total">Total</label>
+                                {{ formCreate.total }}
+                            </div>
+                            <div class="form-group">
+                                <label for="evidencia_pago">Evidencia de Pago</label>
+                                {{ formCreate.evidencia_pago }}
+                            </div>
+                            <div class="form-group">
+                                <label for="estado_pedido">Estado del Pedido</label>
+                                <select class="form-control" id="estado_pedido" name="estado_pedido">
+                                    <option value="Por hacer">Por hacer</option>
+                                    <option value="Haciendo">Haciendo</option>
+                                    <option value="Hecho">Hecho</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Fin del Modal Crear Pedido -->
 
 <script>
-    function confirmarEliminar(idPedido) {
-        if (confirm('¿Estás seguro que deseas eliminar este pedido?')) {
-            // Realizar una solicitud DELETE directamente desde JavaScript
-            fetch('/pedidos/eliminar_pedido/' + idPedido + '/', {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Eliminación exitosa
-                    location.reload(); // Recargar la página
-                } else {
-                    // Manejar errores de eliminación si es necesario
-                    console.error('Error al eliminar el pedido');
-                }
-            })
-            .catch(error => {
-                console.error('Error de red:', error);
-            });
-        }
-    }
-</script>
-{% endblock %}
+    // Función para validar el formulario de creación de pedido
+    function validatePedidoForm(pedidoId) {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
 
+        // Obtener el formulario correspondiente al pedido
+        const form = document.getElementById(`pedidoForm${pedidoId}`);
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:crear_pedido' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'El pedido se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.message) { // Check if a message is provided in the response
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+    // Función para validar la edición de un pedido
+    function validatePedidoEdit(pedidoId) {
+        // Evitar que el formulario se envíe
+        event.preventDefault();
+
+        // Mostrar SweetAlert de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Quieres editar este pedido?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, editar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Aquí puedes añadir la lógica para enviar el formulario si el usuario confirma
+                document.getElementById(`pedidoForm${pedidoId}`).submit();
+            }
+        });
+    }
+
+    // Configuración de DataTable personalizada para pedidos
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#pedidoTable')) {
+            $('#pedidoTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#pedidoTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#pedidoTable_filter").detach().appendTo(".top");
+
+        // Agregar el botón "Agregar" al lado del cuadro de búsqueda
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal" style="margin: 5px">Agregar</button>');
+
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#pedidoTable_filter input").addClass("form-control form-control-sm");
+
+        // Puedes agregar más personalizaciones según tus necesidades
+    });
+
+</script>
+
+
+{% endblock %}
