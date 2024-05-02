@@ -10,14 +10,7 @@ import json
 
 def listar_pedidos(request):
     pedidos = Pedido.objects.all()
-    if request.method == 'POST':
-        form = PedidoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('listar_pedidos')
-    else:
-        form = PedidoForm()
-    return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'uwu': form})
+    return render(request, 'listar_pedidos.html', {'pedidos': pedidos})
 
 
 
@@ -27,21 +20,21 @@ def crear_pedido(request):
         form = PedidoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('listar_pedidos')
+            return redirect('pedidos:listar_pedidos')
     else:
         form = PedidoForm()
     return render(request, 'crear_pedido.html', {'form': form})
 
-def editar_pedido(request, pedido_id):
-    pedido = get_object_or_404(Pedido, id=pedido_id)
+def editar_pedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
     if request.method == 'POST':
-        form = PedidoForm(request.POST, instance=pedido)
+        form = PedidoForm(request.POST, request.FILES, instance=pedido)
         if form.is_valid():
             form.save()
-            return redirect('listar_pedidos')
+            return redirect('pedidos:listar_pedidos')
     else:
         form = PedidoForm(instance=pedido)
-    return render(request, 'editar_pedido.html', {'form': form})
+    return render(request, 'editar_pedido.html', {'form': form, 'pedido': pedido})
 
 def eliminar_pedido(request, pedido_id):
     if request.method == 'DELETE':

@@ -106,12 +106,18 @@ def listar_usuarios(request):
     if request.method == 'POST':
         form = CreateUsuario(request.POST)
         if form.is_valid():
+            correo = form.cleaned_data['correo']
+            if Usuario.objects.filter(correo=correo).exists():
+                return JsonResponse({'success': False, 'message': 'Correo ya en uso'})
+            
             usuario = form.save(commit=False)
             usuario.contraseña = make_password(form.cleaned_data['contraseña'])
             usuario.save()
             return JsonResponse({'success': True})
         else:
-            return JsonResponse({'success': False, 'errors': form.errors})
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
     else:
         formCreate = UsuarioForm()
         usuarios = Usuario.objects.all()
@@ -251,6 +257,10 @@ def registrarse(request):
             usuario.contraseña = make_password(contraseña)
             usuario.save()
             return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, enviar los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
     else:
         form = RegistroForm()
     return render(request, 'register.html', {'form': form})
