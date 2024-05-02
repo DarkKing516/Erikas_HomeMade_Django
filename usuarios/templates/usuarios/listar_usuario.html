@@ -82,7 +82,7 @@
                                         <button type="button" class="btn btn-inverse-warning edit-user" data-toggle="modal" data-target="#editUserModal{{ usuario.id }}" data-nombre="{{ usuario.nombre }}" data-documento="{{ usuario.documento }}" data-telefono="{{ usuario.telefono }}" data-correo="{{ usuario.correo }}" data-rol="{{ usuario.idRol.id }}">
                                             <i class="mdi mdi-pencil"></i>
                                         </button>                                
-                                        <button type="button" class="btn btn-inverse-danger delete-user">
+                                        <button type="button" class="btn btn-inverse-danger delete-user" data-usuario-id="{{ usuario.id }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
                                     </div>
@@ -510,29 +510,6 @@
         });
 
 
-
-        // Agrega evento clic para el botón de eliminación
-        $('.delete-user').on('click', function () {
-            // Mostrar SweetAlert de confirmación
-            Swal.fire({
-                title: 'Eliminar Usuario',
-                text: '¿Estás seguro de eliminar este usuario?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar usuario'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Simular la eliminación (aquí deberías hacer la llamada a tu lógica de eliminación)
-                    // ...
-
-                    // Mostrar SweetAlert de éxito después de la eliminación
-                    Swal.fire('Usuario eliminado', 'El usuario se ha eliminado con éxito.', 'success');
-                }
-            });
-        });
-
         // Agregar evento clic para el botón edit-user
         $('.edit-user').on('click', function () {
             // Obtener la información del usuario (puedes ajustar esto según tu lógica)
@@ -557,9 +534,13 @@
             $('#editUserModal').modal('show');
         });
 
+        
     });
+    
+    
+$('.delete-user').on('click', function () {
 
-
+});
 </script>
 
 
