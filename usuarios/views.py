@@ -215,6 +215,15 @@ def eliminar_usuario(request, id_usuario):
         return JsonResponse({'message': 'Usuario eliminado correctamente'})
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+def eliminar_usuario(request, usuario_id):
+    if request.method == 'POST':
+        usuario = Usuario.objects.get(pk=usuario_id)
+        usuario.delete()
+        return JsonResponse({'success': True})
+    elif Usuario.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'El usuario no existe'})
+    else:
+        return JsonResponse({'success': False, 'errors': errors})
 
 def iniciar_sesion(request):
     if request.method == 'POST':
