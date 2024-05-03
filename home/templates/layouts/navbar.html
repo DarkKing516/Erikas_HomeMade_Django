@@ -128,6 +128,10 @@
                     </li>
                     {% else %}
                     <li class="nav-item nav-profile dropdown">
+                        <a id="logout-link" class="dropdown-item close-session">
+                            <i class="ti-power-off text-primary"></i>
+                            <span>Bienvenido, {{ request.session.nombre_usuario }}!</span>
+                        </a>
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                             <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg" alt="profile" />
                         </a>
@@ -356,6 +360,7 @@
                                 <span class="menu-title"> Dashboard </span>
                             </a>
                         </li> -->
+                        {% if request.session.id_rol == 1 %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#config" aria-expanded="false"
                                 aria-controls="config">
@@ -374,7 +379,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false"
-                                aria-controls="users">
+                            aria-controls="users">
                                 <i class="icon-head menu-icon"></i>
                                 <span class="menu-title"> Usuarios</span>
                                 <i class="menu-arrow"></i>
@@ -382,8 +387,8 @@
                             <div class="collapse" id="users">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link"
-                                            href="{% url 'usuarios:listar_usuarios' %}">
-                                            Usuarios </a>
+                                        href="{% url 'usuarios:listar_usuarios' %}">
+                                        Usuarios </a>
                                     </li>
                                     <!-- <li class="nav-item"> <a class="nav-link" href="clientes_dash.html"> Clientes </a></li> -->
                                 </ul>
@@ -437,11 +442,12 @@
                                 <span class="menu-title"> Reservas </span>
                             </a>
                         </li>
+                        {% endif %}
 
                         <li class="nav-item">
                             <a class="nav-link" href="compras.html">
                                 <i class="mdi mdi-calendar menu-icon"></i>
-                                <span class="menu-title"> Compras </span>
+                                <span class="menu-title">Mis Compras </span>
                             </a>
                         </li>
                     </ul>

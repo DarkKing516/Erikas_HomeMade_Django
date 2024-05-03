@@ -25,9 +25,6 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
 
-<!-- endinject -->
-<script src="{% static 'js/usuarios.js' %}"></script>
-
 
 <!-- Contenido principal -->
 <div class="row">
@@ -79,12 +76,12 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-inverse-warning edit-user" data-toggle="modal" data-target="#editUserModal{{ usuario.id }}" data-nombre="{{ usuario.nombre }}" data-documento="{{ usuario.documento }}" data-telefono="{{ usuario.telefono }}" data-correo="{{ usuario.correo }}" data-rol="{{ usuario.idRol.id }}">
+                                        <button type="button" class="btn btn-inverse-warning edit-user" data-toggle="modal" data-target="#editUserModal{{ usuario.id }}" data-nombre="{{ usuario.nombre }}" data-documento="{{ usuario.documento }}" data-telefono="{{ usuario.telefono }}" data-correo="{{ usuario.correo }}" data-rol="{{ usuario.idRol.id }}" data-usuario-id="{{ usuario.id }}">
                                             <i class="mdi mdi-pencil"></i>
                                         </button>                                
                                         <button type="button" class="btn btn-inverse-danger delete-user" data-usuario-id="{{ usuario.id }}">
                                             <i class="mdi mdi-delete"></i>
-                                        </button>
+                                        </button>                                        
                                     </div>
                                 </td>
                             </tr>
@@ -99,9 +96,10 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            {% comment %} <form id="myForm" class="forms-sample" onsubmit="return validateForm()"> {% endcomment %}
-                                            <form method="post" action="{% url 'usuarios:editar_usuario_' usuario.id %}" id="myForm" class="forms-sample">
+                                            <!-- <form method="post" action="{% url 'usuarios:editar_usuario_' usuario.id %}" id="editarUsuarioForm" class="forms-sample" data-usuario-id="{{ usuario.id }}"> -->
+                                            <form method="post" onsubmit="EditarUsuarioxd()" id="editarUsuarioForm" class="forms-sample" data-usuario-id="{{ usuario.id }}">
                                                 {% csrf_token %}
+                                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
@@ -307,30 +305,7 @@
                 console.error('Error:', errors);
             });
     }
-    
 
-
-    function validateFormEditar() {
-        // Evitar que el formulario se envíe
-        event.preventDefault();
-
-        // Mostrar SweetAlert
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: '¿Quieres editar este usuario?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, editar!',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Aquí puedes añadir la lógica para enviar el formulario si el usuario confirma
-                document.forms[0].submit();
-            }
-        });
-    }
 
 
 
@@ -536,13 +511,154 @@
 
         
     });
-    
-    
-$('.delete-user').on('click', function () {
+</script>
+<script>
+    // Función para eliminar un usuario
+    function eliminarUsuario(usuario_id) {
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'usuarios:eliminar_usuario' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({'usuario_id': usuario_id})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Usuario Eliminado!', 'Usuario Eliminado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
+            } else {
+                // Mostrar un mensaje de error si la eliminación falla
+                Swal.fire({
+                    title: 'Error',
+                    text: data.message,
+                    icon: 'error'
+                });
+            }
+        })
+        .catch(error => {
+            // Mostrar un mensaje de error en caso de un fallo en la solicitud
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al intentar eliminar el usuario. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
+            });
+        });
+    }
 
-});
+    // Event listener para el botón de eliminar usuario
+    document.querySelectorAll('.delete-user').forEach(button => {
+        button.addEventListener('click', function() {
+            const usuarioId = this.getAttribute('data-usuario-id');
+            var usuario_id = $(this).data('usuario-id');
+            // Confirmar antes de eliminar
+            Swal.fire({
+                title: '¿Estás seguro?',
+                // text: `Esta acción no se puede deshacer para el usuario con ID ${usuarioId}.`,
+                text: `Esta acción no se puede deshacer`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarUsuario(usuarioId);
+                }
+            });
+        });
+    });
 </script>
 
+
+
+<script>
+    function EditarUsuarioxd() {
+
+    // Evitar que el formulario se envíe automáticamente
+    event.preventDefault();
+
+    // Obtener el formulario
+    const form = document.getElementById('editarUsuarioForm');
+
+    // Crear un objeto FormData para enviar los datos del formulario
+    const formData = new FormData(form);
+
+    // Realizar la solicitud POST utilizando fetch
+    fetch("{% url 'usuarios:editar_usuario' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Verificar si la solicitud fue exitosa
+        if (data.success) {
+            // Mostrar SweetAlert de éxito
+            Swal.fire({
+                title: '¡Actualización exitosa!',
+                text: 'Los datos del usuario se han actualizado correctamente.',
+                icon: 'success',
+                onClose: () => {
+                    // Recargar la página
+                    location.reload();
+                }
+            });
+        } else if (data.errors) { // Verificar si hay errores de validación
+            let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+            for (const key in data.errors) {
+                errorMessage += `${data.errors[key]}<br>`;
+            }
+            Swal.fire({
+                title: 'Error',
+                html: errorMessage,
+                icon: 'error',
+            });
+        } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                icon: 'error'
+            });
+        }
+    })
+    .catch(errors => {
+        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error'
+        });
+        console.error('Error:', errors);
+    });
+}
+
+</script>
+
+
+{% if not request.session.usuario_id %}
+        <script>
+            // Muestra una alerta utilizando SweetAlert si el usuario no ha iniciado sesión
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Alerta!',
+                text: 'Para ver esta información, debes iniciar sesión.',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            }).then(function() {
+                // Redirige al usuario al formulario de inicio de sesión después de que se cierre la alerta
+                window.location.href = "{% url 'usuarios:login' %}";
+            });
+        </script>
+    {% endif %}
 
 <!-- plugins:js -->
 <script src="vendors/js/vendor.bundle.base.js"></script>

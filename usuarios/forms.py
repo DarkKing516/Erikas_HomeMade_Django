@@ -140,3 +140,16 @@ class EditarUsuario(forms.ModelForm):
         if not telefono.isdigit():
             raise forms.ValidationError("El teléfono debe contener solo números.")
         return telefono
+    def clean_correo(self):  # Aquí cambiamos 'clean_email' a 'clean_correo'
+        correo = self.cleaned_data['correo']  # Aquí cambiamos 'email' a 'correo'
+        user_id = self.instance.id
+        try:
+            existing_user = Usuario.objects.exclude(id=user_id).get(correo=correo)  # Aquí cambiamos 'User' a 'Usuario' y 'email' a 'correo'
+            # Si el correo electrónico ya está en uso pero es el mismo que el actual,
+            # entonces no hay conflicto y podemos permitir que pase la validación.
+            if existing_user.correo == self.instance.correo:
+                return correo
+            else:
+                raise forms.ValidationError("Este correo electrónico ya está en uso.")
+        except Usuario.DoesNotExist:  # Aquí cambiamos 'User' a 'Usuario'
+            return correo

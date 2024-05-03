@@ -22,8 +22,9 @@ urlpatterns = [
     path('crear_usuario/', viewsUsuarios.crear_usuario, name='crear_usuario'),
     path('cambiar_rol/', viewsUsuarios.cambiar_rol, name='cambiar_rol'),
     path('cambiar_estado/', viewsUsuarios.cambiar_estado, name='cambiar_estado'),
-    path('editar_usuario/<int:id_usuario>/', viewsUsuarios.editar_usuario, name='editar_usuario'),
+    path('editar_usuario/', viewsUsuarios.editar_usuario, name='editar_usuario'),
     path('editar_usuario_/<int:id_usuario>/', viewsUsuarios.editar_usuario_, name='editar_usuario_'),
+    path('eliminar_usuario/', viewsUsuarios.eliminar_usuario, name='eliminar_usuario'),
     path('eliminar_usuario/<int:id_usuario>/', viewsUsuarios.eliminar_usuario, name='eliminar_usuario'),
 
     path('iniciar_sesion/', viewsUsuarios.iniciar_sesion, name='login'),

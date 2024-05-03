@@ -1,3 +1,4 @@
+from django.views.decorators.http import require_POST
 import json
 from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password  # Importa make_password
@@ -10,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import login as auth_login
 from django.contrib.sessions.models import Session
+from django.contrib.auth.decorators import login_required
 from .backends import *
 from .models import *
 from .forms import *
@@ -18,9 +20,14 @@ from .forms import *
 def hello(request):
     return HttpResponse("Hello World")
 
+
 def listar_permisos(request):
-    permisos = Permiso.objects.all()
-    return render(request, 'permisos/listar_permiso.html', {'permisos': permisos})
+    if not request.session.get('usuario_id'):
+        # Si el usuario no ha iniciado sesión, renderiza la plantilla de "splash screen"
+        return render(request, 'splash_screen.html')
+    else:
+        permisos = Permiso.objects.all()
+        return render(request, 'permisos/listar_permiso.html', {'permisos': permisos})
 
 def crear_permiso(request):
     if request.method == 'POST':
@@ -51,9 +58,14 @@ def eliminar_permiso(request, id_permiso):
 
 
 # =================================================================
+# @login_required
 def listar_roles(request):
-    roles = Rol.objects.all()
-    return render(request, 'roles/listar_roles.html', {'roles': roles})
+    if not request.session.get('usuario_id'):
+        # Si el usuario no ha iniciado sesión, renderiza la plantilla de "splash screen"
+        return render(request, 'splash_screen.html')
+    else:
+        roles = Rol.objects.all()
+        return render(request, 'roles/listar_roles.html', {'roles': roles})
 
 def crear_rol(request):
     if request.method == 'POST':
@@ -177,27 +189,73 @@ def crear_usuario(request):
         form = UsuarioForm()
     return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
-def editar_usuario(request, id_usuario):
-    usuario = get_object_or_404(Usuario, pk=id_usuario)
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST, instance=usuario)
-        if form.is_valid():
-            usuario = form.save(commit=False)  # Guarda el formulario pero no lo persiste en la base de datos todavía
-            usuario.contraseña = make_password(form.cleaned_data['contraseña'])  # Encripta la contraseña antes de guardarla
-            usuario.save()  # Ahora guarda el usuario en la base de datos
-            return redirect('usuarios:listar_usuarios')
+# def editar_usuario(request, id_usuario):
+#     usuario = get_object_or_404(Usuario, pk=id_usuario)
+#     if request.method == 'POST':
+#         form = UsuarioForm(request.POST, instance=usuario)
+#         if form.is_valid():
+#             usuario = form.save(commit=False)  # Guarda el formulario pero no lo persiste en la base de datos todavía
+#             usuario.contraseña = make_password(form.cleaned_data['contraseña'])  # Encripta la contraseña antes de guardarla
+#             usuario.save()  # Ahora guarda el usuario en la base de datos
+#             return redirect('usuarios:listar_usuarios')
+#     else:
+#         form = UsuarioForm(instance=usuario)
+#     return render(request, 'usuarios/editar_usuario.html', {'form': form})
+# def editar_usuario(request):
+#     if request.method == 'POST':
+#         usuario_id = request.POST.get('usuario_id')
+#         usuario = Usuario.objects.get(id=usuario_id)
+
+#         print("ID del usuario a editar:", usuario_id)
+#         data = json.loads(request.body)
+#         usuario_id = data.get('usuario_id')
+#         print("ID del usuario a editar:", usuario_id)
+#         form = EditarUsuario(request.POST, instance=usuario)
+#         if form.is_valid():
+#             usuario = form.save()
+#             # Mensaje de éxito con SweetAlert
+#             return JsonResponse({'success': True, 'message': 'Usuario editado correctamente'})
+#         else:
+#             # Si el formulario no es válido, se envían los errores de validación
+#             errors = dict(form.errors.items())
+#             return JsonResponse({'success': False, 'errors': errors})
+#     else:
+#         return redirect('usuarios:listar_usuarios')
+@require_POST
+def editar_usuario(request):
+    usuario_id = request.POST.get('usuario_id')
+    usuario = get_object_or_404(Usuario, pk=usuario_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    form = EditarUsuario(request.POST, instance=usuario)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en el usuario
+        form.save()
+        return JsonResponse({'success': True})
     else:
-        form = UsuarioForm(instance=usuario)
-    return render(request, 'usuarios/editar_usuario.html', {'form': form})
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
+
+
 
 def editar_usuario_(request, id_usuario):
     usuario = get_object_or_404(Usuario, pk=id_usuario)
     if request.method == 'POST':
         form = EditarUsuario(request.POST, instance=usuario)
         if form.is_valid():
-            usuario = form.save(commit=False)
-            usuario.save()
-            return redirect('usuarios:listar_usuarios')
+            usuario = form.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        # Si la solicitud no es POST, renderiza el formulario de edición
+        form = EditarUsuario(instance=usuario)
+        return render(request, 'usuarios/editar_usuario.html', {'form': form})
 # def eliminar_usuario(request, id_usuario):
 #     usuario = get_object_or_404(Usuario, pk=id_usuario)
 #     print("Eliminar usuario llamado")  # Agregar mensaje de registro
@@ -206,24 +264,32 @@ def editar_usuario_(request, id_usuario):
 #         return redirect('usuarios:listar_usuarios')
 #     return render(request, 'usuarios/eliminar_usuario.html', {'usuario': usuario})
 
-@require_http_methods(["POST", "DELETE"])
-def eliminar_usuario(request, id_usuario):
-    print("Eliminar usuario llamado")  # Agregar mensaje de registro
-    usuario = get_object_or_404(Usuario, pk=id_usuario)
-    if request.method == 'POST' or request.method == 'DELETE':
-        usuario.delete()
-        return JsonResponse({'message': 'Usuario eliminado correctamente'})
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+# @require_http_methods(["POST", "DELETE"])
+# def eliminar_usuario(request, id_usuario):
+#     print("Eliminar usuario llamado")  # Agregar mensaje de registro
+#     usuario = get_object_or_404(Usuario, pk=id_usuario)
+#     if request.method == 'POST' or request.method == 'DELETE':
+#         usuario.delete()
+#         return JsonResponse({'message': 'Usuario eliminado correctamente'})
+#     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-def eliminar_usuario(request, usuario_id):
+def eliminar_usuario(request):
     if request.method == 'POST':
-        usuario = Usuario.objects.get(pk=usuario_id)
-        usuario.delete()
-        return JsonResponse({'success': True})
-    elif Usuario.DoesNotExist:
-        return JsonResponse({'success': False, 'message': 'El usuario no existe'})
+        usuario_id = request.POST.get('usuario_id')
+        print("Usuario ID:", usuario_id)
+        data = json.loads(request.body)
+        usuario_id = data.get('usuario_id')
+        print("Usuario ID:", usuario_id)
+        try:
+            usuario = Usuario.objects.get(pk=usuario_id)
+            if usuario.id == 1:
+                return JsonResponse({'success': False, 'message': 'No se puede eliminar el SuperAdmin'})
+            usuario.delete()
+            return JsonResponse({'success': True})
+        except Usuario.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'El usuario no existe'})
     else:
-        return JsonResponse({'success': False, 'errors': errors})
+        return JsonResponse({'success': False, 'message': 'Método no permitido'})
 
 def iniciar_sesion(request):
     if request.method == 'POST':
@@ -237,14 +303,21 @@ def iniciar_sesion(request):
             usuario = backend.authenticate(request, correo=correo, contraseña=contraseña)
             
             if usuario is not None:
-                
+                # Obtener el rol del usuario y guardar en la sesión
+                request.session['rol'] = usuario.idRol.nombre_rol
+                request.session['id_rol'] = usuario.idRol.id
+                # Obtener los permisos asociados al rol y guardar en la sesión
+                permisos = usuario.idRol.permisos.values_list('nombre_permiso', flat=True)
+                request.session['permisos'] = list(permisos)
                 # Establecer manualmente la sesión del usuario
                 request.session['usuario_id'] = usuario.id
                 request.session['nombre_usuario'] = usuario.nombre
+                request.session['usuario'] = usuario.usuario
                 request.session['correo_usuario'] = usuario.correo
                 # print(request.session)  # Imprimir el contenido de la sesión para depuración
                 # print(usuario.nombre)  # Imprime el nombre del usuario en la consola
                 # return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
+                print(request.session)  # Imprimir el contenido de la sesión para depuración
                 return JsonResponse({'success': True})
             else:
                 # Comprobación para mensajes de error específicos

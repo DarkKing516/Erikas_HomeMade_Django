@@ -142,3 +142,6 @@ AUTHENTICATION_BACKENDS = [
     'usuarios.backends.CustomBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+LOGIN_URL = 'usuarios:login'  # Reemplaza 'usuarios:login' con la URL real de tu página de inicio de sesión
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Backend de sesión basado en la base de datos

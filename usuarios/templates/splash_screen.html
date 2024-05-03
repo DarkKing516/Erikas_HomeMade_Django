@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesión requerido</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        // Muestra una alerta utilizando SweetAlert para solicitar al usuario que inicie sesión
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Alerta!',
+            text: 'Para ver esta información, debes iniciar sesión.',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        }).then(function() {
+            // Redirige al usuario al formulario de inicio de sesión después de que se cierre la alerta
+            window.location.href = "{% url 'usuarios:login' %}";
+        });
+    </script>
+</body>
+</html>
