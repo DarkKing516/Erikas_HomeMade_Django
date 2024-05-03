@@ -344,7 +344,7 @@
 
         // Mostrar SweetAlert con el campo de selección y el token CSRF
         Swal.fire({
-            title: 'Cambiar Rol',
+            title: 'Cambiar Estado',
             html: '<select class="form-control" id="estado_pedido2" name="estado_pedido">'+
                 '<option value="Por hacer">Por hacer</option>' +
                 '<option value="En proceso">En proceso</option>' +
@@ -386,7 +386,7 @@
             if (result.isConfirmed) {
                 var nuevoRol = $('#estado_pedido').val();
 
-                Swal.fire('¡Rol cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
                     location.reload();
                 });
             }
