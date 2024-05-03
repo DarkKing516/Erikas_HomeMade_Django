@@ -14,6 +14,7 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
    
    ```
    pip install virtualenv
+   
    ```
 
    Luego, crea un nuevo entorno virtual con el siguiente comando:
