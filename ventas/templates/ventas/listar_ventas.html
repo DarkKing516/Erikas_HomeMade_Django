@@ -25,9 +25,8 @@
                                 <tr>
                                     <th>Fecha de venta</th>
                                     <th>Método de pago</th>
-                                    <th>Subtotal</th>
+                                    <th>Total de pedido</th>
                                     <th>Descuento</th>
-                                    <th>Iva</th>
                                     <th>Total Final</th>
                                 </tr>
                             </thead>
@@ -37,9 +36,8 @@
                                 <tr>
                                     <td>{{ venta.fecha }}</td>
                                     <td>{{ venta.metodo_pago }}</td>
-                                    <td>{{ venta.idPedido.subtotal }}</td>
+                                    <td>{{ venta.idPedido.total }}</td>
                                     <td>{{ venta.descuento }}</td>
-                                    <td>{{ venta.idPedido.iva }}</td>
                                     <td>{{ venta.total }}</td>
                                 </tr>
                                 {% endfor %}
