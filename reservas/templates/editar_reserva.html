@@ -25,7 +25,7 @@
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 
 </script>
-{% elif request.session.id_rol != 1 %}
+{% elif "Editar Reservas" not in request.session.permisos %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 

@@ -361,6 +361,7 @@
                                 <span class="menu-title"> Dashboard </span>
                             </a>
                         </li> -->
+                        
                         {% if request.session.id_rol == 1 %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#config" aria-expanded="false"
@@ -443,7 +444,7 @@
                                 <span class="menu-title"> Reservas </span>
                             </a>
                         </li>
-                        
+                        {% elif request.session.usuario_id %}
                         <li class="nav-item">
                             <a class="nav-link" href="compras.html">
                                 <i class="mdi mdi-calendar menu-icon"></i>
