@@ -13,40 +13,20 @@
 
 <body>
     {% block content %}
-
     <div class="row">
-        <div class="col-lg-12 grid-margin stretch-card">
+        {% for venta in ventas %}
+        <div class="col-lg-4">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title"> Mis Compras </h4>
-                    <div class="table-responsive">
-                        <table id="ventasTable" class="table reserva-table" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Fecha de venta</th>
-                                    <th>Método de pago</th>
-                                    <th>Total de pedido</th>
-                                    <th>Descuento</th>
-                                    <th>Total Final</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Aquí se generan las filas de la tabla con datos de ventas -->
-                                {% for venta in ventas %}
-                                <tr>
-                                    <td>{{ venta.fecha }}</td>
-                                    <td>{{ venta.metodo_pago }}</td>
-                                    <td>{{ venta.idPedido.total }}</td>
-                                    <td>{{ venta.descuento }}</td>
-                                    <td>{{ venta.total }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    <h5 class="card-title">Compra del {{ venta.fecha }}</h5>
+                    <p class="card-text">Método de pago: {{ venta.metodo_pago }}</p>
+                    <p class="card-text">Total de pedido: {{ venta.idPedido.total }}</p>
+                    <p class="card-text">Descuento: {{ venta.descuento }}</p>
+                    <p class="card-text">Total Final: {{ venta.total }}</p>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
     <script>
         $(document).ready(function () {
