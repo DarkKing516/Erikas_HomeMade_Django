@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Ventas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% extends 'layouts/navbar.html' %}
+</head>
+
+<body>
+    {% block content %}
+
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title"> Mis Compras </h4>
+                    <div class="table-responsive">
+                        <table id="ventasTable" class="table reserva-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Fecha de venta</th>
+                                    <th>Método de pago</th>
+                                    <th>Total de pedido</th>
+                                    <th>Descuento</th>
+                                    <th>Total Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Aquí se generan las filas de la tabla con datos de ventas -->
+                                {% for venta in ventas %}
+                                <tr>
+                                    <td>{{ venta.fecha }}</td>
+                                    <td>{{ venta.metodo_pago }}</td>
+                                    <td>{{ venta.idPedido.total }}</td>
+                                    <td>{{ venta.descuento }}</td>
+                                    <td>{{ venta.total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            // Destruir la instancia actual, si existe
+            if ($.fn.DataTable.isDataTable('#ventasTable')) {
+                $('#ventasTable').DataTable().destroy();
+            }
+    
+            // Configuración personalizada para DataTables
+            var dataTableConfig = {
+                // "pagingType": "full_numbers",
+                "lengthChange": false,
+                "pageLength": 5,
+                "searching": true,
+                "language": {
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                    "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                "dom": '<"top"lf>rt<"bottom"ip>',
+            };
+    
+            // Inicializar DataTable con la configuración personalizada
+            var table = $('#ventasTable').DataTable(dataTableConfig);
+    
+            // Mover el cuadro de búsqueda al lugar deseado
+            $("#ventasTable_filter").detach().appendTo(".top");
+    
+            // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+            $("#ventasTable_filter input").addClass("form-control form-control-sm");
+    
+            // Puedes agregar más personalizaciones según tus necesidades
+        });
+    </script>
+
+    {% endblock %}
+</body>
+
+</html>
