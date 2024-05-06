@@ -7,58 +7,48 @@
     <title>Listar Ventas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% extends 'layouts/navbar.html' %}
 </head>
 
 <body>
     {% block content %}
-    <div class="container-fluid page-body-wrapper">
-        <!-- Contenido principal -->
-        <div class="main-panel">
-            <div class="content-wrapper">
-                <h1>Listar Ventas</h1>
-                <!-- Botón para activar la modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCrearVenta">Crear
-                    Nueva Venta</button>
-                <div class="row">
-                    <div class="col-lg-12 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table reserva-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Fecha de venta</th>
-                                                <th>Método de pago</th>
-                                                <th>Subtotal</th>
-                                                <th>Descuento</th>
-                                                <th>Iva</th>
-                                                <th>Total Final</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Aquí se generan las filas de la tabla con datos de ventas -->
-                                            {% for venta in ventas %}
-                                            <tr>
-                                                <td>{{ venta.fecha }}</td>
-                                                <td>{{ venta.metodo_pago }}</td>
-                                                <td>{{ venta.idPedido.subtotal }}</td>
-                                                <td>{{ venta.descuento }}</td>
-                                                <td>{{ venta.idPedido.iva }}</td>
-                                                <td>{{ venta.total }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title"> Ventas</h4>
+                    <div class="table-responsive">
+                        <table id="ventasTable" class="table reserva-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Fecha de venta</th>
+                                    <th>Método de pago</th>
+                                    <th>Total de pedido</th>
+                                    <th>Descuento</th>
+                                    <th>Total Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Aquí se generan las filas de la tabla con datos de ventas -->
+                                {% for venta in ventas %}
+                                <tr>
+                                    <td>{{ venta.fecha }}</td>
+                                    <td>{{ venta.metodo_pago }}</td>
+                                    <td>{{ venta.idPedido.total }}</td>
+                                    <td>{{ venta.descuento }}</td>
+                                    <td>{{ venta.total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Fin del contenido principal -->
     </div>
+
     <!-- Modal Crear Venta -->
     <div class="modal fade" id="modalCrearVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -71,7 +61,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Contenido del formulario con Bootstrap grid system -->
                     <!-- Contenido del formulario con Bootstrap grid system -->
                     <form method="post" action="{% url 'ventas:crear_venta' %}">
                         {% csrf_token %}
@@ -116,78 +105,149 @@
                             </div>
                         </div>
                     </form>
-                    <script>
-                        function buscarPedido() {
-                            var idPedido = document.getElementById("id_idPedido").value;
-                            fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
-                                method: 'GET',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Error al obtener la respuesta.');
-                                    }
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    document.getElementById("id_total_pedido").value = data.total_pedido;
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    // Maneja el error de alguna manera
-                                });
-                        }
-                        // Mostrar campos adicionales al cargar la página
-                        window.onload = function () {
-                            var campos = document.getElementById("campos_adicionales");
-                            var campos2 = document.getElementById("id_metodo_pago");
-                            var campos3 = document.getElementById("id_descuento");
-                            var campos4 = document.getElementById("id_total");
-                            campos.style.display = "block"; // Cambiar el estilo para mostrar los campos
-                            campos2.style.display = "block"; // Cambiar el estilo para mostrar los campos
-                            campos3.style.display = "block"; // Cambiar el estilo para mostrar los campos
-                            campos4.style.display = "block"; // Cambiar el estilo para mostrar los campos
-                        };
-                    </script>
-
                 </div>
             </div>
         </div>
     </div>
 
-    {% endblock %}
-
-    <!-- Scripts de Bootstrap -->
+    <!-- Scripts de Bootstrap y DataTables -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- Script para la funcionalidad de la modal -->
+    <script>
+        $(document).ready(function () {
+            // Destruir la instancia actual, si existe
+            if ($.fn.DataTable.isDataTable('#ventasTable')) {
+                $('#ventasTable').DataTable().destroy();
+            }
+    
+            // Configuración personalizada para DataTables
+            var dataTableConfig = {
+                // "pagingType": "full_numbers",
+                "lengthChange": false,
+                "pageLength": 5,
+                "searching": true,
+                "language": {
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                    "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                "dom": '<"top"lf>rt<"bottom"ip>',
+            };
+    
+            // Inicializar DataTable con la configuración personalizada
+            var table = $('#ventasTable').DataTable(dataTableConfig);
+    
+            // Mover el cuadro de búsqueda al lugar deseado
+            $("#ventasTable_filter").detach().appendTo(".top");
+
+            $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#modalCrearVenta" style="margin: 5px">Agregar Venta</button>');
+    
+            // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+            $("#ventasTable_filter input").addClass("form-control form-control-sm");
+    
+            // Puedes agregar más personalizaciones según tus necesidades
+        });
+    </script>
+
     <script>
         function buscarPedido() {
             var idPedido = document.getElementById("id_idPedido").value;
-            window.location.href = "{% url 'ventas:crear_venta' %}?idPedido=" + idPedido;
+            fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener la respuesta.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("id_total_pedido").value = data.total_pedido;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Maneja el error de alguna manera
+                });
         }
-
-        function guardarVenta() {
-            alert("Se está intentando enviar el formulario"); // Agregar esta línea para depuración
-            document.getElementById("form_venta_modal").submit();
-        }
-
+        // Mostrar campos adicionales al cargar la página
         window.onload = function () {
             var campos = document.getElementById("campos_adicionales");
             var campos2 = document.getElementById("id_metodo_pago");
             var campos3 = document.getElementById("id_descuento");
             var campos4 = document.getElementById("id_total");
-            campos.style.display = "block";
-            campos2.style.display = "block";
-            campos3.style.display = "block";
-            campos4.style.display = "block";
+            campos.style.display = "block"; // Cambiar el pos
+            campos2.style.display = "block"; // Cambiar el es
+            campos3.style.display = "block"; // Cambia
+            campos4.style.display = "block"; // 
         };
     </script>
 
+<script>
+    $(document).ready(function () {
+        // ... Tu código existente
+
+        // Agrega un evento de escucha al botón "Guardar" del formulario
+        $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
+            // Obtén los valores de los campos
+            var metodoPago = $('#id_metodo_pago').val();
+            var total = $('#id_total').val();
+            var descuento = $('#id_descuento').val();
+
+            // Verifica si alguno de los campos está vacío
+            if (metodoPago === '' || total === '' || descuento === '') {
+                // Muestra una alerta utilizando SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Por favor completa todos los campos.'
+                });
+
+                // Detén el envío del formulario
+                return false;
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Agrega un evento de escucha al botón "Guardar" del formulario
+        $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
+            // Obtén los valores de los campos
+            var total = parseFloat($('#id_total').val());  // Convertir el valor del campo total a un número decimal
+            var descuento = parseFloat($('#id_descuento').val());  // Convertir el valor del campo descuento a un número decimal
+
+            // Verificar si el descuento ingresado es mayor que el total
+            if (descuento > total) {
+                // Muestra una alerta utilizando SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'El descuento no puede ser mayor que el total.'
+                });
+
+                // Detener el envío del formulario
+                return false;
+            }
+        });
+    });
+</script>
+
+    {% endblock %}
 </body>
 
 </html>

@@ -9,7 +9,12 @@ class VentaForm(forms.ModelForm):
         model = Venta
         fields = ['idPedido']
 
-    metodo_pago = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'style': 'display:block;'}))
+    METODO_PAGO_CHOICES = [
+        ('nequi', 'Nequi'),
+        ('efectivo', 'Efectivo'),
+    ]
+
+    metodo_pago = forms.ChoiceField(choices=METODO_PAGO_CHOICES, widget=forms.Select(attrs={'class': 'form-control', 'style': 'display:block;'}))
     descuento = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'style': 'display:block;'}))
     total = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'style': 'display:block;'}))
     total_pedido = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))  # readonly

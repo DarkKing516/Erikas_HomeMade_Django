@@ -14,13 +14,23 @@ def crear_venta(request):
         form = VentaForm(request.POST)
         if form.is_valid():
             venta = form.save(commit=False)
+
+            # Obtener el total ingresado en el formulario
+            total = form.cleaned_data['total']
+            
+            # Obtener el descuento ingresado en el formulario
+            descuento = form.cleaned_data['descuento']
+            
+            # Calcular el nuevo total después de aplicar el descuento
+            total_final = total - descuento
+
             pedido_id = form.cleaned_data['idPedido'].idPedido
             pedido = get_object_or_404(Pedido, idPedido=pedido_id)
             venta.subtotal = pedido.subtotal
             venta.iva = pedido.iva
             venta.metodo_pago = form.cleaned_data['metodo_pago']
             venta.descuento = form.cleaned_data['descuento']
-            venta.total = form.cleaned_data['total']
+            venta.total = total_final
             venta.total_pedido = pedido.total  # Establecer el valor del campo total_pedido con el total del pedido seleccionado
             venta.save()
             return redirect('ventas:listar_ventas')
