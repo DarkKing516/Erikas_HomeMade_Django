@@ -8,7 +8,6 @@
     {{ form.as_p }}
     <button type="submit">Guardar Cambios</button>
 </form>
-{% endblock %}
 {% if not request.session.usuario_id %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";
@@ -20,3 +19,4 @@
 
 </script>
 {% endif %}
+{% endblock %}
