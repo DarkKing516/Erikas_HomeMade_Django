@@ -231,6 +231,9 @@ def editar_usuario(request):
 
     # Validamos el formulario
     if form.is_valid():
+        if usuario_id == 1:
+            # Devolvemos un mensaje de error indicando que el usuario no puede ser editado
+            return JsonResponse({'success': False, 'errors': 'No se puede editar el rol de este usuario.'})
         # Guardamos los cambios en el usuario
         form.save()
         return JsonResponse({'success': True})
@@ -307,8 +310,8 @@ def iniciar_sesion(request):
                 request.session['rol'] = usuario.idRol.nombre_rol
                 request.session['id_rol'] = usuario.idRol.id
                 # Obtener los permisos asociados al rol y guardar en la sesión
-                permisos = usuario.idRol.permisos.values_list('nombre_permiso', flat=True)
-                request.session['permisos'] = list(permisos)
+                permisos = list(usuario.idRol.permisos.values_list('nombre_permiso', flat=True))
+                request.session['permisos'] = permisos
                 # Establecer manualmente la sesión del usuario
                 request.session['usuario_id'] = usuario.id
                 request.session['nombre_usuario'] = usuario.nombre
@@ -318,7 +321,7 @@ def iniciar_sesion(request):
                 # print(usuario.nombre)  # Imprime el nombre del usuario en la consola
                 # return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
                 print(request.session)  # Imprimir el contenido de la sesión para depuración
-                return JsonResponse({'success': True})
+                return JsonResponse({'success': True, 'message': f'Bienvenido {usuario.nombre}'})
             else:
                 # Comprobación para mensajes de error específicos
                 user_exists = Usuario.objects.filter(correo=correo).exists()

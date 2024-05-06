@@ -497,5 +497,10 @@
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 
 </script>
+{% elif "Listar Mis Reservas" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
 {% endif %}
 {% endblock %}

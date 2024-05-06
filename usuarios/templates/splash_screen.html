@@ -26,13 +26,13 @@
             window.location.href = "{% url 'usuarios:login' %}";
         });
     </script>
-    {% elif request.session.id_rol != 1 %}
+    {% else %}
     <script>
         // Muestra una alerta utilizando SweetAlert para solicitar al usuario que inicie sesión
         Swal.fire({
             icon: 'warning',
             title: '¡Alerta!',
-            text: 'Sólo los usuarios admin pueden acceder a esta vista',
+            text: 'No Tienes permisos para realizar esta acción',
             showConfirmButton: false,
             timer: 3000,
             timerProgressBar: true
