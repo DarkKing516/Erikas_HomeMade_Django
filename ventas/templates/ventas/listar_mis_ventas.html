@@ -90,6 +90,18 @@
         });
     </script>
 
+    {% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif "Listar Mis Ventas" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}
+
     {% endblock %}
 </body>
 
