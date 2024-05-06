@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eliminar Reserva</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
+
 <body>
     <div class="container">
         <h1>¿Estás seguro que deseas eliminar la Reserva "{{ reserva.descripcion }}"?</h1>
@@ -15,4 +17,16 @@
         </form>
     </div>
 </body>
+
 </html>
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif request.session.id_rol != 1 %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}

@@ -657,8 +657,27 @@
                 // Redirige al usuario al formulario de inicio de sesión después de que se cierre la alerta
                 window.location.href = "{% url 'usuarios:login' %}";
             });
+            window.location.href = "{% url 'usuarios:requestLogin' %}";
+
         </script>
-    {% endif %}
+{% elif request.session.id_rol != 1 %}
+        <script>
+            // Muestra una alerta utilizando SweetAlert si el usuario no ha iniciado sesión
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Alerta!',
+                text: 'Sólo los usuarios admin pueden acceder a esta vista.',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            }).then(function() {
+                // Redirige al usuario al formulario de inicio de sesión después de que se cierre la alerta
+                window.location.href = "{% url 'home:index' %}";
+            });
+            window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+        </script>
+{% endif %}
 
 <!-- plugins:js -->
 <script src="vendors/js/vendor.bundle.base.js"></script>

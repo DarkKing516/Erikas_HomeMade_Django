@@ -356,3 +356,6 @@ def registrarse(request):
     else:
         form = RegistroForm()
     return render(request, 'register.html', {'form': form})
+
+def requestLogin(request):
+    return render(request, 'splash_screen.html')

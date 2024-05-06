@@ -7,10 +7,22 @@
 <h1>Listado de Roles</h1>
 <ul>
     {% for rol in roles %}
-    <li>{{ rol.nombre_rol }} - 
-        <a href="{% url 'usuarios:editar_rol' rol.id %}">Editar</a> | 
-        <a href="{% url 'usuarios:eliminar_rol' rol.id %}">Eliminar</a></li>
+    <li>{{ rol.nombre_rol }} -
+        <a href="{% url 'usuarios:editar_rol' rol.id %}">Editar</a> |
+        <a href="{% url 'usuarios:eliminar_rol' rol.id %}">Eliminar</a>
+    </li>
     {% endfor %}
 </ul>
 <a href="{% url 'home:index' %}">Atrás</a>
 {% endblock %}
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif request.session.id_rol != 1 %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}

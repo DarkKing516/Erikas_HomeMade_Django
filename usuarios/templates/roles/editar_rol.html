@@ -9,8 +9,19 @@
     <button type="submit">Guardar Cambios</button>
 </form>
 <script>
-$(document).ready(function() {
-    $('#id_permisos').select2();
-});
-</script> 
+    $(document).ready(function () {
+        $('#id_permisos').select2();
+    });
+</script>
 {% endblock %}
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif request.session.id_rol != 1 %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}

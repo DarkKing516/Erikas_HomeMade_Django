@@ -73,7 +73,9 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarReservaxd('{{ reserva.id }}')" id="editarReservaform{{ reserva.id }}" class="forms-sample" data-Reserva-id="{{ Reserva.id }}">
+                                            <form method="post" onsubmit="EditarReservaxd('{{ reserva.id }}')"
+                                                id="editarReservaform{{ reserva.id }}" class="forms-sample"
+                                                data-Reserva-id="{{ Reserva.id }}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="Reserva_id" value="{{ reserva.id }}">
                                                 <div class="form-row">
@@ -122,7 +124,8 @@
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ reserva.id }}</button>
+                                                        <button class="btn btn-primary mr-2">Editar {{ reserva.id
+                                                            }}</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Cancelar</button>
                                                     </div>
@@ -435,37 +438,37 @@
                 'Content-Type': 'application/json',
                 'X-CSRFToken': '{{ csrf_token }}'
             },
-            body: JSON.stringify({'reserva_id': reserva_id})
+            body: JSON.stringify({ 'reserva_id': reserva_id })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire('reserva eliminada correctamente', 'success').then(() => {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('reserva eliminada correctamente', 'success').then(() => {
                         location.reload();
                     });
-            } else {
-                // Mostrar un mensaje de error si la eliminación falla
+                } else {
+                    // Mostrar un mensaje de error si la eliminación falla
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(error => {
+                // Mostrar un mensaje de error en caso de un fallo en la solicitud
+                console.error('Error:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: data.message,
+                    text: 'Hubo un error al intentar eliminar la reserva. Por favor, inténtelo de nuevo más tarde.',
                     icon: 'error'
                 });
-            }
-        })
-        .catch(error => {
-            // Mostrar un mensaje de error en caso de un fallo en la solicitud
-            console.error('Error:', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un error al intentar eliminar la reserva. Por favor, inténtelo de nuevo más tarde.',
-                icon: 'error'
             });
-        });
     }
 
     // Event listener para el botón de eliminar usuario
     document.querySelectorAll('.delete-reserva').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const reservaId = this.getAttribute('data-reserva-id');
             var reserva_id = $(this).data('reserva-id');
             // Confirmar antes de eliminar
@@ -489,12 +492,9 @@
 </script>
 
 {% endblock %}
-{% if not request.session.usuario_id %}
-<script>
-    window.location.href = "{% url 'usuarios:requestLogin' %}";
 
-</script>
-{% elif request.session.id_rol != 1 %}
+
+{% if not request.session.usuario_id %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 

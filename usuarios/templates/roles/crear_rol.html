@@ -13,21 +13,32 @@
 
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('.select2').select2({ // Inicializar Select2 para todos los elementos con la clase 'select2'
-        theme: 'bootstrap4', // Opcional: cambia el tema a Bootstrap 4 para que coincida con tu estilo
-        width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
-        placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
-        closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+            theme: 'bootstrap4', // Opcional: cambia el tema a Bootstrap 4 para que coincida con tu estilo
+            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+            placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
+            closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
         });
     });
-    
-    </script>
-    <script>
-    $(document).ready(function() {
+
+</script>
+<script>
+    $(document).ready(function () {
         $('#id_permisos').select2({
             placeholder: 'Selecciona los permisos'
         });
     });
-    </script>
+</script>
 {% endblock %}
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif request.session.id_rol != 1 %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}

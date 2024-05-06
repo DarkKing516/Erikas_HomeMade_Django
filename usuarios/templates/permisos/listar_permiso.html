@@ -6,7 +6,7 @@
 <h1>Listado de Permisos</h1>
 <ul>
     {% for permiso in permisos %}
-    <li>{{ permiso.nombre_permiso }} - 
+    <li>{{ permiso.nombre_permiso }} -
         <a href="{% url 'usuarios:editar_permiso' permiso.id %}">Editar</a>
         <a href="#" onclick="confirmarEliminar('{{ permiso.id }}')">Eliminar</a>
     </li>
@@ -28,19 +28,30 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         })
-        .then(response => {
-            if (response.ok) {
-                // Eliminación exitosa
-                location.reload(); // Recargar la página
-            } else {
-                // Manejar errores de eliminación si es necesario
-                console.error('Error al eliminar el permiso');
-            }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
+            .then(response => {
+                if (response.ok) {
+                    // Eliminación exitosa
+                    location.reload(); // Recargar la página
+                } else {
+                    // Manejar errores de eliminación si es necesario
+                    console.error('Error al eliminar el permiso');
+                }
+            })
+            .catch(error => {
+                console.error('Error de red:', error);
+            });
     }
 </script>
 
 {% endblock %}
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif request.session.id_rol != 1 %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}
