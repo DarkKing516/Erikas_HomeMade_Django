@@ -444,9 +444,9 @@
                                 <span class="menu-title"> Reservas </span>
                             </a>
                         </li>
-                        {% elif request.session.usuario_id %}
+                        {% elif "Listar Mis Ventas" in request.session.permisos %}
                         <li class="nav-item">
-                            <a class="nav-link" href="compras.html">
+                            <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
                                 <i class="mdi mdi-calendar menu-icon"></i>
                                 <span class="menu-title">Mis Compras </span>
                             </a>
