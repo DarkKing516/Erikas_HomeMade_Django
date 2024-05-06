@@ -235,7 +235,9 @@
       <div class="row row-20 gutters-20">
         <div class="col-md-6 col-lg-4 oh-desktop">
           <div class="form-wrap wow slideInDown">
-            {{ form.usuario }}
+            <!-- {{ form.usuario }} -->
+            <input type="number" name="usuario" id="" hidden value="{{ request.session.usuario_id }}">
+            <input type="text" id="" readonly value="{{ request.session.nombre_usuario }}" class="form-input">
             <!-- <label class="form-label" for="contact-your-name-6">Nombre Usuario</label> -->
           </div>
         </div>
@@ -253,8 +255,16 @@
         </div>
       </div>
       <div class="group-custom-1 group-middle oh-desktop">
+        {% if not request.session.usuario_id %}
+
+        <button class="button button-lg button-primary button-winona wow fadeInRight" onclick="window.location.href = '{% url 'usuarios:login' %}';">Primero inicia sesión!!!!!!!</button>
+
+        {% else %}
+
         <button class="button button-lg button-primary button-winona wow fadeInRight" type="submit">Realizar
           reserva</button>
+
+        {% endif %}
         <!-- Quote Classic-->
         <article class="quote-classic quote-classic-3 wow slideInDown">
           <div class="quote-classic-text">
