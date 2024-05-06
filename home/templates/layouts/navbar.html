@@ -362,7 +362,7 @@
                             </a>
                         </li> -->
                         
-                        {% if request.session.id_rol == 1 %}
+                        {% if "Listar Roles" in request.session.permisos or "Listar Permisos" in request.session.permisos or "Editar Perfil" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#config" aria-expanded="false"
                                 aria-controls="config">
@@ -372,13 +372,23 @@
                             </a>
                             <div class="collapse" id="config">
                                 <ul class="nav flex-column sub-menu">
+                                    {% if "Listar Roles" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
                                             Roles </a></li>
+                                    {% endif %}
+                                    {% if "Listar Permisos" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
                                             Permisos </a></li>
+                                    {% endif %}
+                                    {% if "Editar Perfil" in request.session.permisos %}
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
+                                            Editar </a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if "Listar Usuarios" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false"
                             aria-controls="users">
@@ -396,6 +406,7 @@
                                 </ul>
                             </div>
                         </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false"
                                 aria-controls="products">
@@ -444,11 +455,27 @@
                                 <span class="menu-title"> Reservas </span>
                             </a>
                         </li>
-                        {% elif "Listar Mis Ventas" in request.session.permisos %}
+                        {% if request.session.id_rol != 1 and "Listar Mis Ventas" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
                                 <i class="mdi mdi-calendar menu-icon"></i>
                                 <span class="menu-title">Mis Compras </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if request.session.id_rol != 1 and "Listar Mis Reservas" in request.session.permisos %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
+                                <i class="mdi mdi-calendar menu-icon"></i>
+                                <span class="menu-title">Mis Reservas </span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if request.session.id_rol != 1 and "Listar Mis Pedidos" in request.session.permisos %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
+                                <i class="mdi mdi-calendar menu-icon"></i>
+                                <span class="menu-title">Mis Pedidos </span>
                             </a>
                         </li>
                         {% endif %}
