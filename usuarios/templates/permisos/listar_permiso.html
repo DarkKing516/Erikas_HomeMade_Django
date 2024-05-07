@@ -1,20 +1,123 @@
 <title>Listar Permisos</title>
-{% extends 'layouts/navbarUsuarios.html' %}
-{% block contentConfiguracion %}
 
-<a href="{% url 'usuarios:crear_permiso' %}">Crear Nuevo Permiso</a>
-<h1>Listado de Permisos</h1>
-<ul>
-    {% for permiso in permisos %}
-    <li>{{ permiso.nombre_permiso }} -
-        <a href="{% url 'usuarios:editar_permiso' permiso.id %}">Editar</a>
-        <a href="#" onclick="confirmarEliminar('{{ permiso.id }}')">Eliminar</a>
-    </li>
-    {% endfor %}
-</ul>
+{% extends 'layouts/navbar.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- endinject -->
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- End plugin css for this page -->
+<!-- inject:css -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <a href="{% url 'usuarios:crear_permiso' %}">Crear Nuevo Permiso</a>
+
+                <h4 class="card-title">Permisos</h4>
+                <div class="table-responsive">
+                    <table id="permisosTable" class="table table hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Permiso</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for permiso in permisos %}
+                            <tr class="user-row">
+                                <td>{{ permiso.nombre_permiso }}</td>
+                                <td>
+                                    {% if 'Editar Permisos' in request.session.permisos %}
+                                    <a href="{% url 'usuarios:editar_permiso' permiso.id %}"
+                                        class="btn btn-sm btn-primary">Editar</a>
+                                    {% endif %}
+                                    {% if 'Eliminar Permisos' in request.session.permisos %}
+                                    <a href="#" onclick="confirmarEliminar('{{ permiso.id }}')"
+                                        class="btn btn-sm btn-danger">Eliminar</a>
+                                    
+                                    {% endif %}
+                                        
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <a href="{% url 'home:index' %}">Atrás</a>
 
+
 <script>
+   $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#permisosTable')) {
+            $('#permisosTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            // "pagingType": "full_numbers",
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#permisosTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#permisosTable_filter").detach().appendTo(".top");
+
+        // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        {% if "Crear Usuarios" in request.session.permisos %}
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+        {% endif %}
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#permisosTable_filter input").addClass("form-control form-control-sm");
+
+        // Puedes agregar más personalizaciones según tus necesidades
+
+
+
+    });
+
     function confirmarEliminar(permisoId) {
         if (confirm('¿Estás seguro que deseas eliminar este permiso?')) {
             eliminarPermiso(permisoId);

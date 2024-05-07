@@ -58,8 +58,7 @@
                                 </td>
                                 <td>{{ usuario.nombre }}</td>
                                 <td>{{ usuario.usuario }}</td>
-                                <td><label class="badge badge-outline-primary hover-cursor {% if 'Editar Rol Usuarios' in request.session.permisos %}change-rol{% endif %}"
-                                        data-usuario-id="{{ usuario.id }}">
+                                <td><label class="badge badge-outline-primary hover-cursor {% if 'Editar Rol Usuarios' in request.session.permisos %}change-rol{% endif %}" data-usuario-id="{{ usuario.id }}">
                                         {{ usuario.idRol.nombre_rol }}</label>
                                 </td>
                                 <td>{{ usuario.documento }}</td>
