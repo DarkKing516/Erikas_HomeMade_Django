@@ -45,6 +45,7 @@
                                 <td>{{ reserva.estado }}</td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Reservas' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-warning edit-reserva"
                                             data-toggle="modal" data-target="#editReservaModal{{ reserva.id }}"
                                             data-Reserva="{{ reserva.Reserva.id }}" data-fecha="{{ reserva.fecha }}"
@@ -53,10 +54,18 @@
                                             data-estado="{{ reserva.estado }}" data-reserva-id="{{ reserva.id }}">
                                             <i class="mdi mdi-pencil">{{ reserva.id }}</i>
                                         </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Reservas' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-danger delete-reserva"
                                             data-reserva-id="{{ reserva.id }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Reservas' not in request.session.permisos and 'Editar Reservas' not in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-primary"">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -303,9 +312,10 @@
         // Mover el cuadro de búsqueda al lugar deseado
         $("#reservaTable_filter").detach().appendTo(".top");
 
+        {% if 'Crear Reservas' in request.session.permisos %}
         // Mover el botón "Agregar" al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
-
+        {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#reservaTable_filter input").addClass("form-control form-control-sm");
 
@@ -348,8 +358,10 @@
         // Mover el cuadro de búsqueda al lugar deseado
         $("#reservaTable_filter").detach().appendTo(".top");
 
+        {% if 'Crear Reservas' in request.session.permisos %}
         // Mover el botón "Agregar" al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+        {% endif %}
 
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#reservaTable_filter input").addClass("form-control form-control-sm");

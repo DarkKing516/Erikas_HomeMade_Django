@@ -3,6 +3,8 @@ INSERT INTO permisos (nombre_permiso, estado_permiso) VALUES
 ('Listar Usuarios', 'activo'),
 ('Crear Usuarios', 'activo'),
 ('Editar Usuarios', 'activo'),
+('Editar Rol Usuarios', 'activo'),
+('Editar Estado Usuarios', 'activo'),
 ('Editar Perfil', 'activo'),
 ('Eliminar Usuarios', 'activo'),
 ('Listar Roles', 'activo'),

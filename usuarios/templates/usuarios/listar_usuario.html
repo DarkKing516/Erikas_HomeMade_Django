@@ -58,7 +58,7 @@
                                 </td>
                                 <td>{{ usuario.nombre }}</td>
                                 <td>{{ usuario.usuario }}</td>
-                                <td><label class="badge badge-outline-primary hover-cursor change-rol"
+                                <td><label class="badge badge-outline-primary hover-cursor {% if 'Editar Rol Usuarios' in request.session.permisos %}change-rol{% endif %}"
                                         data-usuario-id="{{ usuario.id }}">
                                         {{ usuario.idRol.nombre_rol }}</label>
                                 </td>
@@ -68,21 +68,30 @@
                                 <td>
                                     <!-- Aquí puedes acceder al estado del usuario -->
                                     {% if usuario.estado == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status"
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Usuarios' in request.session.permisos %}change-status{% endif %}"
                                     data-usuario-id="{{ usuario.id }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Usuarios' in request.session.permisos %}change-status{% endif %}"
                                     data-usuario-id="{{ usuario.id }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Usuarios' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-warning edit-user" data-toggle="modal" data-target="#editUserModal{{ usuario.id }}" data-nombre="{{ usuario.nombre }}" data-documento="{{ usuario.documento }}" data-telefono="{{ usuario.telefono }}" data-correo="{{ usuario.correo }}" data-rol="{{ usuario.idRol.id }}" data-usuario-id="{{ usuario.id }}">
                                             <i class="mdi mdi-pencil"></i>
-                                        </button>                                
+                                        </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Usuarios' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-danger delete-user" data-usuario-id="{{ usuario.id }}">
                                             <i class="mdi mdi-delete"></i>
-                                        </button>                                        
+                                        </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Usuarios' not in request.session.permisos and 'Editar Usuarios' not in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-primary">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -346,8 +355,9 @@
         $("#userTable_filter").detach().appendTo(".top");
 
         // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        {% if "Crear Usuarios" in request.session.permisos %}
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
-
+        {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#userTable_filter input").addClass("form-control form-control-sm");
 
