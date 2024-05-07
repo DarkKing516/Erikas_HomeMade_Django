@@ -26,3 +26,19 @@ class CreatePedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
         fields = ['id_Usuario', 'fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago', 'estado_pedido']
+        
+        
+class EditarPedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['id_Usuario', 'fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago', 'estado_pedido']
+        widgets = {
+            'id_Usuario': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha_pedido': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'descripcion_pedido': forms.TextInput(attrs={'class': 'form-control'}),
+            'subtotal': forms.NumberInput(attrs={'class': 'form-control'}),
+            'iva': forms.NumberInput(attrs={'class': 'form-control'}),
+            'total': forms.NumberInput(attrs={'class': 'form-control'}),
+            'evidencia_pago': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'estado_pedido': forms.Select(attrs={'class': 'form-control'}),
+        }

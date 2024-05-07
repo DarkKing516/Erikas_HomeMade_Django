@@ -44,6 +44,7 @@
                                 <th>Fecha de Pedido</th>
                                 <th>Total</th>
                                 <th>Estado</th>
+                                <th>Detalles</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -75,6 +76,11 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    <button type="button" class="badge btn-info hover-cursor" data-toggle="modal" data-target="#detallePedidoModal{{ pedido.idPedido }}">
+                                        <i class="mdi mdi-eye"></i>
+                                    </button>
+                                </td>                                
+                                <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-inverse-warning edit-pedido" data-toggle="modal" data-target="#editPedidoModal{{ pedido.idPedido }}" data-cliente="{{ pedido.id_Usuario }}" data-producto="{{ pedido.producto }}" data-cantidad="{{ pedido.cantidad }}" data-fecha="{{ pedido.fecha_pedido }}">
                                             <i class="mdi mdi-pencil"></i>
@@ -85,6 +91,27 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Modal Detalle del Pedido -->
+                            <div class="modal fade" id="detallePedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="detallePedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="detallePedidoModal{{ pedido.idPedido }}Label">Detalle del Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
+                                            <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
+                                            <p><strong>IVA:</strong> {{ pedido.iva }}</p>
+                                            <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                     
                             <!-- Modal para editar pedido -->
                             <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
@@ -97,46 +124,47 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form id="pedidoForm{{ pedido.idPedido }}" class="forms-sample" onsubmit="return validatePedidoForm({{ pedido.idPedido }})">
+                                            <form method="post" enctype="multipart/form-data">
+                                                {% csrf_token %}
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="usuario">Usuario</label>
-                                                            <input type="text" class="form-control" id="usuario{{ pedido.idPedido }}" value="{{ pedido.id_Usuario }}">
+                                                            <input type="text" class="form-control" id="usuario{{ pedido.idPedido }}" name="id_Usuario" value="{{ pedido.id_Usuario }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="fecha_creacion">Fecha de Creación</label>
-                                                            <input type="datetime-local" class="form-control" id="fecha_creacion{{ pedido.idPedido }}" value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
+                                                            <input type="datetime-local" class="form-control" id="fecha_creacion{{ pedido.idPedido }}" name="fecha_creacion" value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="fecha_pedido">Fecha de Pedido</label>
-                                                            <input type="datetime-local" class="form-control" id="fecha_pedido{{ pedido.idPedido }}" value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
+                                                            <input type="datetime-local" class="form-control" id="fecha_pedido{{ pedido.idPedido }}" name="fecha_pedido" value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="descripcion">Descripción</label>
-                                                            <input type="text" class="form-control" id="descripcion{{ pedido.idPedido }}" value="{{ pedido.descripcion_pedido }}">
+                                                            <input type="text" class="form-control" id="descripcion{{ pedido.idPedido }}" name="descripcion_pedido" value="{{ pedido.descripcion_pedido }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="subtotal">Subtotal</label>
-                                                            <input type="number" step="0.01" class="form-control" id="subtotal{{ pedido.idPedido }}" value="{{ pedido.subtotal }}">
+                                                            <input type="number" step="0.01" class="form-control" id="subtotal{{ pedido.idPedido }}" name="subtotal" value="{{ pedido.subtotal }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="iva">IVA</label>
-                                                            <input type="number" step="0.01" class="form-control" id="iva{{ pedido.idPedido }}" value="{{ pedido.iva }}">
+                                                            <input type="number" step="0.01" class="form-control" id="iva{{ pedido.idPedido }}" name="iva" value="{{ pedido.iva }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="total">Total</label>
-                                                            <input type="number" step="0.01" class="form-control" id="total{{ pedido.idPedido }}" value="{{ pedido.total }}">
+                                                            <input type="number" step="0.01" class="form-control" id="total{{ pedido.idPedido }}" name="total" value="{{ pedido.total }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="evidencia_pago">Evidencia de Pago</label>
-                                                            <input type="file" class="form-control-file" id="evidencia_pago{{ pedido.idPedido }}" accept="image/*">
+                                                            <input type="file" class="form-control-file" id="evidencia_pago{{ pedido.idPedido }}" name="evidencia_pago" accept="image/*">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="estado_pedido">Estado del Pedido</label>
-                                                            <select class="form-control" id="estado_pedido{{ pedido.idPedido }}">
+                                                            <select class="form-control" id="estado_pedido{{ pedido.idPedido }}" name="estado_pedido">
                                                                 <option value="Por hacer" {% if pedido.estado_pedido == 'Por hacer' %}selected{% endif %}>Por hacer</option>
                                                                 <option value="Pendiente" {% if pedido.estado_pedido == 'Pendiente' %}selected{% endif %}>Pendiente</option>
                                                                 <option value="Completado" {% if pedido.estado_pedido == 'Completado' %}selected{% endif %}>Completado</option>
@@ -144,7 +172,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
@@ -153,11 +180,11 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                            
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
                             {% endfor %}
                         </tbody>
                     </table>
@@ -168,6 +195,8 @@
     </div>
 </div>
 <!-- Fin del contenido principal -->
+
+
 
 <!-- Modal Crear Pedido -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

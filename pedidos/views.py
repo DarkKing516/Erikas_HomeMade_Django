@@ -2,10 +2,13 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Pedido
 from .forms import PedidoForm
+from .forms import CreatePedidoForm
+from .forms import EditarPedidoForm
 from django.http import JsonResponse
 import base64
 import json
-from .forms import CreatePedidoForm
+
+
 
 
 def listar_pedidos(request):
@@ -38,12 +41,12 @@ def crear_pedido(request):
 def editar_pedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
     if request.method == 'POST':
-        form = PedidoForm(request.POST, request.FILES, instance=pedido)
+        form = EditarPedidoForm(request.POST, request.FILES, instance=pedido)
         if form.is_valid():
             form.save()
             return redirect('pedidos:listar_pedidos')
     else:
-        form = PedidoForm(instance=pedido)
+        form = EditarPedidoForm(instance=pedido)
     return render(request, 'editar_pedido.html', {'form': form, 'pedido': pedido})
 
 def eliminar_pedido(request):
@@ -93,3 +96,4 @@ def cambiar_estado(request):
     else:
         # Si la solicitud no es POST, devuelve una respuesta JSON indicando que la operación falló
         return JsonResponse({'success': False})
+    
