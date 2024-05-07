@@ -50,6 +50,7 @@
                         <tbody>
                             {% for usuario in usuarios %}
                             <!-- <tr class="table-info user-row"> -->
+                            {% if usuario.id != 1 and request.session.usuario_id != usuario.id %}
                             <tr class="user-row">
                                 <td class=" py-1">
                                     <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg"
@@ -85,6 +86,7 @@
                                     </div>
                                 </td>
                             </tr>
+                            {% endif %}
                             <!-- Modal para editar usuario -->
                             <div class="modal fade" id="editUserModal{{ usuario.id }}" tabindex="-1" role="dialog" aria-labelledby="editUserModal{{ usuario.id }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -97,7 +99,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <!-- <form method="post" action="{% url 'usuarios:editar_usuario_' usuario.id %}" id="editarUsuarioForm" class="forms-sample" data-usuario-id="{{ usuario.id }}"> -->
-                                            <form method="post" onsubmit="EditarUsuarioxd()" id="editarUsuarioForm" class="forms-sample" data-usuario-id="{{ usuario.id }}">
+                                            <form method="post" onsubmit="EditarUsuarioxd('{{ usuario.id }}')" id="editarUsuarioForm{{ usuario.id }}" class="forms-sample" data-usuario-id="{{ usuario.id }}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
                                                 <div class="form-row">
@@ -578,13 +580,12 @@
 
 
 <script>
-    function EditarUsuarioxd() {
-
-    // Evitar que el formulario se envíe automáticamente
+    function EditarUsuarioxd(idUsuarioxd) {
     event.preventDefault();
 
     // Obtener el formulario
-    const form = document.getElementById('editarUsuarioForm');
+    // const form = document.getElementById('editarUsuarioForm');
+    const form = document.getElementById(`editarUsuarioForm${idUsuarioxd}`);
 
     // Crear un objeto FormData para enviar los datos del formulario
     const formData = new FormData(form);
@@ -610,6 +611,8 @@
                     // Recargar la página
                     location.reload();
                 }
+            }).then(() => {
+                location.reload();
             });
         } else if (data.errors) { // Verificar si hay errores de validación
             let errorMessage = "Hubo un error al procesar su solicitud:<br>";

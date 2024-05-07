@@ -377,12 +377,12 @@
                                             Roles </a></li>
                                     {% endif %}
                                     {% if "Listar Permisos" in request.session.permisos %}
-                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_permisos' %}">
                                             Permisos </a></li>
                                     {% endif %}
-                                    {% if "Editar Perfil" in request.session.permisos %}
+                                    {% if request.session.id_rol != 1 and "Editar Perfil" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
-                                            Editar </a></li>
+                                            Editar Cuenta </a></li>
                                     {% endif %}
                                 </ul>
                             </div>
