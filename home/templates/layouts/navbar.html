@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navegacion provisional</title>
+    <title>Erika's HomeMade</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
     <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
@@ -148,7 +148,7 @@
                             </a>
                         </div>
                     </li>
-                    
+
                     {% endif %}
 
                     <!-- <li class="nav-item nav-settings d-none d-lg-flex">
@@ -361,7 +361,7 @@
                                 <span class="menu-title"> Dashboard </span>
                             </a>
                         </li> -->
-                        
+
                         {% if "Listar Roles" in request.session.permisos or "Listar Permisos" in request.session.permisos or "Editar Perfil" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#config" aria-expanded="false"
@@ -391,7 +391,7 @@
                         {% if "Listar Usuarios" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#users" aria-expanded="false"
-                            aria-controls="users">
+                                aria-controls="users">
                                 <i class="icon-head menu-icon"></i>
                                 <span class="menu-title"> Usuarios</span>
                                 <i class="menu-arrow"></i>
@@ -399,14 +399,15 @@
                             <div class="collapse" id="users">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link"
-                                        href="{% url 'usuarios:listar_usuarios' %}">
-                                        Usuarios </a>
+                                            href="{% url 'usuarios:listar_usuarios' %}">
+                                            Usuarios </a>
                                     </li>
                                     <!-- <li class="nav-item"> <a class="nav-link" href="clientes_dash.html"> Clientes </a></li> -->
                                 </ul>
                             </div>
                         </li>
                         {% endif %}
+                        {% if "Listar Productos" in request.session.permisos or "Listar Tipo Productos" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false"
                                 aria-controls="products">
@@ -416,12 +417,18 @@
                             </a>
                             <div class="collapse" id="products">
                                 <ul class="nav flex-column sub-menu">
+                                    {% if "Listar Productos" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="productos.html"> Productos </a></li>
+                                    {% endif %}
+                                    {% if "Listar Tipo Productos" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="tipo_productos.html"> T. Productos
                                         </a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if "Listar Servicios" in request.session.permisos or "Listar Tipo Servicios" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#services" aria-expanded="false"
                                 aria-controls="services">
@@ -431,30 +438,41 @@
                             </a>
                             <div class="collapse" id="services">
                                 <ul class="nav flex-column sub-menu">
+                                    {% if "Listar Servicios" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="servicios.html"> Servicios </a></li>
+                                    {% endif %}
+                                    {% if "Listar Tipo Servicios" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="tipo_servicios.html"> T. Servicios
                                         </a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </li>
+                        {% endif %}
+                        {% if "Listar Pedidos" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'pedidos:listar_pedidos' %}">
                                 <i class="mdi mdi-clipboard-outline menu-icon"></i>
                                 <span class="menu-title"> Pedidos </span>
                             </a>
                         </li>
+                        {% endif %}
+                        {% if "Listar Ventas" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'ventas:listar_ventas' %}">
                                 <i class="mdi mdi-tag-outline menu-icon"></i>
                                 <span class="menu-title"> Ventas </span>
                             </a>
                         </li>
+                        {% endif %}
+                        {% if "Listar Reservas" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'reservas:listar_reserva' %}">
                                 <i class="mdi mdi-calendar menu-icon"></i>
                                 <span class="menu-title"> Reservas </span>
                             </a>
                         </li>
+                        {% endif %}
                         {% if request.session.id_rol != 1 and "Listar Mis Ventas" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
