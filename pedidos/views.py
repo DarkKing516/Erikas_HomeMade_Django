@@ -40,8 +40,8 @@ def crear_pedido(request):
 
 @require_POST
 def editar_pedido(request):
-    print(request.POST)  # Imprimir el contenido de request.POST
     pedido_id = request.POST.get('pedido_id')
+    print(pedido_id)
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
     # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario

@@ -90,11 +90,13 @@
                                         data-estado="{{ pedido.estado_pedido }}" data-pedido-id="{{ pedido.idPedido }}" 
                                         data-subtotal="{{ pedido.subtotal }} "
                                         data-iva=" {{ pedido.iva }} "
-                                        data-total=" {{ pedido.total }} "
-                                        data-evidencia="{{ pedido.evidencia_pago.url }}">
+                                        data-total=" {{ pedido.total }} ">
                                         <i class="mdi mdi-pencil">{{ pedido.idPedido }}</i>
                                         </button>
                                         
+                                        <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
+                                            <i class="bi bi-file-earmark-image"></i>
+                                        </button> 
                                         <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button> 
@@ -136,9 +138,9 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}">
+                                            <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="Pedido_id" value="{{ pedido.idPedido }}">
+                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
@@ -157,32 +159,77 @@
                                                                 id="fecha_pedido" name="fecha_pedido"
                                                                 value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="descripcion">Descripción</label>
-                                                            <input type="textarea" class="form-control" id="descripcion"
-                                                                name="descripcion" value="{{ pedido.descripcion_pedido }}">
-                                                        </div>
+                                                        
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="subtotal">Subtotal</label>
-                                                            <input type="textarea" class="form-control" id="subtotal"
-                                                                name="subtotal" value="{{ pedido.subtotal }}">
+                                                            <input type="number" class="form-control" id="subtotal"
+                                                                name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="iva">Iva</label>
-                                                            <input type="textarea" class="form-control" id="iva"
-                                                                name="iva" value="{{ pedido.iva }}">
+                                                            <input type="number" class="form-control" id="iva"
+                                                                name="iva" value="{{ pedido.iva|floatformat:"0" }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="total">Total</label>
-                                                            <input type="" class="form-control" id="total"
-                                                                name="total" value="{{ pedido.total }}">
+                                                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
                                                         </div>
+                                                        {% comment %} <div class="form-group">
+                                                            <label for="evidencia_pago">Evidencia de Pago</label>
+                                                            <input type="file" name="evidencia_pago" class="form-control-file" accept="image/*" required="" id="evidencia_pago" value="{{ pedido.evidencia_pago.url }}">
+                                                        </div> {% endcomment %}
+
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col-md-12">
+                                                            <label for="descripcion_pedido">Descripción</label>
+                                                            <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="editevidenciapedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Evidecia
+                                                Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarEvidenciaPedidoxd('{{ pedido.idPedido }}')" id="EditarEvidenciaPedidoxd{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label for="evidencia_pago">Evidencia de Pago</label>
-                                                            <input type="imagefile" class="form-control" id="evidencia_pago"
-                                                                name="evidencia_pago" value="{{ pedido.evidencia_pago }}">
+                                                            <input type="file" name="evidencia_pago" id="evidencia_pago_input" class="form-control-file" accept="image/*">
+                                                            <img src="#" id="imagen_vista_previa" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                                                         </div>
 
                                                     </div>
@@ -259,7 +306,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="evidencia_pago">Evidencia de Pago</label>
-                                {{ formCreate.evidencia_pago }}
+                                <input type="file" name="evidencia_pago" id="evidencia_pago_input" class="form-control-file" accept="image/*">
+                                <img src="#" id="imagen_vista_previa" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                             </div>
                             <div class="form-group">
                                 <label for="estado_pedido">Estado del Pedido</label>
@@ -614,6 +662,26 @@
         });
     });
 </script>
+<script>
+    document.getElementById('evidencia_pago_input').addEventListener('change', function(event) {
+        var archivo = event.target.files[0];
+        var imagen_vista_previa = document.getElementById('imagen_vista_previa');
+    
+        // Verificar si se seleccionó un archivo
+        if (archivo) {
+            // Crear un objeto URL para el archivo seleccionado
+            var objeto_url = URL.createObjectURL(archivo);
+    
+            // Mostrar la vista previa de la imagen
+            imagen_vista_previa.style.display = 'block';
+            imagen_vista_previa.src = objeto_url;
+        } else {
+            // Ocultar la vista previa si no se seleccionó ningún archivo
+            imagen_vista_previa.style.display = 'none';
+        }
+    });
+</script>
+
 
 
 {% endblock %}

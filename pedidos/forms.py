@@ -33,10 +33,10 @@ class CreatePedidoForm(forms.ModelForm):
         
         
         
-class PedidoFormEditar(forms.ModelForm):
+class PedidoFormEditar(forms.ModelForm):    
     class Meta:
         model = Pedido
-        fields = ['fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago']
+        fields = ['fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total']
 
 
 
@@ -47,3 +47,4 @@ class PedidoFormEditar(forms.ModelForm):
             elif fecha_pedido < self.instance.fecha.date():
                 raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha del pedido actual.")
             return fecha_pedido
+        

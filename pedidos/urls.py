@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 from . import views as viewsPedidos
 from . import views
 
@@ -13,4 +15,4 @@ urlpatterns = [
     path('editar_pedido/', views.editar_pedido, name='editar_pedido'),
     path('eliminar_pedido/', views.eliminar_pedido, name='eliminar_pedido'),
     path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
