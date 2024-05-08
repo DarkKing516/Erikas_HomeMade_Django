@@ -82,9 +82,19 @@
                                 </td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-inverse-warning edit-pedido" data-toggle="modal" data-target="#editPedidoModal{{ pedido.idPedido }}" data-cliente="{{ pedido.id_Usuario }}" data-producto="{{ pedido.producto }}" data-cantidad="{{ pedido.cantidad }}" data-fecha="{{ pedido.fecha_pedido }}">
-                                            <i class="mdi mdi-pencil"></i>
+                                        <button type="button" class="btn btn-inverse-warning edit-pedido"
+                                        data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
+                                        data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
+                                        data-fecha-pedido="{{ pedido.fecha_pedido }}"
+                                        data-descripcion="{{ pedido.descripcion_pedido }}"
+                                        data-estado="{{ pedido.estado_pedido }}" data-pedido-id="{{ pedido.idPedido }}" 
+                                        data-subtotal="{{ pedido.subtotal }} "
+                                        data-iva=" {{ pedido.iva }} "
+                                        data-total=" {{ pedido.total }} "
+                                        data-evidencia="{{ pedido.evidencia_pago.url }}">
+                                        <i class="mdi mdi-pencil">{{ pedido.idPedido }}</i>
                                         </button>
+                                        
                                         <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button> 
@@ -113,70 +123,77 @@
                             </div>
 
                     
-                            <!-- Modal para editar pedido -->
-                            <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                            <!-- Modal para editar Pedido -->
+                            <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Pedido</h5>
+                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar
+                                                Pedido</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" enctype="multipart/form-data">
+                                            <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}">
                                                 {% csrf_token %}
+                                                <input type="hidden" name="Pedido_id" value="{{ pedido.idPedido }}">
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="usuario">Usuario</label>
-                                                            <input type="text" class="form-control" id="usuario{{ pedido.idPedido }}" name="id_Usuario" value="{{ pedido.id_Usuario }}">
+                                                            <label for="usuario">Nombre</label>
+                                                            <input type="text" class="form-control" id="usuario"
+                                                                readonly value="{{ pedido.id_Usuario }}">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="fecha_creacion">Fecha de Creación</label>
-                                                            <input type="datetime-local" class="form-control" id="fecha_creacion{{ pedido.idPedido }}" name="fecha_creacion" value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
+                                                            <label for="fecha">Fecha</label>
+                                                            <input type="datetime-loca" class="form-control" id="fecha" readonly
+                                                                value="{{ pedido.fechaCreacion_pedido }}">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="fecha_pedido">Fecha de Pedido</label>
-                                                            <input type="datetime-local" class="form-control" id="fecha_pedido{{ pedido.idPedido }}" name="fecha_pedido" value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
+                                                            <label for="fecha_pedido">Fecha del pedido</label>
+                                                            <input type="datetime-local" class="form-control"
+                                                                id="fecha_pedido" name="fecha_pedido"
+                                                                value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="descripcion">Descripción</label>
-                                                            <input type="text" class="form-control" id="descripcion{{ pedido.idPedido }}" name="descripcion_pedido" value="{{ pedido.descripcion_pedido }}">
+                                                            <input type="textarea" class="form-control" id="descripcion"
+                                                                name="descripcion" value="{{ pedido.descripcion_pedido }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="subtotal">Subtotal</label>
-                                                            <input type="number" step="0.01" class="form-control" id="subtotal{{ pedido.idPedido }}" name="subtotal" value="{{ pedido.subtotal }}">
+                                                            <input type="textarea" class="form-control" id="subtotal"
+                                                                name="subtotal" value="{{ pedido.subtotal }}">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="iva">IVA</label>
-                                                            <input type="number" step="0.01" class="form-control" id="iva{{ pedido.idPedido }}" name="iva" value="{{ pedido.iva }}">
+                                                            <label for="iva">Iva</label>
+                                                            <input type="textarea" class="form-control" id="iva"
+                                                                name="iva" value="{{ pedido.iva }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="total">Total</label>
-                                                            <input type="number" step="0.01" class="form-control" id="total{{ pedido.idPedido }}" name="total" value="{{ pedido.total }}">
+                                                            <input type="" class="form-control" id="total"
+                                                                name="total" value="{{ pedido.total }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="evidencia_pago">Evidencia de Pago</label>
-                                                            <input type="file" class="form-control-file" id="evidencia_pago{{ pedido.idPedido }}" name="evidencia_pago" accept="image/*">
+                                                            <input type="imagefile" class="form-control" id="evidencia_pago"
+                                                                name="evidencia_pago" value="{{ pedido.evidencia_pago }}">
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="estado_pedido">Estado del Pedido</label>
-                                                            <select class="form-control" id="estado_pedido{{ pedido.idPedido }}" name="estado_pedido">
-                                                                <option value="Por hacer" {% if pedido.estado_pedido == 'Por hacer' %}selected{% endif %}>Por hacer</option>
-                                                                <option value="Pendiente" {% if pedido.estado_pedido == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-                                                                <option value="Completado" {% if pedido.estado_pedido == 'Completado' %}selected{% endif %}>Completado</option>
-                                                            </select>
-                                                        </div>
+
                                                     </div>
                                                 </div>
+
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar</button>
-                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -343,28 +360,33 @@
             });
     }
 
-    // Función para validar la edición de un pedido
-    function validatePedidoEdit(pedidoId) {
-        // Evitar que el formulario se envíe
-        event.preventDefault();
+    // Agregar evento clic para el botón edit-pedido
+    $('.edit-pedido').on('click', function () {
+        // Obtener la información del pedido
+        var pedidoInfo = {
+            Pedido: "Datos del pedido",
+            fechaCreacion_pedido: "Fecha del pedido",
+            fecha_pedido: "Fecha del pedido",
+            descripcion_pedido: "Descripción del pedido",
+            subtotal: "Subtotal del pedido",
+            iva: "IVA del pedido",
+            total: "Total del pedido",
+            evidencia_pago: "Evidencia de pago del pedido",
+        };
 
-        // Mostrar SweetAlert de confirmación
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: '¿Quieres editar este pedido?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, editar!',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Aquí puedes añadir la lógica para enviar el formulario si el usuario confirma
-                document.getElementById(`pedidoForm${pedidoId}`).submit();
-            }
-        });
-    }
+        // Llenar la modal con la información del pedido
+        $('#editPedidoModal #Pedido').val(pedidoInfo.Pedido);
+        $('#editPedidoModal #fechaCreacion_pedido').val(pedidoInfo.fechaCreacion_pedido);
+        $('#editPedidoModal #fecha_pedido').val(pedidoInfo.fecha_pedido);
+        $('#editPedidoModal #descripcion_pedido').val(pedidoInfo.descripcion_pedido);
+        $('#editPedidoModal #subtotal').val(pedidoInfo.subtotal);
+        $('#editPedidoModal #iva').val(pedidoInfo.iva);
+        $('#editPedidoModal #total').val(pedidoInfo.total);
+        $('#editPedidoModal #evidencia_pago').val(pedidoInfo.evidencia_pago);
+
+        // Mostrar la modal
+        $('#editPedidoModal').modal('show');
+    });
 
     // Función para manejar el cambio de estado del pedido
     function handleChangeStatus(event) {
@@ -464,6 +486,73 @@
         // Manejar el evento de cambio de estado del pedido
         $('#pedidoTable').on('click', 'td .change-status', handleChangeStatus);
     });
+
+    
+    function EditarPedidoxd(pedidoId) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById(`editarPedidoform${pedidoId}`);
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_pedido' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El pedido se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+
 
     function eliminarPedido(pedido_id) {
         // Realizar la solicitud POST utilizando fetch

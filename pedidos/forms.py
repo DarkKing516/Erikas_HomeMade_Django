@@ -1,6 +1,10 @@
 from django import forms
 from .models import Pedido
 from usuarios.models import Usuario
+from datetime import datetime
+
+
+
 
 class PedidoForm(forms.ModelForm):
     class Meta:
@@ -28,17 +32,18 @@ class CreatePedidoForm(forms.ModelForm):
         fields = ['id_Usuario', 'fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago', 'estado_pedido']
         
         
-class EditarPedidoForm(forms.ModelForm):
+        
+class PedidoFormEditar(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = ['id_Usuario', 'fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago', 'estado_pedido']
-        widgets = {
-            'id_Usuario': forms.TextInput(attrs={'class': 'form-control'}),
-            'fecha_pedido': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'descripcion_pedido': forms.TextInput(attrs={'class': 'form-control'}),
-            'subtotal': forms.NumberInput(attrs={'class': 'form-control'}),
-            'iva': forms.NumberInput(attrs={'class': 'form-control'}),
-            'total': forms.NumberInput(attrs={'class': 'form-control'}),
-            'evidencia_pago': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'estado_pedido': forms.Select(attrs={'class': 'form-control'}),
-        }
+        fields = ['fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago']
+
+
+
+        def clean_fecha_pedido(self):
+            fecha_pedido = self.cleaned_data.get('fecha_pedido')
+            if fecha_pedido < datetime.now().date():
+                raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
+            elif fecha_pedido < self.instance.fecha.date():
+                raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha del pedido actual.")
+            return fecha_pedido
