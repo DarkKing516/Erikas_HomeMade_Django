@@ -39,6 +39,7 @@
                         <thead>
                             <tr>
                                 <th>Nombre del Permiso</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -46,6 +47,15 @@
                             {% for permiso in permisos %}
                             <tr class="user-row">
                                 <td>{{ permiso.nombre_permiso }}</td>
+                                <td>
+                                    {% if permiso.estado_permiso == 'A' %}
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Permisos' in request.session.permisos %}change-status{% endif %}"
+                                    data-permiso-id="{{ permiso.id }}">Activo</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Permisos' in request.session.permisos %}change-status{% endif %}"
+                                    data-permiso-id="{{ permiso.id }}">Inactivo</label>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if 'Editar Permisos' in request.session.permisos %}
                                     <a href="{% url 'usuarios:editar_permiso' permiso.id %}"
@@ -145,6 +155,31 @@
             });
     }
 </script>
+
+<style>
+    .top {
+        min-width: 9px;
+        display: flex;
+        min-height: 50px;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+
+    .swal2-popup {
+        min-height: 400px !important;
+    }
+
+    .swal2-select {
+        width: 100%;
+        margin: 10px 0;
+        /* Puedes ajustar según sea necesario */
+
+    }
+
+    .table.dataTable.no-footer {
+        border-bottom: none
+    }
+</style>
 
 {% if not request.session.usuario_id %}
 <script>
