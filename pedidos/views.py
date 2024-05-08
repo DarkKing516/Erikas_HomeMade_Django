@@ -1,8 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import Pedido
-from .forms import PedidoForm
-from .forms import CreatePedidoForm
-from .forms import PedidoFormEditar
+from .forms import *
 from django.http import JsonResponse
 import json
 from django.views.decorators.http import require_POST
@@ -46,6 +44,27 @@ def editar_pedido(request):
 
     # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
     form = PedidoFormEditar(request.POST, instance=pedido)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en la reserva
+        saved_instance = form.save()
+        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+        return JsonResponse({'success': True})
+    else:
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
+    
+    
+@require_POST
+def editar_evidencia_pedido(request):
+    pedido_id = request.POST.get('pedido_id')
+    print(pedido_id)
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    form = PedidoFormEditarEvidencia(request.POST, request.FILES, instance=pedido)
 
     # Validamos el formulario
     if form.is_valid():

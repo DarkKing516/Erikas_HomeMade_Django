@@ -30,6 +30,14 @@ class CreatePedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
         fields = ['id_Usuario', 'fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago', 'estado_pedido']
+
+
+class PedidoFormEditarEvidencia(forms.ModelForm):
+    evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+
+    class Meta:
+        model = Pedido
+        fields = [ 'evidencia_pago']
         
         
         

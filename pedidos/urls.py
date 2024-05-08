@@ -13,6 +13,7 @@ urlpatterns = [
     # path('editar_pedido/<int:pk>/', views.editar_pedido, name='editar_pedido'),
     # path('eliminar_pedido/<int:pedido_id>/', views.eliminar_pedido, name='eliminar_pedido'),
     path('editar_pedido/', views.editar_pedido, name='editar_pedido'),
+    path('editar_evidencia_pedido/', views.editar_evidencia_pedido, name='editar_evidencia_pedido'),
     path('eliminar_pedido/', views.eliminar_pedido, name='eliminar_pedido'),
     path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
