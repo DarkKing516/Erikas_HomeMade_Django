@@ -1,12 +1,12 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from django.http import HttpResponse
 from .models import Pedido
 from .forms import PedidoForm
 from .forms import CreatePedidoForm
-from .forms import EditarPedidoForm
+from .forms import PedidoFormEditar
 from django.http import JsonResponse
-import base64
 import json
+from django.views.decorators.http import require_POST
+
 
 
 
@@ -38,16 +38,25 @@ def crear_pedido(request):
         form = PedidoForm()
     return render(request, 'crear_pedido.html', {'form': form})
 
-def editar_pedido(request, pk):
-    pedido = get_object_or_404(Pedido, pk=pk)
-    if request.method == 'POST':
-        form = EditarPedidoForm(request.POST, request.FILES, instance=pedido)
-        if form.is_valid():
-            form.save()
-            return redirect('pedidos:listar_pedidos')
+@require_POST
+def editar_pedido(request):
+    print(request.POST)  # Imprimir el contenido de request.POST
+    pedido_id = request.POST.get('pedido_id')
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    form = PedidoFormEditar(request.POST, instance=pedido)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en la reserva
+        saved_instance = form.save()
+        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+        return JsonResponse({'success': True})
     else:
-        form = EditarPedidoForm(instance=pedido)
-    return render(request, 'editar_pedido.html', {'form': form, 'pedido': pedido})
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
 
 def eliminar_pedido(request):
     if request.method == 'POST':
