@@ -140,16 +140,30 @@ def crear_rol(request):
     return render(request, 'roles/crear_rol.html', {'form': form})
 
 
-def editar_rol(request, id_rol):
+# def editar_rol(request, id_rol):
+#     rol = get_object_or_404(Rol, pk=id_rol)
+#     if request.method == 'POST':
+#         form = RolForm(request.POST, instance=rol)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('usuarios:listar_roles')
+#     else:
+#         form = RolForm(instance=rol)
+#     return render(request, 'roles/editar_rol.html', {'form': form})
+
+@require_POST
+def editar_rol(request):
+    id_rol = request.POST.get('rol_id')
+    print(id_rol)
     rol = get_object_or_404(Rol, pk=id_rol)
-    if request.method == 'POST':
-        form = RolForm(request.POST, instance=rol)
-        if form.is_valid():
-            form.save()
-            return redirect('usuarios:listar_roles')
+    form = RolForm(request.POST, instance=rol)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'success': True})
     else:
-        form = RolForm(instance=rol)
-    return render(request, 'roles/editar_rol.html', {'form': form})
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
 
 def cambiar_estado_rol(request):
     if request.method == 'POST':
