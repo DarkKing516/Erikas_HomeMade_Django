@@ -8,15 +8,26 @@ class RolForm(forms.ModelForm):
         ('I', 'Inactivo'),
     )
 
-    estado_rol = forms.ChoiceField(choices=ESTADOS_ROL, label='Estado')
+    estado_rol = forms.ChoiceField(choices=ESTADOS_ROL, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))
+    nombre_rol = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
+
     # permisos = forms.ModelMultipleChoiceField(queryset=Permiso.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
-    permisos = forms.ModelMultipleChoiceField(queryset=Permiso.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'select2'}), required=False)
+    permisos = forms.ModelMultipleChoiceField(queryset=Permiso.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'select2 form-control'}), required=False)
 
 
 
     class Meta:
         model = Rol
         fields = ['nombre_rol', 'estado_rol', 'permisos']
+    def clean_nombre_rol(self):
+        nombre_rol = self.cleaned_data['nombre_rol']
+        if self.instance.pk:  # Verifica si el rol ya existe en la base de datos
+            original_rol = Rol.objects.get(pk=self.instance.pk)
+            if original_rol.nombre_rol == nombre_rol:
+                return nombre_rol  # El nombre del rol no ha cambiado, no es necesario validar
+        if Rol.objects.filter(nombre_rol=nombre_rol).exists():
+            raise forms.ValidationError("¡El nombre del rol ya existe!")
+        return nombre_rol
 
 
 class PermisoForm(forms.ModelForm):
@@ -25,11 +36,22 @@ class PermisoForm(forms.ModelForm):
         ('I', 'Inactivo'),
     )
 
-    estado_permiso = forms.ChoiceField(choices=ESTADOS_PERMISO)
-
+    # estado_permiso = forms.ChoiceField(choices=ESTADOS_PERMISO)
+    estado_permiso = forms.ChoiceField(choices=ESTADOS_PERMISO, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))
+    nombre_permiso = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
     class Meta:
         model = Permiso
         fields = ['nombre_permiso', 'estado_permiso']
+
+    def clean_nombre_permiso(self):
+        nombre_permiso = self.cleaned_data['nombre_permiso']
+        if self.instance.pk:  # Verifica si el permiso ya existe en la base de datos
+            original_permiso = Permiso.objects.get(pk=self.instance.pk)
+            if original_permiso.nombre_permiso == nombre_permiso:
+                return nombre_permiso  # El nombre del permiso no ha cambiado, no es necesario validar
+        if Permiso.objects.filter(nombre_permiso=nombre_permiso).exists():
+            raise forms.ValidationError("¡El nombre del permiso ya existe!")
+        return nombre_permiso
 
 
 # class RolxPermisoForm(forms.ModelForm):

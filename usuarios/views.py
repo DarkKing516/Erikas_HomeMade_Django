@@ -18,16 +18,32 @@ from .forms import *
 
 # Create your views here.
 def hello(request):
-    return HttpResponse("Hello World")
-
-
-def listar_permisos(request):
     if not request.session.get('usuario_id'):
         # Si el usuario no ha iniciado sesión, renderiza la plantilla de "splash screen"
         return render(request, 'splash_screen.html')
     else:
+        return HttpResponse("Hello World")
+
+
+def listar_permisos(request):
+    if request.method == 'POST':
+        form = PermisoForm(request.POST)
+        if form.is_valid():
+            nombre_permiso = form.cleaned_data['nombre_permiso']
+            if Permiso.objects.filter(nombre_permiso=nombre_permiso).exists():
+                return JsonResponse({'success': False, 'message': 'Nombre permiso ya en uso'})
+            
+            permiso = form.save(commit=False)
+            permiso.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
         permisos = Permiso.objects.all()
-        return render(request, 'permisos/listar_permiso.html', {'permisos': permisos})
+        form = PermisoForm()
+        return render(request, 'permisos/listar_permiso.html', {'permisos': permisos, 'form': form})
 
 def crear_permiso(request):
     if request.method == 'POST':
@@ -39,18 +55,52 @@ def crear_permiso(request):
         form = PermisoForm()
     return render(request, 'permisos/crear_permiso.html', {'form': form})
 
-def editar_permiso(request, id_permiso):
-    permiso_obj = get_object_or_404(Permiso, pk=id_permiso)  # Changed variable name
-    if request.method == 'POST':
-        form = PermisoForm(request.POST, instance=permiso_obj)  # Updated variable name here as well
-        if form.is_valid():
-            form.save()
-            return redirect('usuarios:listar_permisos')
+# def editar_permiso(request, id_permiso):
+#     permiso_obj = get_object_or_404(Permiso, pk=id_permiso)  # Changed variable name
+#     if request.method == 'POST':
+#         form = PermisoForm(request.POST, instance=permiso_obj)  # Updated variable name here as well
+#         if form.is_valid():
+#             form.save()
+#             return redirect('usuarios:listar_permisos')
+#     else:
+#         form = PermisoForm(instance=permiso_obj)  # Updated variable name here as well
+#     return render(request, 'permisos/editar_permiso.html', {'form': form})
+
+@require_POST
+def editar_permiso(request):
+    permiso_id = request.POST.get('permiso_id')
+    permiso = get_object_or_404(Permiso, pk=permiso_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del permiso
+    form = PermisoForm(request.POST, instance=permiso)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en el permiso
+        form.save()
+        return JsonResponse({'success': True})
     else:
-        form = PermisoForm(instance=permiso_obj)  # Updated variable name here as well
-    return render(request, 'permisos/editar_permiso.html', {'form': form})
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
 
-
+def cambiar_estado_permiso(request):
+    if request.method == 'POST':
+        permiso_id = request.POST.get('permiso_id')
+        print("permiso ID:", permiso_id)
+        
+        data = json.loads(request.body)
+        permiso_id = data.get('permiso_id')
+        print("permiso ID:", permiso_id)
+        permiso = Permiso.objects.get(pk=permiso_id)
+        if permiso.estado_permiso == 'A':
+            permiso.estado_permiso = 'I'
+        else:
+            permiso.estado_permiso = 'A'
+        permiso.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'warning': False})
 def eliminar_permiso(request, id_permiso):
     permiso = get_object_or_404(Permiso, pk=id_permiso)
     permiso.delete()
@@ -60,12 +110,24 @@ def eliminar_permiso(request, id_permiso):
 # =================================================================
 # @login_required
 def listar_roles(request):
-    if not request.session.get('usuario_id'):
-        # Si el usuario no ha iniciado sesión, renderiza la plantilla de "splash screen"
-        return render(request, 'splash_screen.html')
+    if request.method == 'POST':
+        form = RolForm(request.POST)
+        if form.is_valid():
+            nombre_rol = form.cleaned_data['nombre_rol']
+            if Rol.objects.filter(nombre_rol=nombre_rol).exists():
+                return JsonResponse({'success': False, 'message': 'Nombre del rol ya en uso'})
+            
+            rol = form.save(commit=False)
+            rol.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
     else:
         roles = Rol.objects.all()
-        return render(request, 'roles/listar_roles.html', {'roles': roles})
+        form = RolForm()
+        return render(request, 'roles/listar_roles.html', {'roles': roles, 'form': form})
 
 def crear_rol(request):
     if request.method == 'POST':
@@ -89,7 +151,23 @@ def editar_rol(request, id_rol):
         form = RolForm(instance=rol)
     return render(request, 'roles/editar_rol.html', {'form': form})
 
-
+def cambiar_estado_rol(request):
+    if request.method == 'POST':
+        rol_id = request.POST.get('rol_id')
+        print("rol ID:", rol_id)
+        
+        data = json.loads(request.body)
+        rol_id = data.get('rol_id')
+        print("rol ID:", rol_id)
+        rol = Rol.objects.get(pk=rol_id)
+        if rol.estado_rol == 'A':
+            rol.estado_rol = 'I'
+        else:
+            rol.estado_rol = 'A'
+        rol.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'warning': False})
 # def eliminar_rol(request, id_rol):
 #     rol = get_object_or_404(Rol, pk=id_rol)
 #     try:

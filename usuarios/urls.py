@@ -9,13 +9,18 @@ urlpatterns = [
     path('listar_permisos/', viewsUsuarios.listar_permisos, name='listar_permisos'),
     path('crear_permiso/', viewsUsuarios.crear_permiso, name='crear_permiso'),
     path('editar_permiso/<int:id_permiso>/', viewsUsuarios.editar_permiso, name='editar_permiso'),
+    path('editar_permiso/', viewsUsuarios.editar_permiso, name='editar_permiso'),
+    path('cambiar_estado_permiso/', viewsUsuarios.cambiar_estado_permiso, name='cambiar_estado_permiso'),
     path('eliminar_permiso/<int:id_permiso>/', viewsUsuarios.eliminar_permiso, name='eliminar_permiso'),
 
     # ROLES
     path('listar_roles/', viewsUsuarios.listar_roles, name='listar_roles'),
     path('crear_rol/', viewsUsuarios.crear_rol, name='crear_rol'),
     path('editar_rol/<int:id_rol>/', viewsUsuarios.editar_rol, name='editar_rol'),
+    path('editar_rol/', viewsUsuarios.editar_rol, name='editar_rol'),
+    path('cambiar_estado_rol/', viewsUsuarios.cambiar_estado_rol, name='cambiar_estado_rol'),
     path('eliminar_rol/<int:id_rol>/', viewsUsuarios.eliminar_rol, name='eliminar_rol'),
+    path('eliminar_rol/', viewsUsuarios.eliminar_rol, name='eliminar_rol'),
 
     # USUARIOS
     path('listar_usuarios/', viewsUsuarios.listar_usuarios, name='listar_usuarios'),
