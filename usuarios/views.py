@@ -177,19 +177,24 @@ def cambiar_estado_rol(request):
 #         return render(request, 'roles/eliminar_rol.html', {'rol': rol})
 #     except PermissionDenied:
 #         return render(request, 'roles/error_permiso.html')
+# def eliminar_rol(request, id_rol):
+#     rol = get_object_or_404(Rol, pk=id_rol)
+#     try:
+#         if request.method == 'POST':
+#             rol.delete()
+#             return redirect('usuarios:listar_roles')
+#         return render(request, 'roles/eliminar_rol.html', {'rol': rol})
+#     except PermissionDenied:
+#         image_url = 'https://http.cat/403'  # URL de la imagen de gato para el código de estado HTTP 403
+#         return JsonResponse({'image_url': image_url})
 def eliminar_rol(request, id_rol):
     rol = get_object_or_404(Rol, pk=id_rol)
-    try:
-        if request.method == 'POST':
-            rol.delete()
-            return redirect('usuarios:listar_roles')
-        return render(request, 'roles/eliminar_rol.html', {'rol': rol})
-    except PermissionDenied:
-        # Redirige al usuario a la API de gatos con el código de estado HTTP 403
-        response = requests.get('https://http.cat/403')
-        image_url = response.url
-        return redirect(image_url)
-
+    if id_rol in [1, 2]:
+        image_url = 'https://http.cat/403'  # URL de la imagen de gato para el código de estado HTTP 403
+        return JsonResponse({'message': 'No se puede eliminar este rol', 'image_url': image_url}, status=403)
+    else:
+        rol.delete()
+        return JsonResponse({'message': 'Rol eliminado correctamente'})
 
 # =================================================================
 def listar_usuarios(request):

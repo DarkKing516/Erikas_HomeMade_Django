@@ -250,35 +250,45 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         })
-            .then(response => {
-                if (response.ok) {
-                    // Eliminación exitosa
-                    Swal.fire(
-                        '¡Eliminado!',
-                        'El rol ha sido eliminado exitosamente.',
-                        'success'
-                    ).then(() => {
-                        location.reload(); // Recargar la página
-                    });
-                } else {
-                    // Manejar errores de eliminación si es necesario
-                    Swal.fire(
-                        'Error',
-                        'No se pudo eliminar el rol.',
-                        'error'
-                    );
-                    console.error('Error al eliminar el rol');
-                }
-            })
-            .catch(error => {
+        .then(response => {
+            if (response.ok) {
+                // Eliminación exitosa
                 Swal.fire(
-                    'Error de red',
-                    'Hubo un error de red al intentar eliminar el rol.',
+                    '¡Eliminado!',
+                    'El rol ha sido eliminado exitosamente.',
+                    'success'
+                ).then(() => {
+                    location.reload(); // Recargar la página
+                });
+            } else if (response.status === 403) {
+                // No se puede eliminar el rol debido a permisos insuficientes
+                response.json().then(data => {
+                    Swal.fire({
+                        title: 'Permiso denegado',
+                        html: '<img src="' + data.image_url + '" style="max-width:100%;">',
+                        confirmButtonText: 'Entendido'
+                    });
+                });
+            } else {
+                // Manejar otros errores de eliminación
+                Swal.fire(
+                    'Error',
+                    'No se pudo eliminar el rol.',
                     'error'
                 );
-                console.error('Error de red:', error);
-            });
+                console.error('Error al eliminar el rol');
+            }
+        })
+        .catch(error => {
+            Swal.fire(
+                'Error de red',
+                'Hubo un error de red al intentar eliminar el rol.',
+                'error'
+            );
+            console.error('Error de red:', error);
+        });
     }
+
 
 
     $('#rolesTable').on('click', 'td .change-status.btn-inverse-success, td .change-status.btn-inverse-danger', function () {

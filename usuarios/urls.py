@@ -20,7 +20,7 @@ urlpatterns = [
     path('editar_rol/', viewsUsuarios.editar_rol, name='editar_rol'),
     path('cambiar_estado_rol/', viewsUsuarios.cambiar_estado_rol, name='cambiar_estado_rol'),
     path('eliminar_rol/<int:id_rol>/', viewsUsuarios.eliminar_rol, name='eliminar_rol'),
-    path('eliminar_rol/', viewsUsuarios.eliminar_rol, name='eliminar_rol'),
+    # path('eliminar_rol/', viewsUsuarios.eliminar_rol, name='eliminar_rol'),
 
     # USUARIOS
     path('listar_usuarios/', viewsUsuarios.listar_usuarios, name='listar_usuarios'),
