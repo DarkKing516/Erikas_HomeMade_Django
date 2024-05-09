@@ -227,9 +227,9 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <label for="evidencia_pago">Evidencia de Pago</label>
-                                                            <input type="file" name="evidencia_pago" id="evidencia_pago_input" class="form-control-file" accept="image/*">
-                                                            <img src="#" id="imagen_vista_previa" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                                            <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
+                                                            <br>
+                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                                                         </div>
 
                                                     </div>
@@ -305,9 +305,8 @@
                                 {{ formCreate.total }}
                             </div>
                             <div class="form-group">
-                                <label for="evidencia_pago">Evidencia de Pago</label>
-                                <input type="file" name="evidencia_pago" id="evidencia_pago_input" class="form-control-file" accept="image/*">
-                                <img src="#" id="imagen_vista_previa" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
+                                <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                             </div>
                             <div class="form-group">
                                 <label for="estado_pedido">Estado del Pedido</label>
@@ -726,24 +725,35 @@
     });
 </script>
 <script>
-    document.getElementById('evidencia_pago_input').addEventListener('change', function(event) {
-        var archivo = event.target.files[0];
-        var imagen_vista_previa = document.getElementById('imagen_vista_previa');
-    
+    // Función para mostrar la vista previa de la imagen al seleccionar un archivo
+    function mostrarVistaPrevia(input, elementoVistaPrevia) {
+        var archivo = input.files[0];
+        var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
+
         // Verificar si se seleccionó un archivo
         if (archivo) {
             // Crear un objeto URL para el archivo seleccionado
-            var objeto_url = URL.createObjectURL(archivo);
-    
+            var objetoURL = URL.createObjectURL(archivo);
+
             // Mostrar la vista previa de la imagen
-            imagen_vista_previa.style.display = 'block';
-            imagen_vista_previa.src = objeto_url;
+            imagenVistaPrevia.style.display = 'block';
+            imagenVistaPrevia.src = objetoURL;
         } else {
             // Ocultar la vista previa si no se seleccionó ningún archivo
-            imagen_vista_previa.style.display = 'none';
+            imagenVistaPrevia.style.display = 'none';
         }
+    }
+
+    // Agregar un evento change a cada input de tipo file para mostrar la vista previa
+    var inputsEvidenciaPago = document.querySelectorAll('.evidencia_pago_input');
+    inputsEvidenciaPago.forEach(function(input) {
+        input.addEventListener('change', function(event) {
+            var elementoVistaPrevia = this.dataset.vistaPrevia;
+            mostrarVistaPrevia(this, elementoVistaPrevia);
+        });
     });
 </script>
+
 
 
 
