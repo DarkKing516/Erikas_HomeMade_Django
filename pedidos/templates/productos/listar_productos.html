@@ -80,7 +80,7 @@
                                 <td>{{ producto.cantidad }}</td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-inverse-warning edit-pedido"
+                                        <button type="button" class="btn btn-inverse-warning edit-producto"
                                         data-toggle="modal" data-target="#editarproductoModal{{ producto.idProducto }}"
                                         data-nombre="{{ producto.nombre }}"
                                         data-descripcion="{{ producto.descripcion }}"
@@ -102,8 +102,9 @@
                             </tr>
                     
                             <!-- Modal para editar Pedido -->
-                            <div class="modal fade" id="editarproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
+                            
+                            <div class="modal fade" id="editarProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editarProductoModal{{ producto.idProducto }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -242,7 +243,7 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del formulario con Bootstrap grid system -->
-                <form id="productosForm" class="forms-sample" method="post" enctype="multipart/form-data" action="{% url 'pedidos:crear_producto' %}" >
+                <form method="post" onsubmit="validateProductoForm('{{ producto.idProducto }}')" id="productoForm{{ pedido.idPedido }}" class="forms-sample" data-pedido-id="{{ producto.idProducto }}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-6">
@@ -307,18 +308,18 @@
 
 <script>
     // Función para validar el formulario de creación de pedido
-    function validatePedidoForm(pedidoId) {
+    function validateProductoForm(productoId) {
         // Evitar que el formulario se envíe automáticamente
         event.preventDefault();
 
         // Obtener el formulario correspondiente al pedido
-        const form = document.getElementById(`pedidoForm${pedidoId}`);
+        const form = document.getElementById(`productoForm${productoId}`);
 
         // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
 
         // Realizar la solicitud POST utilizando fetch
-        fetch("{% url 'pedidos:crear_pedido' %}", {
+        fetch("{% url 'pedidos:crear_producto' %}", {
             method: 'POST',
             body: formData,
             headers: {
@@ -332,7 +333,7 @@
                     // Mostrar SweetAlert de éxito
                     Swal.fire({
                         title: '¡Registro exitoso!',
-                        text: 'El pedido se ha registrado correctamente.',
+                        text: 'El producto se ha registrado correctamente.',
                         icon: 'success',
                         onClose: () => {
                             // Recargar la página
@@ -377,13 +378,12 @@
     }
 
     // Agregar evento clic para el botón edit-pedido
-    $('.edit-pedido').on('click', function () {
+    $('.edit-producto').on('click', function () {
         // Obtener la información del pedido
         var productoInfo = {
             id_TipoProducto: "Datos del tipo de producto",
             nombre: "Nombre del producto",
             descripcion: "Descripcion del producto",
-            imagen: "Imagen del producto",
             precio: "Precio del producto",
             estado_producto: "Estado del producto",
             estado_catalogo: "Estado del catalogo",
@@ -394,7 +394,6 @@
         $('#editarproductoModal #id_TipoProducto').val(productoInfo.id_TipoProducto);
         $('#editarproductoModal #nombre').val(productoInfo.nombre);
         $('#editarproductoModal #descripcion').val(productoInfo.descripcion);
-        $('#editarproductoModal #imagen').val(productoInfo.imagen);
         $('#editarproductoModal #precio').val(productoInfo.precio);
         $('#editarproductoModal #estado_producto').val(productoInfo.estado_producto);
         $('#editarproductoModal #estado_catalogo').val(productoInfo.estado_catalogo);
@@ -563,7 +562,7 @@
     const formData = new FormData(form);
 
     // Realizar la solicitud POST utilizando fetch
-    fetch("{% url 'pedidos:editar_productos' %}", {
+    fetch("{% url 'pedidos:editar_producto' %}", {
         method: 'POST',
         body: formData,
         headers: {
