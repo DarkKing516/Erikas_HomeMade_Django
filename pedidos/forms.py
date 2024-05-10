@@ -1,5 +1,5 @@
 from django import forms
-from .models import Pedido
+from .models import *
 from usuarios.models import Usuario
 from datetime import datetime
 
@@ -56,3 +56,42 @@ class PedidoFormEditar(forms.ModelForm):
                 raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha del pedido actual.")
             return fecha_pedido
         
+#------------------------------------------------------------productos---------------------------------------------------------
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['idProducto', 'id_TipoProducto', 'nombre', 'descripcion', 'imagen', 'precio', 'estado_producto', 'estado_catalogo', 'cantidad']
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'type': 'textarea'}),
+            'imagen': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(ProductoForm, self).__init__(*args, **kwargs)
+
+
+class CreateProductoForm(forms.ModelForm):
+    id_TipoProducto = forms.ModelChoiceField(queryset=TipoProducto.objects.all(), label='Tipo de Producto', widget=forms.Select(attrs={'class': 'form-control'}))
+    nombre = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
+    descripcion = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción'}))
+    imagen = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    precio = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}))
+    estado_producto = forms.CharField(max_length=1, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado del Producto'}))
+    estado_catalogo = forms.BooleanField(initial=False, required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    cantidad = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}))
+
+    class Meta:
+        model = Producto
+        fields = ['id_TipoProducto', 'nombre', 'descripcion', 'imagen', 'precio', 'estado_producto', 'estado_catalogo', 'cantidad']
+
+class editProductoForm(forms.ModelForm):
+    nombre = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
+    descripcion = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción'}))
+    precio = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}))
+    estado_producto = forms.CharField(max_length=1, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado del Producto'}))
+    estado_catalogo = forms.BooleanField(initial=False, required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    cantidad = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}))
+
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'descripcion', 'precio', 'estado_producto', 'estado_catalogo', 'cantidad']

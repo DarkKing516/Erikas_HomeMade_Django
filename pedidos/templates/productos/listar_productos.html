@@ -1,0 +1,750 @@
+<title>Listar Pedidos</title>
+{% extends 'layouts/navbar.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- endinject -->
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- End plugin css for this page -->
+<!-- inject:css -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+
+<!-- endinject -->
+<script src="{% static 'js/pedidos.js' %}"></script>
+
+
+<!-- Contenido principal -->
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Productos</h4>
+                <div class="table-responsive">
+                    <table id="pedidoTable" class="table table-hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>id_TipoProducto</th>
+                                <th>nombre</th>
+                                <th>descripcion</th>
+                                <th>precio</th>
+                                <th>estado_producto</th>
+                                <th>estado_catalogo</th>
+                                <th>cantidad</th>
+                                <th>Acciones</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in productos %}
+                            <tr class="producto-row">
+                                <td>{{ producto.id_TipoProducto }}</td>
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.descripcion }}</td>
+                                <td>{{ producto.precio }}</td>                                
+
+                                {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
+                                <td>
+                                    {% if producto.estado_producto == 'A' %}
+                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
+                                    data-producto-id="{{ producto.idProducto }}">Activo</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    data-producto-id="{{ producto.idProducto }}">Inactivo</label>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if producto.estado_catalogo == 'A' %}
+                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
+                                    data-catalogo-id="{{ producto.idProducto }}">Activo</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    data-catalogo-id="{{ producto.idProducto }}">Inactivo</label>
+                                    {% endif %}
+                                </td>
+                                <td>{{ producto.cantidad }}</td>                                
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-inverse-warning edit-pedido"
+                                        data-toggle="modal" data-target="#editarproductoModal{{ producto.idProducto }}"
+                                        data-nombre="{{ producto.nombre }}"
+                                        data-descripcion="{{ producto.descripcion }}"
+                                        data-precio="{{ producto.precio }}" 
+                                        data-estado-producto="{{ producto.estado_producto }} " data-producto-id="{{ producto.idProducto }}" 
+                                        data-estado-catalogo=" {{ producto.estado_catalogo }} " data-catalogo-id="{{ producto.idProducto }}"
+                                        data-cantidad=" {{ producto.cantidad }} ">
+                                        <i class="mdi mdi-pencil">{{ producto.idProducto }}</i>
+                                        </button>
+                                        
+                                        <button type="button" class="btn btn-inverse-primary" data-producto-id="{{ producto.idProducto }}" data-toggle="modal" data-target="#editevidenciaproductoModal{{ producto.idProducto }}">
+                                            <i class="bi bi-file-earmark-image"></i>
+                                        </button> 
+                                        <button type="button" class="btn btn-inverse-danger delete-producto" data-producto-id="{{ Producto.idProducto }}">
+                                            <i class="mdi mdi-delete"></i>
+                                        </button> 
+                                    </div>
+                                </td>                              
+                            </tr>
+                    
+                            <!-- Modal para editar Pedido -->
+                            <div class="modal fade" id="editarproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar
+                                                Producto</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarProductoxd('{{ producto.idProducto }}')" id="editarProductoform{{ producto.idProducto }}" class="forms-sample" data-Producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="usuario">nombre</label>
+                                                            <input type="text" class="form-control" id="nombre"
+                                                                 value="{{ producto.nombre }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fecha">descripcion</label>
+                                                            <input type="datetime-loca" class="form-control" id="descripcion" 
+                                                                value="{{ producto.descripcion }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="precio">precio</label>
+                                                            <input type="text" class="form-control" id="precio" 
+                                                                value="{{ producto.precio }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="estado_producto">Estado del Producto</label>
+                                                            <select class="form-control" id="estado_producto" name="estado_producto">
+                                                                <option value="A" {% if producto.estado_producto == 'A' %} selected {% endif %}>Activo</option>
+                                                                <option value="I" {% if producto.estado_producto == 'I' %} selected {% endif %}>Inactivo</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="estado_producto">Estado del Producto</label>
+                                                            <select class="form-control" id="estado_producto" name="estado_producto">
+                                                                <option value="A" {% if producto.estado_producto == 'A' %} selected {% endif %}>Activo</option>
+                                                                <option value="I" {% if producto.estado_producto == 'I' %} selected {% endif %}>Inactivo</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="cantidad">cantidad</label>
+                                                            <input type="text" class="form-control" id="cantidad" 
+                                                                value="{{ producto.cantidad }}">
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar {{ producto.idProducto }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="editevidenciaproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar imagen de
+                                                Producto</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-Producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="pedido_id" value="{{ producto.idProducto }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <p><strong>Imagen actual:</strong> <img src="{{ producto.imagen.url }}" alt="imagen" style="max-width: 100%; height: auto;"></p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
+                                                            <br>
+                                                            <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar {{ producto.idProducto }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin del contenido principal -->
+
+
+
+<!-- Modal Crear Pedido -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro de Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="productosForm" class="forms-sample" method="post" enctype="multipart/form-data" action="{% url 'pedidos:crear_producto' %}" >
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_TipoProducto">id_TipoProducto</label>
+                                {{ formCreate.id_TipoProducto }}
+                            </div>
+                            <div class="form-group">
+                                <label for="nombre">nombre</label>
+                                {{ formCreate.nombre }}
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion">Descripción del Producto</label>
+                                {{ formCreate.descripcion }}
+                            </div>
+                            <div class="form-group">
+                                <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
+                                <br>
+                                <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                            </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="precio">precio</label>
+                                {{ formCreate.precio }}
+                            </div>
+                            <div class="form-group">
+                                <label for="estado_producto">Estado del Productos</label>
+                                <select class="form-control" id="estado_producto" name="estado_producto">
+                                    <option value="A">Activo</option>
+                                    <option value="I">Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="estado_catalogo">Estado del Catalogo</label>
+                                <select class="form-control" id="estado_catalogo" name="estado_catalogo">
+                                    <option value="A">Activo</option>
+                                    <option value="I">Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Cantidad">Cantidad</label>
+                                {{ formCreate.cantidad }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Fin del Modal Crear Pedido -->
+
+<script>
+    // Función para validar el formulario de creación de pedido
+    function validatePedidoForm(pedidoId) {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
+
+        // Obtener el formulario correspondiente al pedido
+        const form = document.getElementById(`pedidoForm${pedidoId}`);
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:crear_pedido' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'El pedido se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.message) { // Check if a message is provided in the response
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+    // Agregar evento clic para el botón edit-pedido
+    $('.edit-pedido').on('click', function () {
+        // Obtener la información del pedido
+        var productoInfo = {
+            id_TipoProducto: "Datos del tipo de producto",
+            nombre: "Nombre del producto",
+            descripcion: "Descripcion del producto",
+            imagen: "Imagen del producto",
+            precio: "Precio del producto",
+            estado_producto: "Estado del producto",
+            estado_catalogo: "Estado del catalogo",
+            cantidad: "Cantidad del producto",
+        };
+
+        // Llenar la modal con la información del pedido
+        $('#editarproductoModal #id_TipoProducto').val(productoInfo.id_TipoProducto);
+        $('#editarproductoModal #nombre').val(productoInfo.nombre);
+        $('#editarproductoModal #descripcion').val(productoInfo.descripcion);
+        $('#editarproductoModal #imagen').val(productoInfo.imagen);
+        $('#editarproductoModal #precio').val(productoInfo.precio);
+        $('#editarproductoModal #estado_producto').val(productoInfo.estado_producto);
+        $('#editarproductoModal #estado_catalogo').val(productoInfo.estado_catalogo);
+        $('#editarproductoModal #cantidad').val(productoInfo.cantidad);
+
+        // Mostrar la modal
+        $('#editarproductoModal').modal('show');
+    });
+
+    // Función para manejar el cambio de estado del pedido
+    function handleChangeStatus(event) {
+        // Obtener el pedido ID
+        var producto_id = $(this).data('producto-id');
+
+        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        Swal.fire({
+            title: 'Cambiar Estado',
+            html: '<select class="form-control" id="estado_producto2" name="estado_producto">'+
+                '<option value="A">Activo</option>' +
+                '<option value="I">Inactivo</option>' +
+                '</select>',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cambiar',
+            preConfirm: () => {
+                // Obtener el valor seleccionado del select
+                var nuevoProducto = $('#estado_producto2').val();
+
+                // Enviar los datos a través de AJAX incluyendo el token CSRF
+                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'producto_id': producto_id,
+                        'estado_pedido': nuevoProducto,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el Estado.');
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    });
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var nuevoRol = $('#estado_producto').val();
+
+                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                    location.reload();
+                });
+            }
+        });
+    }
+    function handleChangeStatus2(event) {
+        // Obtener el pedido ID
+        var producto_id = $(this).data('producto-id');
+
+        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        Swal.fire({
+            title: 'Cambiar Estado',
+            html: '<select class="form-control" id="estado_catalogo2" name="estado_catalogo">'+
+                '<option value="A">Activo</option>' +
+                '<option value="I">Inactivo</option>' +
+                '</select>',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cambiar',
+            preConfirm: () => {
+                // Obtener el valor seleccionado del select
+                var nuevoCatalogo = $('#estado_catalogo2').val();
+
+                // Enviar los datos a través de AJAX incluyendo el token CSRF
+                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'pedido_id': producto_id,
+                        'estado_pedido': nuevoCatalogo,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el Estado.');
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    });
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var nuevoRol = $('#estado_catalogo').val();
+
+                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                    location.reload();
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#pedidoTable')) {
+            $('#pedidoTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#pedidoTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#pedidoTable_filter").detach().appendTo(".top");
+
+        // Agregar el botón "Agregar" al lado del cuadro de búsqueda
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal" style="margin: 5px">Agregar</button>');
+
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#pedidoTable_filter input").addClass("form-control form-control-sm");
+
+        // Manejar el evento de cambio de estado del pedido
+        $('#pedidoTable').on('click', 'td .change-status', handleChangeStatus);
+    });
+
+    function EditarProductoxd(productoId) {
+    event.preventDefault();
+
+    // Obtener el formulario usando el ID del producto
+    const form = document.getElementById(`editarProductoform${productoId}`);
+
+    // Crear un objeto FormData para enviar los datos del formulario
+    const formData = new FormData(form);
+
+    // Realizar la solicitud POST utilizando fetch
+    fetch("{% url 'pedidos:editar_productos' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Verificar si la solicitud fue exitosa
+        if (data.success) {
+            // Mostrar SweetAlert de éxito
+            Swal.fire({
+                title: '¡Actualización exitosa!',
+                text: 'El producto se ha editado correctamente.',
+                icon: 'success',
+                onClose: () => {
+                    // Recargar la página   
+                    location.reload();
+                }
+            }).then(() => {
+                location.reload();
+            });
+        } else if (data.errors) { // Verificar si hay errores de validación
+            let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+            for (const key in data.errors) {
+                errorMessage += `${data.errors[key]}<br>`;
+            }
+            Swal.fire({
+                title: 'Error',
+                html: errorMessage,
+                icon: 'error',
+            });
+        } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                icon: 'error'
+            });
+        }
+    })
+    .catch(errors => {
+        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error'
+        });
+        console.error('Error:', errors);
+    });
+}
+
+
+
+    function EditarEvidenciaProductoxd(productoId) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById(`EditarEvidenciaForm${productoId}`);
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_evidencia_productos' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El producto se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+
+
+    function eliminarPedido(pedido_id) {
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:eliminar_pedido' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({'pedido_id': pedido_id})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Pedido Eliminado!', 'Pedido Eliminado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
+            } else {
+                // Mostrar un mensaje de error si la eliminación falla
+                Swal.fire({
+                    title: 'Error',
+                    text: data.message,
+                    icon: 'error'
+                });
+            }
+        })
+        .catch(error => {
+            // Mostrar un mensaje de error en caso de un fallo en la solicitud
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al intentar eliminar el pedido. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
+            });
+        });
+    }
+
+
+    document.querySelectorAll('.delete-pedido').forEach(button => {
+        button.addEventListener('click', function() {
+            const pedidoId = this.getAttribute('data-producto-id');
+            var pedido_id = $(this).data('producto-id');
+            // Confirmar antes de eliminar
+            Swal.fire({
+                title: '¿Estás seguro?',
+                // text: `Esta acción no se puede deshacer para el pedido con ID ${pedidoId}.`,
+                text: `Esta acción no se puede deshacer`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarPedido(pedidoId);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+{% endblock %}

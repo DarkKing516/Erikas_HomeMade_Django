@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Pedido
+from .models import *
 from .forms import *
 from django.http import JsonResponse
 import json
@@ -125,3 +125,62 @@ def cambiar_estado(request):
         # Si la solicitud no es POST, devuelve una respuesta JSON indicando que la operación falló
         return JsonResponse({'success': False})
     
+
+# ----------------------------------------------------------PRODUCTOS--------------------------------------------------------------------------
+
+def listar_productos(request):
+    if request.method == 'POST':
+        form = CreateProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        formCreate = CreateProductoForm()
+        productos = Producto.objects.all()
+        return render(request, 'productos/listar_productos.html', {'productos': productos, 'formCreate': formCreate})
+    
+
+@require_POST
+def editar_productos(request):
+    producto_id = request.POST.get('producto_id')
+    print(producto_id)
+    producto = get_object_or_404(Producto, pk=producto_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    form = editProductoForm(request.POST, instance=producto)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en la reserva
+        saved_instance = form.save()
+        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+        return JsonResponse({'success': True})
+    else:
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
+    
+    
+@require_POST
+def editar_evidencia_productos(request):
+    producto_id = request.POST.get('producto_id')
+    print(producto_id)
+    pedido = get_object_or_404(Pedido, pk=producto_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    form = PedidoFormEditarEvidencia(request.POST, request.FILES, instance=producto_id)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en la reserva
+        saved_instance = form.save()
+        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+        return JsonResponse({'success': True})
+    else:
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})

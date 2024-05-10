@@ -418,7 +418,7 @@
                             <div class="collapse" id="products">
                                 <ul class="nav flex-column sub-menu">
                                     {% if "Listar Productos" in request.session.permisos %}
-                                    <li class="nav-item"> <a class="nav-link" href="productos.html"> Productos </a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'pedidos:listar_productos' %}"> Productos </a></li>
                                     {% endif %}
                                     {% if "Listar Tipo Productos" in request.session.permisos %}
                                     <li class="nav-item"> <a class="nav-link" href="tipo_productos.html"> T. Productos
