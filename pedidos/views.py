@@ -68,7 +68,7 @@ def editar_evidencia_pedido(request):
 
     # Validamos el formulario
     if form.is_valid():
-        # Guardamos los cambios en la reserva
+        # Guardamos los cambios en el pedido
         saved_instance = form.save()
         print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
         return JsonResponse({'success': True})
