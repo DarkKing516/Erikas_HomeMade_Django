@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from usuarios.models import Usuario
+from django.utils import timezone
 from datetime import datetime
 
 
@@ -30,6 +31,16 @@ class CreatePedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
         fields = ['id_Usuario', 'fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total', 'evidencia_pago', 'estado_pedido']
+        widgets = {
+            'fecha_pedido': forms.DateTimeInput(attrs={'type': 'datetime-local'}),  # Usa DateTimeInput para fechas y horas
+            'fecha_pedido': forms.DateTimeInput(attrs={'class': 'form-input', 'placeholder': 'Fecha', 'type': 'datetime-local'})
+        }
+        
+    def clean_fecha_pedido(self):
+        fecha_pedido = self.cleaned_data.get('fecha_pedido')
+        if fecha_pedido and fecha_pedido.date() < datetime.now().date():
+            raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
+        return fecha_pedido
 
 
 class PedidoFormEditarEvidencia(forms.ModelForm):
@@ -37,7 +48,18 @@ class PedidoFormEditarEvidencia(forms.ModelForm):
 
     class Meta:
         model = Pedido
-        fields = [ 'evidencia_pago']
+        fields = ['evidencia_pago']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pedido = self.instance
+
+        # Verificar si el estado del pedido es "Por hacer"
+        if pedido.estado_pedido != 'Por hacer':
+            raise forms.ValidationError("No se puede cambiar la evidencia de pago si el estado del pedido no es 'Por hacer'.")
+
+        return cleaned_data
+
         
         
         
@@ -46,15 +68,18 @@ class PedidoFormEditar(forms.ModelForm):
         model = Pedido
         fields = ['fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total']
 
+    def clean_fecha_pedido(self):
+        fecha_pedido = self.cleaned_data.get('fecha_pedido')
 
+        # Convertir fecha_pedido a datetime.date
+        fecha_pedido_date = fecha_pedido.date()
 
-        def clean_fecha_pedido(self):
-            fecha_pedido = self.cleaned_data.get('fecha_pedido')
-            if fecha_pedido < datetime.now().date():
-                raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
-            elif fecha_pedido < self.instance.fecha.date():
-                raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha del pedido actual.")
-            return fecha_pedido
+        if fecha_pedido_date < datetime.now().date():
+            raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
+        elif fecha_pedido_date < self.instance.fechaCreacion_pedido.date():
+            raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha de creación del pedido.")
+
+        return fecha_pedido
         
 #------------------------------------------------------------productos---------------------------------------------------------
 

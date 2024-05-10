@@ -7,7 +7,9 @@
 <h1>Crear Nuevo Rol</h1>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.nombre_rol }}
+    {{ form.estado_rol }}
+    {{ form.permisos }}
     <button type="submit">Guardar</button>
 </form>
 
@@ -26,10 +28,17 @@
 <script>
     $(document).ready(function () {
         $('#id_permisos').select2({
-            placeholder: 'Selecciona los permisos'
+            placeholder: 'Selecciona los permisos',
+            // theme: "classic",
+            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+            closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
         });
     });
 </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+
 {% if not request.session.usuario_id %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";

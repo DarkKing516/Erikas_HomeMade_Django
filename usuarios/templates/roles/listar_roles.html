@@ -27,6 +27,7 @@
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
 
 
+
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
@@ -156,6 +157,12 @@
                             <div class="form-group">
                                 <label for="estado">Estado</label>
                                 {{ form.estado_rol }}
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="estado">Permisos</label>
+                                {{ form.permisos }}
                             </div>
                         </div>
                     </div>
@@ -477,7 +484,39 @@
             });
     }
 </script>
+<script>
+    $(document).ready(function () {
+        $('.select2').select2({ // Inicializar Select2 para todos los elementos con la clase 'select2'
+            theme: 'bootstrap4', // Opcional: cambia el tema a Bootstrap 4 para que coincida con tu estilo
+            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+            placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
+            closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+        });
+    });
 
+</script>
+<script>
+    $(document).ready(function () {
+        $('#id_permisos').select2({
+            placeholder: 'Selecciona los permisos',
+            theme: "classic",
+            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+            closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+        });
+    });
+</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<style>
+    /* Estilo para resaltar el elemento seleccionado en la lista desplegable */
+    .select2-container--classic .select2-results__option[aria-selected=true] {
+        background-color: #007bff !important; /* Cambia el color de fondo */
+        color: #fff !important; /* Cambia el color del texto */
+    }
+</style>
 <style>
     .top {
         min-width: 9px;
@@ -514,4 +553,8 @@
 
 </script>
 {% endif %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 {% endblock %}

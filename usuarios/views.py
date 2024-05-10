@@ -132,6 +132,7 @@ def listar_roles(request):
 def crear_rol(request):
     if request.method == 'POST':
         form = RolForm(request.POST)
+        print(form)
         if form.is_valid():
             form.save()
             return redirect('usuarios:listar_roles')
