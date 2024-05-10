@@ -74,10 +74,6 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido {self.idPedido}"
     
-    # def clean(self):
-    #     if self.fecha_pedido < self.fechaCreacion_pedido:
-    #         raise ValidationError(_("La fecha de la cita no puede ser anterior a la fecha de la reserva."))
-
     class Meta:
         db_table = 'pedidos'  # Personalizando el nombre de la tabla
 
