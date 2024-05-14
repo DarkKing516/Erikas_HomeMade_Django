@@ -143,6 +143,16 @@ def listar_productos(request):
         productos = Producto.objects.all()
         return render(request, 'productos/listar_productos.html', {'productos': productos, 'formCreate': formCreate})
     
+def crear_producto(request):
+    if request.method == 'POST':
+        form = CreateProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('pedidos:listar_productos')
+    else:
+        form = CreateProductoForm()
+    return render(request, 'crear_producto.html', {'form': form})
+    
 
 @require_POST
 def editar_productos(request):
@@ -151,7 +161,7 @@ def editar_productos(request):
     producto = get_object_or_404(Producto, pk=producto_id)
 
     # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
-    form = editProductoForm(request.POST, instance=producto)
+    form = ProductoFormEditar(request.POST, instance=producto)
 
     # Validamos el formulario
     if form.is_valid():
@@ -169,10 +179,10 @@ def editar_productos(request):
 def editar_evidencia_productos(request):
     producto_id = request.POST.get('producto_id')
     print(producto_id)
-    pedido = get_object_or_404(Pedido, pk=producto_id)
+    producto = get_object_or_404(Pedido, pk=producto_id)
 
     # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
-    form = PedidoFormEditarEvidencia(request.POST, request.FILES, instance=producto_id)
+    form = ProductoFormEditarEvidencia(request.POST, request.FILES, instance=producto_id)
 
     # Validamos el formulario
     if form.is_valid():

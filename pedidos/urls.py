@@ -19,7 +19,7 @@ urlpatterns = [
     #--------------------------------productos-----------------------------------
     path('listar_productos/', views.listar_productos, name='listar_productos'),
     path('crear_productos/', views.listar_productos, name='crear_producto'),
-    path('editar_productos/', views.editar_pedido, name='editar_productos'),
+    path('editar_productos/', views.editar_productos, name='editar_producto'),
     path('editar_evidencia_productos/', views.editar_evidencia_productos, name='editar_evidencia_productos'),
     path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
 
