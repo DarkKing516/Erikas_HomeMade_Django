@@ -121,3 +121,23 @@ class ProductoFormEditarEvidencia(forms.ModelForm):
     class Meta:
         model = Producto
         fields = ['imagen']
+        
+#------------------------------------------------------------TIPO productos---------------------------------------------------------
+        
+        
+        
+class TipoProductoForm(forms.ModelForm):
+    class Meta:
+        model = TipoProducto
+        fields = ['nombre_producto', 'estado_producto']
+
+    def __init__(self, *args, **kwargs):
+        super(TipoProductoForm, self).__init__(*args, **kwargs)
+        self.fields['nombre_producto'].widget.attrs.update({'class': 'form-control'})
+        self.fields['estado_producto'].widget.attrs.update({'class': 'form-control'})
+
+
+class TipoProductoFormEditar(forms.ModelForm):
+    class Meta:
+        model = TipoProducto
+        fields = ['nombre_producto', 'estado_producto']

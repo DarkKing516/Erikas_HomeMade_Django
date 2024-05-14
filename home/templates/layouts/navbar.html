@@ -421,7 +421,7 @@
                                     <li class="nav-item"> <a class="nav-link" href="{% url 'pedidos:listar_productos' %}"> Productos </a></li>
                                     {% endif %}
                                     {% if "Listar Tipo Productos" in request.session.permisos %}
-                                    <li class="nav-item"> <a class="nav-link" href="tipo_productos.html"> T. Productos
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'pedidos:listar_tipo_producto' %}"> T. Productos
                                         </a></li>
                                     {% endif %}
                                 </ul>

@@ -1,0 +1,10 @@
+{% extends 'layouts/navbar.html' %}
+
+{% block content %}
+<h1>Crear Nuevo Tipo de Producto</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Crear Tipo de Producto</button>
+</form>
+{% endblock %}

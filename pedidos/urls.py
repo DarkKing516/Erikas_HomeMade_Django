@@ -23,7 +23,10 @@ urlpatterns = [
     path('editar_evidencia_productos/', views.editar_evidencia_productos, name='editar_evidencia_productos'),
     path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
 
+    #--------------------------------TIPO productos-----------------------------------
 
+    path('listar_tipo_producto/', views.listar_tipos_productos, name='listar_tipo_producto'),
+    path('editar_tipo_producto/', views.editar_tipo_producto, name='editar_tipo_producto'),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

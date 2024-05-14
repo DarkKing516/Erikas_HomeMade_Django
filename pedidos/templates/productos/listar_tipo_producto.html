@@ -1,0 +1,332 @@
+{% extends 'layouts/navbar.html' %}
+
+{% load static %}
+{% block content %}
+<!-- Estilos CSS -->
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- Plugin CSS -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- Estilos propios -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<!-- Bibliotecas JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+<script src="{% static 'js/reservas.js' %}"></script>
+
+<!-- Contenido principal -->
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Tipos de Producto</h4>
+                <div class="table-responsive">
+                    <table id="tipoProductoTable" class="table table-hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Nombre Producto</th>
+                                <th>Estado Producto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tipo_producto in tipos_productos %}
+                            <tr>
+                                <td>{{ tipo_producto.nombre_producto }}</td>
+                                <td>{{ tipo_producto.estado_producto }}</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-inverse-warning edit-tipo-producto"
+                                            data-toggle="modal"
+                                            data-target="#editTipoProductoModal"
+                                            data-tipo-producto="{{ tipo_producto.id }}"
+                                            data-nombre-producto="{{ tipo_producto.nombre_producto }}"
+                                            data-estado-producto="{{ tipo_producto.estado_producto }}">
+                                            <i class="mdi mdi-pencil">{{ tipo_producto.id }}</i>
+                                        </button>
+
+                                        <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
+                                            data-tipo-producto-id="{{ tipo_producto.id }}">
+                                            <i class="mdi mdi-delete"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Modal para editar Tipo de Producto -->
+                            <div class="modal fade" id="editTipoProductoModal" tabindex="-1" role="dialog"
+                                aria-labelledby="editTipoProductoModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editTipoProductoModalLabel">Editar Tipo de
+                                                Producto</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarTipoProducto(this)"
+                                                id="editarTipoProductoForm" data-tipo-producto-id="{{ tipo_producto.id }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="tipo_producto_id" value="{{ tipo_producto.id }}">
+                                                <div class="form-group">
+                                                    <label for="nombre_producto">Nombre Producto</label>
+                                                    <input type="text" class="form-control" id="nombre_producto"
+                                                        name="nombre_producto" value="{{ tipo_producto.nombre_producto }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="estado_producto">Estado Producto</label>
+                                                    <input type="text" class="form-control" id="estado_producto"
+                                                        name="estado_producto" value="{{ tipo_producto.estado_producto }}">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Guardar
+                                                        Cambios</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para crear Tipo de Producto -->
+<div class="modal fade" id="crearTipoProductoModal" tabindex="-1" role="dialog"
+    aria-labelledby="crearTipoProductoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearTipoProductoModalLabel">Crear Tipo de Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="crearTipoProductoForm" class="forms-sample" method="post" onsubmit="validateForm()">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Crear Tipo de Producto</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#tipoProductoTable')) {
+            $('#tipoProductoTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            // "pagingType": "full_numbers",
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#tipoProductoTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#tipoProductoTable_filter").detach().appendTo(".top");
+
+        // Agregar el botón de crear al lado del cuadro de búsqueda
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#crearTipoProductoModal" style="margin: 5px">Crear</button>');
+
+        // Puedes agregar más personalizaciones según tus necesidades
+    });
+
+
+
+    function validateForm() {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
+
+        // Obtener el formulario de la modal
+        const form = document.getElementById('crearTipoProductoForm');
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:listar_tipo_producto' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'La reserva se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página o realizar alguna otra acción
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.message) { // Check if a message is provided in the response
+                    // Mostrar SweetAlert de error con el mensaje recibido
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    // Mostrar SweetAlert de error con los errores de validación
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    // Mostrar SweetAlert de error genérico
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+    // Agregar evento clic para el botón edit-tipo-producto
+    $('.edit-tipo-producto').on('click', function () {
+        // Obtener la información del tipo de producto desde los atributos data
+        var tipoProductoId = $(this).data('tipo-producto-id');
+        var nombreProducto = $(this).closest('tr').find('td:eq(0)').text();
+        var estadoProducto = $(this).closest('tr').find('td:eq(1)').text();
+
+        // Llenar el modal con la información del tipo de producto
+        $('#editTipoProductoModal #tipo_producto_id').val(tipoProductoId);
+        $('#editTipoProductoModal #nombre_producto').val(nombreProducto);
+        $('#editTipoProductoModal #estado_producto').val(estadoProducto);
+
+        // Mostrar el modal
+        $('#editTipoProductoModal').modal('show');
+    });
+
+
+    function EditarTipoProducto(tipoProductoId) {
+        event.preventDefault();
+
+        const form = document.getElementById(`editarReservaform${tipoProductoId}`);
+
+        // Obtener el formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_tipo_producto' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El tipo de producto se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+</script>
+{% endblock %}

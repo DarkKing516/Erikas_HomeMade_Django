@@ -194,3 +194,74 @@ def editar_evidencia_productos(request):
         # Si el formulario no es válido, devolvemos una respuesta con los errores
         errors = dict(form.errors.items())
         return JsonResponse({'success': False, 'errors': errors})
+
+#--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
+
+
+def listar_tipos_productos(request):
+    if request.method == 'POST':
+        form = TipoProductoForm(request.POST)
+        if form.is_valid():
+            tipo_producto = form.save(commit=False)
+            # Aquí puedes realizar cualquier procesamiento adicional antes de guardar el objeto
+            tipo_producto.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'message': 'Hubo un error de validación', 'errors': errors})
+    else:
+        tipos_productos = TipoProducto.objects.all()
+        form = TipoProductoForm()
+        return render(request, 'productos/listar_tipo_producto.html', {'tipos_productos': tipos_productos, 'form': form})
+
+
+def crear_tipo_producto(request):
+    if request.method == 'POST':
+        form = TipoProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        form = TipoProductoForm()
+    return render(request, 'productos/crear_tipo_producto.html', {'form': form})
+
+@require_POST
+def editar_tipo_producto(request):
+    print(request.POST)  # Imprimir el contenido de request.POST
+    tipoProductoId = request.POST.get('tipo_producto_id')
+    tipo_producto = get_object_or_404(TipoProducto, pk=tipoProductoId)
+    
+    # Verificar si la solicitud es mediante POST
+    if request.method == 'POST':
+        # Obtener los datos del formulario y la instancia del tipo de producto
+        form = TipoProductoForm(request.POST, instance=tipo_producto)
+        
+        # Validar el formulario
+        if form.is_valid():
+            # Guardar los cambios en el tipo de producto
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, devolver una respuesta con los errores
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        # Si la solicitud no es mediante POST, renderizar el formulario para editar el tipo de producto
+        form = TipoProductoForm(instance=tipo_producto)
+        return render(request, 'editar_tipo_producto.html', {'form': form, 'tipo_producto': tipo_producto})
+
+def eliminar_tipo_producto(request):
+    if request.method == 'POST':
+        tipo_producto_id = request.POST.get('tipo_producto_id')
+        try:
+            tipo_producto = TipoProducto.objects.get(pk=tipo_producto_id)
+            tipo_producto.delete()
+            return JsonResponse({'success': True})
+        except TipoProducto.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'El tipo de producto no existe'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método no permitido'})
