@@ -274,4 +274,22 @@ def eliminar_tipo_producto(request):
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'})
 
-
+def cambiar_estado_tipo_producto(request):
+    if request.method == 'POST':
+        tipo_producto_id = request.POST.get('tipo_producto_id')
+        
+        # Obtener el tipo de producto
+        tipo_producto = TipoProducto.objects.get(pk=tipo_producto_id)
+        
+        # Cambiar el estado del tipo de producto
+        if tipo_producto.estado_producto == 'Activo':
+            tipo_producto.estado_producto = 'Inactivo'
+        else:
+            tipo_producto.estado_producto = 'Activo'
+        
+        # Guardar el cambio
+        tipo_producto.save()
+        
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})

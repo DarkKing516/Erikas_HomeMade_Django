@@ -37,7 +37,15 @@
                             {% for tipo_producto in tipos_productos %}
                             <tr>
                                 <td>{{ tipo_producto.nombre_producto }}</td>
-                                <td>{{ tipo_producto.estado_producto }}</td>
+                                <td>
+                                    {% if tipo_producto.estado_producto == 'Activo' %}
+                                    <label class="badge btn-inverse-success hover-cursor change-status"
+                                        data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">Activo</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                        data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">Inactivo</label>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-inverse-warning edit-tipo-producto"
@@ -85,9 +93,15 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="estado_producto">Estado Producto</label>
-                                                    <input type="text" class="form-control" id="estado_producto"
-                                                        name="estado_producto"
-                                                        value="{{ tipo_producto.estado_producto }}">
+                                                    <select class="form-control" id="estado_producto"
+                                                        name="estado_producto">
+                                                        <option value="Activo" {% if
+                                                            tipo_producto.estado_producto=='Activo' %}selected{% endif
+                                                            %}>Activo</option>
+                                                        <option value="Inactivo" {% if
+                                                            tipo_producto.estado_producto=='Inactivo' %}selected{% endif
+                                                            %}>Inactivo</option>
+                                                    </select>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="submit" class="btn btn-primary">Guardar
@@ -177,6 +191,8 @@
         // Agregar el botón de crear al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#crearTipoProductoModal" style="margin: 5px">Crear</button>');
 
+        // Manejar el evento de cambio de estado del pedido
+        $('#tipoProductoTable').on('click', 'td .change-status', handleChangeStatus);
         // Puedes agregar más personalizaciones según tus necesidades
     });
 
@@ -396,6 +412,59 @@
             });
         });
     });
+
+    // Función para manejar el cambio de estado del tipo de producto
+    function handleChangeStatus(event) {
+        // Obtener el tipo de producto ID
+        var tipo_producto_id = $(this).data('tipo-producto');
+
+        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        Swal.fire({
+            title: 'Cambiar Estado',
+            html: '<select class="form-control" id="estado_producto2" name="estado_producto">' +
+                '<option value="Activo">Activo</option>' +
+                '<option value="Inactivo">Inactivo</option>' +
+                '</select>',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cambiar',
+            preConfirm: () => {
+                // Obtener el valor seleccionado del select
+                var nuevoEstado = $('#estado_producto2').val();
+
+                // Enviar los datos a través de AJAX incluyendo el token CSRF
+                return fetch("{% url 'pedidos:cambiar_estado_tipo_producto' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'tipo_producto_id': tipo_producto_id,
+                        'estado_producto': nuevoEstado,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el Estado.');
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    });
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                    location.reload();
+                });
+            }
+        });
+    }
+
 
 </script>
 {% endblock %}
