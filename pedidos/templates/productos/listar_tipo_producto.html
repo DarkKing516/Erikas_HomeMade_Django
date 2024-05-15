@@ -41,24 +41,25 @@
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-inverse-warning edit-tipo-producto"
-                                            data-toggle="modal" data-target="#editTipoProductoModal"
+                                            data-toggle="modal"
+                                            data-target="#editTipoProductoModal{{ tipo_producto.idTipo_Producto }}"
                                             data-tipo-producto="{{ tipo_producto.idTipo_Producto }}"
                                             data-nombre-producto="{{ tipo_producto.nombre_producto }}"
                                             data-estado-producto="{{ tipo_producto.estado_producto }}">
                                             <i class="mdi mdi-pencil">{{ tipo_producto.idTipo_Producto }}</i>
                                         </button>
                                         <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
-                                            data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">
+                                            data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}"
+                                            value="{{ tipo_producto.idTipo_Producto }}">
                                             <i class="mdi mdi-delete">{{ tipo_producto.idTipo_Producto }}</i>
                                         </button>
-
-
                                     </div>
                                 </td>
                             </tr>
                             <!-- Modal para editar Tipo de Producto -->
-                            <div class="modal fade" id="editTipoProductoModal" tabindex="-1" role="dialog"
-                                aria-labelledby="editTipoProductoModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="editTipoProductoModal{{ tipo_producto.idTipo_Producto }}"
+                                tabindex="-1" role="dialog" aria-labelledby="editTipoProductoModalLabel"
+                                aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -69,9 +70,10 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarTipoProducto('{{ tipo_producto.id }}')"
-                                                id="editarTipoProductoForm{{ tipo_producto.id }}"
-                                                data-tipo-producto-id="{{ tipo_producto.id }}">
+                                            <form method="post"
+                                                onsubmit="EditarTipoProducto('{{ tipo_producto.idTipo_Producto }}')"
+                                                id="editarTipoProductoForm{{ tipo_producto.idTipo_Producto }}"
+                                                data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">
                                                 {% csrf_token %}
                                                 <input name="tipo_producto_id"
                                                     value="{{ tipo_producto.idTipo_Producto }}">
@@ -99,6 +101,7 @@
                                 </div>
                             </div>
                             {% endfor %}
+
                         </tbody>
                     </table>
                 </div>
@@ -253,21 +256,20 @@
 
     // Agregar evento clic para el botón edit-tipo-producto
     $('.edit-tipo-producto').on('click', function () {
-        // Obtener la información del tipo de producto (ajusta esto según tu lógica)
-        var tipoProductoInfo = {
-            tipoProductoId: $(this).data('tipo-producto-idTipo_Producto'),
-            nombreProducto: $(this).closest('tr').find('td:eq(0)').text(),
-            estadoProducto: $(this).closest('tr').find('td:eq(1)').text()
-        };
+        // Obtener la información del tipo de producto
+        var tipoProductoId = $(this).data('tipo-producto'); // Cambia a 'tipo-producto'
+        var nombreProducto = $(this).closest('tr').find('td:eq(0)').text();
+        var estadoProducto = $(this).closest('tr').find('td:eq(1)').text();
 
         // Llenar el modal con la información del tipo de producto
-        $('#editTipoProductoModal #tipo_producto_id').val(tipoProductoInfo.tipoProductoId);
-        $('#editTipoProductoModal #nombre_producto').val(tipoProductoInfo.nombreProducto);
-        $('#editTipoProductoModal #estado_producto').val(tipoProductoInfo.estadoProducto);
+        $('#editTipoProductoModal #tipo_producto_id').val(tipoProductoId);
+        $('#editTipoProductoModal #nombre_producto').val(nombreProducto);
+        $('#editTipoProductoModal #estado_producto').val(estadoProducto);
 
         // Mostrar el modal
         $('#editTipoProductoModal').modal('show');
     });
+
 
 
 
@@ -337,6 +339,7 @@
     }
 
     function eliminarTipoProducto(tipoProductoId) {
+        console.log('ID del Tipo de Producto:', tipoProductoId); // Agrega esta línea para imprimir el ID en la consola
         // Realizar la solicitud POST utilizando fetch
         fetch("{% url 'pedidos:eliminar_tipo_producto' %}", {
             method: 'POST',

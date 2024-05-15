@@ -254,15 +254,24 @@ def editar_tipo_producto(request):
         form = TipoProductoForm(instance=tipo_producto)
         return render(request, 'editar_tipo_producto.html', {'form': form, 'tipo_producto': tipo_producto})
 
+
 @require_POST
 def eliminar_tipo_producto(request):
+    print("Se recibió una solicitud para eliminar un tipo de producto")  # Mensaje de depuración
     if request.method == 'POST':
-        tipo_producto_id = request.POST.get('tipo_producto_id')
         try:
+            # Cargar los datos JSON de la solicitud
+            data = json.loads(request.body)
+            tipo_producto_id = data.get('tipo_producto_id')
+            print("ID del tipo de producto recibido en el backend:", tipo_producto_id)  # Mensaje de depuración
             tipo_producto = TipoProducto.objects.get(pk=tipo_producto_id)
             tipo_producto.delete()
             return JsonResponse({'success': True})
         except TipoProducto.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'El tipo de producto no existe'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
