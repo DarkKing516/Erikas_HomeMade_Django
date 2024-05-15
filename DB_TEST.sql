@@ -93,3 +93,33 @@ INSERT INTO `reservas` (`fecha`, `fecha_cita`, `descripcion`, `estado`, `usuario
 ('2024-05-05 15:36:33.000000', '2024-05-07 15:36:33.000000', 'Prueba 1', 'Completada', '1'),
 ('2024-05-05 15:36:33.000000', '2024-05-07 15:36:33.000000', 'Prueba 1', 'En Proceso', '2'),
 ('2024-05-05 15:36:33.000000', '2024-05-07 15:36:33.000000', 'Prueba 1', 'Completada', '1');
+
+-- Insertar Ventas de ejemplo
+INSERT INTO `ventas_venta` (`idVenta`, `fecha`, `metodo_pago`, `subtotal`, `descuento`, `iva`, `total`, `idPedido_id`) VALUES
+(NULL, '2024-05-15 20:12:22.483538', 'efectivo', '60000.00', '0.00', '11400.00', '72000.00', '4'),
+(NULL, '2024-05-15 20:12:22.483538', 'efectivo', '60000.00', '0.00', '11400.00', '72000.00', '5');
+
+-- Insertar Tipo Producto de ejemplo
+INSERT INTO `tipo_productos` (`idTipo_Producto`, `nombre_producto`, `estado_producto`) VALUE
+(NULL, 'Muñecos', 'Activo'),
+(NULL, 'Manualidades', 'Activo'),
+(NULL, 'Accesorios', 'Activo'),
+(NULL, 'Vestidos', 'Activo'),
+(NULL, 'Uniformes', 'Activo');
+
+-- Insertar Tipo Producto de ejemplo
+INSERT INTO `tipo_servicios` (`idTipo_Servicio`, `nombre_tipoServicio`, `estado_tipoServicio`) VALUES
+(NULL, 'Hacer Prendas', 'Activo'),
+(NULL, 'Hacer Manualidades', 'Activo'),
+(NULL, 'Hacer Arreglo', 'Activo'),
+(NULL, 'Coser Prenda', 'Activo'),
+(NULL, 'Hacer uniforme', 'Activo');
+
+-- Insertar Pedido de ejemplo
+INSERT INTO `pedidos` (`idPedido`, `fechaCreacion_pedido`, `fecha_pedido`, `descripcion_pedido`, `subtotal`, `iva`, `total`, `evidencia_pago`, `estado_pedido`, `id_Usuario_id`) VALUES
+(NULL, '2024-05-15 19:54:00.171933', '2024-05-15 19:49:00.000000', 'Prueba uwu', '97200.00', '18468.00', '115668.00', 'pedidos/EvidenciaFlutter.png', 'Por hacer', '2'),
+(NULL, '2024-05-15 19:55:00.171933', '2024-05-15 19:50:00.000000', 'Prueba uwu 2', '80000.00', '15200.00', '95200.00', 'pedidos/EvidenciaFlutter2.png', 'En proceso', '2'),
+(NULL, '2024-05-15 19:56:00.171933', '2024-05-15 19:51:00.000000', 'Prueba uwu 3', '70000.00', '13300.00', '83300.00', 'pedidos/EvidenciaFlutter3.png', 'Hecho', '2'),
+(NULL, '2024-05-15 19:57:00.171933', '2024-05-15 19:52:00.000000', 'Prueba uwu 4', '60000.00', '11400.00', '71400.00', 'pedidos/EvidenciaFlutter4.png', 'Entregado', '2'),
+(NULL, '2024-05-15 19:57:00.171933', '2024-05-15 19:52:00.000000', 'Prueba 1234', '60000.00', '11400.00', '71400.00', 'pedidos/EvidenciaFlutter4.png', 'Entregado', '2'),
+(NULL, '2024-05-15 19:58:00.171933', '2024-05-15 19:53:00.000000', 'Prueba uwu 5', '50000.00', '9500.00', '59500.00', 'pedidos/EvidenciaFlutter5.png', 'Cancelado', '2');
