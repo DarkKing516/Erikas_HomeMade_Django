@@ -48,11 +48,9 @@
                                             <i class="mdi mdi-pencil">{{ tipo_producto.idTipo_Producto }}</i>
                                         </button>
                                         <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
-                                            data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">
+                                            data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}" value="{{ tipo_producto.idTipo_Producto }}">
                                             <i class="mdi mdi-delete">{{ tipo_producto.idTipo_Producto }}</i>
                                         </button>
-
-
                                     </div>
                                 </td>
                             </tr>
@@ -71,7 +69,7 @@
                                         <div class="modal-body">
                                             <form method="post" onsubmit="EditarTipoProducto('{{ tipo_producto.id }}')"
                                                 id="editarTipoProductoForm{{ tipo_producto.id }}"
-                                                data-tipo-producto-id="{{ tipo_producto.id }}">
+                                                data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">
                                                 {% csrf_token %}
                                                 <input name="tipo_producto_id"
                                                     value="{{ tipo_producto.idTipo_Producto }}">
@@ -337,40 +335,41 @@
     }
 
     function eliminarTipoProducto(tipoProductoId) {
-        // Realizar la solicitud POST utilizando fetch
-        fetch("{% url 'pedidos:eliminar_tipo_producto' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ 'tipo_producto_id': tipoProductoId })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('Tipo de Producto Eliminado!', 'El tipo de producto ha sido eliminado correctamente.', 'success').then(() => {
-                        location.reload();
-                    });
-                } else {
-                    // Mostrar un mensaje de error si la eliminación falla
-                    Swal.fire({
-                        title: 'Error',
-                        text: data.message,
-                        icon: 'error'
-                    });
-                }
-            })
-            .catch(error => {
-                // Mostrar un mensaje de error en caso de un fallo en la solicitud
-                console.error('Error:', error);
+    console.log('ID del Tipo de Producto:', tipoProductoId); // Agrega esta línea para imprimir el ID en la consola
+    // Realizar la solicitud POST utilizando fetch
+    fetch("{% url 'pedidos:eliminar_tipo_producto' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ 'tipo_producto_id': tipoProductoId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Tipo de Producto Eliminado!', 'El tipo de producto ha sido eliminado correctamente.', 'success').then(() => {
+                    location.reload();
+                });
+            } else {
+                // Mostrar un mensaje de error si la eliminación falla
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un error al intentar eliminar el tipo de producto. Por favor, inténtelo de nuevo más tarde.',
+                    text: data.message,
                     icon: 'error'
                 });
+            }
+        })
+        .catch(error => {
+            // Mostrar un mensaje de error en caso de un fallo en la solicitud
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al intentar eliminar el tipo de producto. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
             });
-    }
+        });
+}
 
     document.querySelectorAll('.delete-tipo-producto').forEach(button => {
         button.addEventListener('click', function () {
