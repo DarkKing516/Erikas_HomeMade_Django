@@ -254,6 +254,7 @@ def editar_tipo_producto(request):
         form = TipoProductoForm(instance=tipo_producto)
         return render(request, 'editar_tipo_producto.html', {'form': form, 'tipo_producto': tipo_producto})
 
+@require_POST
 def eliminar_tipo_producto(request):
     if request.method == 'POST':
         tipo_producto_id = request.POST.get('tipo_producto_id')

@@ -41,18 +41,18 @@
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-inverse-warning edit-tipo-producto"
-                                            data-toggle="modal"
-                                            data-target="#editTipoProductoModal"
-                                            data-tipo-producto="{{ tipo_producto.id }}"
+                                            data-toggle="modal" data-target="#editTipoProductoModal"
+                                            data-tipo-producto="{{ tipo_producto.idTipo_Producto }}"
                                             data-nombre-producto="{{ tipo_producto.nombre_producto }}"
                                             data-estado-producto="{{ tipo_producto.estado_producto }}">
-                                            <i class="mdi mdi-pencil">{{ tipo_producto.id }}</i>
+                                            <i class="mdi mdi-pencil">{{ tipo_producto.idTipo_Producto }}</i>
+                                        </button>
+                                        <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
+                                            data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">
+                                            <i class="mdi mdi-delete">{{ tipo_producto.idTipo_Producto }}</i>
                                         </button>
 
-                                        <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
-                                            data-tipo-producto-id="{{ tipo_producto.id }}">
-                                            <i class="mdi mdi-delete"></i>
-                                        </button>
+
                                     </div>
                                 </td>
                             </tr>
@@ -69,19 +69,23 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarTipoProducto(this)"
-                                                id="editarTipoProductoForm" data-tipo-producto-id="{{ tipo_producto.id }}">
+                                            <form method="post" onsubmit="EditarTipoProducto('{{ tipo_producto.id }}')"
+                                                id="editarTipoProductoForm{{ tipo_producto.id }}"
+                                                data-tipo-producto-id="{{ tipo_producto.id }}">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="tipo_producto_id" value="{{ tipo_producto.id }}">
+                                                <input name="tipo_producto_id"
+                                                    value="{{ tipo_producto.idTipo_Producto }}">
                                                 <div class="form-group">
                                                     <label for="nombre_producto">Nombre Producto</label>
                                                     <input type="text" class="form-control" id="nombre_producto"
-                                                        name="nombre_producto" value="{{ tipo_producto.nombre_producto }}">
+                                                        name="nombre_producto"
+                                                        value="{{ tipo_producto.nombre_producto }}">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="estado_producto">Estado Producto</label>
                                                     <input type="text" class="form-control" id="estado_producto"
-                                                        name="estado_producto" value="{{ tipo_producto.estado_producto }}">
+                                                        name="estado_producto"
+                                                        value="{{ tipo_producto.estado_producto }}">
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="submit" class="btn btn-primary">Guardar
@@ -249,25 +253,29 @@
 
     // Agregar evento clic para el botón edit-tipo-producto
     $('.edit-tipo-producto').on('click', function () {
-        // Obtener la información del tipo de producto desde los atributos data
-        var tipoProductoId = $(this).data('tipo-producto-id');
-        var nombreProducto = $(this).closest('tr').find('td:eq(0)').text();
-        var estadoProducto = $(this).closest('tr').find('td:eq(1)').text();
+        // Obtener la información del tipo de producto (ajusta esto según tu lógica)
+        var tipoProductoInfo = {
+            tipoProductoId: $(this).data('tipo-producto-idTipo_Producto'),
+            nombreProducto: $(this).closest('tr').find('td:eq(0)').text(),
+            estadoProducto: $(this).closest('tr').find('td:eq(1)').text()
+        };
 
         // Llenar el modal con la información del tipo de producto
-        $('#editTipoProductoModal #tipo_producto_id').val(tipoProductoId);
-        $('#editTipoProductoModal #nombre_producto').val(nombreProducto);
-        $('#editTipoProductoModal #estado_producto').val(estadoProducto);
+        $('#editTipoProductoModal #tipo_producto_id').val(tipoProductoInfo.tipoProductoId);
+        $('#editTipoProductoModal #nombre_producto').val(tipoProductoInfo.nombreProducto);
+        $('#editTipoProductoModal #estado_producto').val(tipoProductoInfo.estadoProducto);
 
         // Mostrar el modal
         $('#editTipoProductoModal').modal('show');
     });
 
 
+
+
     function EditarTipoProducto(tipoProductoId) {
         event.preventDefault();
 
-        const form = document.getElementById(`editarReservaform${tipoProductoId}`);
+        const form = document.getElementById(`editarTipoProductoForm${tipoProductoId}`);
 
         // Obtener el formulario
         const formData = new FormData(form);
@@ -327,6 +335,64 @@
                 console.error('Error:', errors);
             });
     }
+
+    function eliminarTipoProducto(tipoProductoId) {
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:eliminar_tipo_producto' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'tipo_producto_id': tipoProductoId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Tipo de Producto Eliminado!', 'El tipo de producto ha sido eliminado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    // Mostrar un mensaje de error si la eliminación falla
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(error => {
+                // Mostrar un mensaje de error en caso de un fallo en la solicitud
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al intentar eliminar el tipo de producto. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+            });
+    }
+
+    document.querySelectorAll('.delete-tipo-producto').forEach(button => {
+        button.addEventListener('click', function () {
+            const tipoProductoId = this.getAttribute('data-tipo-producto-id');
+            console.log('ID del Tipo de Producto:', tipoProductoId); // Imprimir el ID en la consola
+            // Confirmar antes de eliminar
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarTipoProducto(tipoProductoId);
+                }
+            });
+        });
+    });
 
 </script>
 {% endblock %}
