@@ -4,6 +4,7 @@ from .forms import *
 from django.http import JsonResponse
 import json
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -338,3 +339,20 @@ def editar_tipo_servicio(request):
         errors = dict(form.errors.items())
         return JsonResponse({'success': False, 'errors': errors})
 
+def cambiar_estado_tipo_servicio(request):
+    if request.method == 'POST':
+        tipo_servicio_id = request.POST.get('tipo_servicio_id')
+        print("Tipo Servicio ID:", tipo_servicio_id)
+        
+        data = json.loads(request.body)
+        tipo_servicio_id = data.get('tipo_servicio_id')
+        print("Tipo Servicio ID:", tipo_servicio_id)
+        tipo_servicio = TipoServicio.objects.get(pk=tipo_servicio_id)
+        if tipo_servicio.estado_tipoServicio == 'Activo':
+            tipo_servicio.estado_tipoServicio = 'Inactivo'
+        else:
+            tipo_servicio.estado_tipoServicio = 'Activo'
+        tipo_servicio.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'warning': False})
