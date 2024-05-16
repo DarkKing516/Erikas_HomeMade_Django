@@ -54,12 +54,12 @@
                                             data-tipo-producto="{{ tipo_producto.idTipo_Producto }}"
                                             data-nombre-producto="{{ tipo_producto.nombre_producto }}"
                                             data-estado-producto="{{ tipo_producto.estado_producto }}">
-                                            <i class="mdi mdi-pencil">{{ tipo_producto.idTipo_Producto }}</i>
+                                            <i class="mdi mdi-pencil"></i>
                                         </button>
                                         <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
                                             data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}"
                                             value="{{ tipo_producto.idTipo_Producto }}">
-                                            <i class="mdi mdi-delete">{{ tipo_producto.idTipo_Producto }}</i>
+                                            <i class="mdi mdi-delete"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -83,7 +83,7 @@
                                                 id="editarTipoProductoForm{{ tipo_producto.idTipo_Producto }}"
                                                 data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">
                                                 {% csrf_token %}
-                                                <input name="tipo_producto_id"
+                                                <input hidden name="tipo_producto_id"
                                                     value="{{ tipo_producto.idTipo_Producto }}">
                                                 <div class="form-group">
                                                     <label for="nombre_producto">Nombre Producto</label>
