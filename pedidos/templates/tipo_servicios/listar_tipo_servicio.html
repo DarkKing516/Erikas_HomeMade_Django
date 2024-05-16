@@ -61,8 +61,8 @@
                                         </button>
                                         {% endif %}
                                         {% if 'Eliminar Tipo Servicios' in request.session.permisos %}
-                                        <a href="#" onclick="confirmarEliminar('{{ tipo_servicio.idTipo_Servicio }}')"
-                                            class="btn btn-inverse-danger delete-permiso"><i class="mdi mdi-delete"></i></a>
+                                        <a href="#" onclick="confirmarEliminarTipoServicio('{{ tipo_servicio.idTipo_Servicio }}')" class="btn btn-inverse-danger delete-tipo-servicio"><i class="mdi mdi-delete"></i></a>
+
                                         {% endif %}
                                         {% if 'Eliminar Tipo Servicios' not in request.session.permisos and 'Editar Tipo Servicios' not in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-primary">
