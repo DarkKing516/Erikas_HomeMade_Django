@@ -1,6 +1,6 @@
 from django import forms
 from .models import *
-from usuarios.models import Usuario
+from usuarios.models import *
 from django.utils import timezone
 from datetime import datetime
 
@@ -141,3 +141,29 @@ class TipoProductoFormEditar(forms.ModelForm):
     class Meta:
         model = TipoProducto
         fields = ['nombre_producto', 'estado_producto']
+        
+        
+        
+# ---------------- Tipo Servicios ----------------
+class TipoServicioForm(forms.ModelForm):
+    ESTADOS_TIPO_SERVICIO = (
+        ('Activo', 'Activo'),
+        ('Inactivo', 'Inactivo'),
+    )
+
+    estado_tipoServicio = forms.ChoiceField(choices=ESTADOS_TIPO_SERVICIO, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))
+    nombre_tipoServicio = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
+
+    class Meta:
+        model = TipoServicio
+        fields = ['nombre_tipoServicio', 'estado_tipoServicio']
+
+    def clean_nombre_tipoServicio(self):
+        nombre_tipoServicio = self.cleaned_data['nombre_tipoServicio']
+        if self.instance.pk:  # Verifica si el tipo de servicio ya existe en la base de datos
+            original_tipo_servicio = TipoServicio.objects.get(pk=self.instance.pk)
+            if original_tipo_servicio.nombre_tipoServicio == nombre_tipoServicio:
+                return nombre_tipoServicio  # El nombre del tipo de servicio no ha cambiado, no es necesario validar
+        if TipoServicio.objects.filter(nombre_tipoServicio=nombre_tipoServicio).exists():
+            raise forms.ValidationError("¡El nombre del tipo de servicio ya existe!")
+        return nombre_tipoServicio

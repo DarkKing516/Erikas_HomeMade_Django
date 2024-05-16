@@ -275,3 +275,27 @@ def eliminar_tipo_producto(request):
         return JsonResponse({'success': False, 'message': 'Método no permitido'})
 
 
+def listar_tipo_servicios(request):
+    if request.method == 'POST':
+        form = TipoServicioForm(request.POST)
+        if form.is_valid():
+            nombre_tipoServicio = form.cleaned_data['nombre_tipoServicio']
+            if TipoServicio.objects.filter(nombre_tipoServicio=nombre_tipoServicio).exists():
+                return JsonResponse({'success': False, 'message': 'Nombre Tipo de Servicio ya en uso'})
+            
+            TServicio = form.save(commit=False)
+            TServicio.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        tipo_servicios = TipoServicio.objects.all()
+        form = TipoServicioForm()
+        return render(request, 'tipo_servicios/listar_tipo_servicio.html', {'tipo_servicios': tipo_servicios, 'form': form})
+    
+def eliminar_tipo_servicios(request, tipoServicioId):
+    permiso = get_object_or_404(TipoServicio, pk=tipoServicioId)
+    permiso.delete()
+    return JsonResponse({'message': 'Tipo de Servicio eliminado correctamente'})
