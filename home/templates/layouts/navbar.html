@@ -355,13 +355,19 @@
                                 <span class="menu-title"> Home </span>
                             </a>
                         </li>
+                        
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="dashboard.html">
                                 <i class="icon-grid menu-icon"></i>
                                 <span class="menu-title"> Dashboard </span>
                             </a>
                         </li> -->
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home:catalogo' %}">
+                                <i class="mdi mdi-home menu-icon"></i>
+                                <span class="menu-title"> Catálogo </span>
+                            </a>
+                        </li>
                         {% if "Listar Roles" in request.session.permisos or "Listar Permisos" in request.session.permisos or "Editar Perfil" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#config" aria-expanded="false"
