@@ -1,0 +1,505 @@
+<title>Listar Tipo Servicios</title>
+
+{% extends 'layouts/navbar.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- endinject -->
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- End plugin css for this page -->
+<!-- inject:css -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Tipo Servicios</h4>
+                <div class="table-responsive">
+                    <table id="TServiciosTable" class="table table hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Nombre del T. Servicio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tipo_servicio in tipo_servicios %}
+                            <tr class="user-row">
+                                <td>{{ tipo_servicio.nombre_tipoServicio }}</td>
+                                <td>
+                                    {% if tipo_servicio.estado_tipoServicio == 'Activo' %}
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
+                                    data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">Activo</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
+                                    data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">Inactivo</label>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Tipo Servicios' in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-warning edit-permiso" data-toggle="modal" data-target="#editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}" data-nombre="{{ tipo_servicio.nombre_tipoServicio }}" data-estado="{{ tipo_servicio.estado_tipoServicio }}" data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">
+                                            <i class="mdi mdi-pencil"></i>
+                                        </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Tipo Servicios' in request.session.permisos %}
+                                        <a href="#" onclick="confirmarEliminar('{{ tipo_servicio.idTipo_Servicio }}')"
+                                            class="btn btn-inverse-danger delete-permiso"><i class="mdi mdi-delete"></i></a>
+                                        {% endif %}
+                                        {% if 'Eliminar Tipo Servicios' not in request.session.permisos and 'Editar Tipo Servicios' not in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-primary">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            <div class="modal fade" id="editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}Label">Editar Tipo de servicio</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarTipoDeServicioxd('{{ tipo_servicio.idTipo_Servicio }}')"
+                                                id="editarpermisoForm{{ tipo_servicio.idTipo_Servicio }}" class="forms-sample" data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="permiso_id" value="{{ tipo_servicio.idTipo_Servicio }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="nombre">Nombre</label>
+                                                            <input type="text" class="form-control" id="nombre_permiso" name="nombre_permiso"
+                                                                value="{{ tipo_servicio.nombre_permiso }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="estado_permiso">Rol</label>
+                                                            <select name="estado_permiso" class="form-control">
+                                                                <option value="A" {% if tipo_servicio.estado_tipoServicio == 'A' %}selected{% endif %}>Activo</option>
+                                                                <option value="I" {% if tipo_servicio.estado_tipoServicio == 'I' %}selected{% endif %}>Inactivo</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Tipo de Servicio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm()">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                {{ form.nombre_tipoServicio }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="estado">Estado</label>
+                                {{ form.estado_tipoServicio }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#TServiciosTable')) {
+            $('#TServiciosTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            // "pagingType": "full_numbers",
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#TServiciosTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#TServiciosTable_filter").detach().appendTo(".top");
+
+        // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        {% if "Crear Tipo Servicios" in request.session.permisos %}
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+        {% endif %}
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#TServiciosTable_filter input").addClass("form-control form-control-sm");
+
+        // Puedes agregar más personalizaciones según tus necesidades
+
+
+
+    });
+
+    function confirmarEliminar(tipoServicioId) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Estás seguro que deseas eliminar este Tipo de Servicio?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarPermiso(tipoServicioId);
+            }
+        });
+    }
+
+    function eliminarPermiso(tipoServicioId) {
+        fetch('/pedidos/eliminar_tipo_servicios/' + tipoServicioId + '/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Eliminación exitosa
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El permiso ha sido eliminado exitosamente.',
+                        'success'
+                    ).then(() => {
+                        location.reload(); // Recargar la página
+                    });
+                } else {
+                    // Manejar errores de eliminación si es necesario
+                    Swal.fire(
+                        'Error',
+                        'No se pudo eliminar el tipo_servicio.',
+                        'error'
+                    );
+                    console.error('Error al eliminar el permiso');
+                }
+            })
+            .catch(error => {
+                Swal.fire(
+                    'Error de red',
+                    'Hubo un error de red al intentar eliminar el tipo_servicio.',
+                    'error'
+                );
+                console.error('Error de red:', error);
+            });
+    }
+
+
+    $('#TServiciosTable').on('click', 'td .change-status.btn-inverse-success, td .change-status.btn-inverse-danger', function () {
+        // Obtener la fila correspondiente
+        var row = $(this).closest('tr');
+
+        // Obtener el permiso ID
+        var permiso_id = $(this).data('permiso-id');
+
+        // Mostrar SweetAlert de confirmación
+        Swal.fire({
+            title: 'Cambiar estado',
+            text: '¿Estás seguro de cambiar el estado?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cambiar estado'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Cambiar la clase y el texto de la etiqueta según el nuevo estado
+                var estadoLabel = row.find('.change-status');
+
+                // Realizar la solicitud fetch para cambiar el estado del permiso
+                return fetch("{% url 'usuarios:cambiar_estado_permiso' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'permiso_id': permiso_id,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el estado.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Mostrar SweetAlert de éxito
+                        Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success');
+                        // Actualizar la etiqueta de estado en la interfaz
+                        if (estadoLabel.hasClass('btn-inverse-success')) {
+                            estadoLabel.removeClass('btn-inverse-success').addClass('btn-inverse-danger');
+                            estadoLabel.text('Inactivo');
+                        } else {
+                            estadoLabel.removeClass('btn-inverse-danger').addClass('btn-inverse-success');
+                            estadoLabel.text('Activo');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('¡Error!', 'El estado no se ha cambiado.', 'error');
+                    });
+            }
+        });
+    });
+
+    function validateForm() {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById('myForm');
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:listar_tipo_servicios' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'El Tipo de Servicio se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.message) { // Check if a message is provided in the response
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+    function EditarTipoDeServicioxd(idTipoServicioxd) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        // const form = document.getElementById('editarUsuarioForm');
+        const form = document.getElementById(`TipoServicioForm${idTipoServicioxd}`);
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_tipo_servicio' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'Los datos del tipo de servicio se han actualizado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+</script>
+
+<style>
+    .top {
+        min-width: 9px;
+        display: flex;
+        min-height: 50px;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+
+    .swal2-popup {
+        min-height: 400px !important;
+    }
+
+    .swal2-select {
+        width: 100%;
+        margin: 10px 0;
+        /* Puedes ajustar según sea necesario */
+
+    }
+
+    .table.dataTable.no-footer {
+        border-bottom: none
+    }
+</style>
+
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% elif "Listar Tipo Servicios" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}
+{% endblock %}

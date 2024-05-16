@@ -28,7 +28,12 @@ urlpatterns = [
     path('listar_tipo_producto/', views.listar_tipos_productos, name='listar_tipo_producto'),
     path('editar_tipo_producto/', views.editar_tipo_producto, name='editar_tipo_producto'),
     path('eliminar_tipo_producto/', views.eliminar_tipo_producto, name='eliminar_tipo_producto'),
+    path('cambiar_estado_tipo_producto/', views.cambiar_estado_tipo_producto, name='cambiar_estado_tipo_producto'),
 
 
+    # -------------------------------- Tipo de Servicios --------------------------------
+    path('listar_tipo_servicios/', views.listar_tipo_servicios, name='listar_tipo_servicios'),
+    path('eliminar_tipo_servicios/', views.eliminar_tipo_servicios, name='eliminar_tipo_servicios'),
+    path('editar_tipo_servicio/', views.editar_tipo_servicio, name='editar_tipo_servicio'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
