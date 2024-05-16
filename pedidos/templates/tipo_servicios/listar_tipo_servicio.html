@@ -84,23 +84,23 @@
                                         </div>
                                         <div class="modal-body">
                                             <form method="post" onsubmit="EditarTipoDeServicioxd('{{ tipo_servicio.idTipo_Servicio }}')"
-                                                id="editarpermisoForm{{ tipo_servicio.idTipo_Servicio }}" class="forms-sample" data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">
+                                                id="TipoServicioForm{{ tipo_servicio.idTipo_Servicio }}" class="forms-sample" data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="permiso_id" value="{{ tipo_servicio.idTipo_Servicio }}">
+                                                <input type="hidden" name="idTipo_Servicio" value="{{ tipo_servicio.idTipo_Servicio }}">
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="nombre">Nombre</label>
-                                                            <input type="text" class="form-control" id="nombre_permiso" name="nombre_permiso"
-                                                                value="{{ tipo_servicio.nombre_permiso }}">
+                                                            <input type="text" class="form-control" id="nombre_tipoServicio" name="nombre_tipoServicio"
+                                                                value="{{ tipo_servicio.nombre_tipoServicio }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="estado_permiso">Rol</label>
-                                                            <select name="estado_permiso" class="form-control">
-                                                                <option value="A" {% if tipo_servicio.estado_tipoServicio == 'A' %}selected{% endif %}>Activo</option>
-                                                                <option value="I" {% if tipo_servicio.estado_tipoServicio == 'I' %}selected{% endif %}>Inactivo</option>
+                                                            <label for="estado_tipoServicio">Estado</label>
+                                                            <select name="estado_tipoServicio" class="form-control">
+                                                                <option value="Activo" {% if tipo_servicio.estado_tipoServicio == 'Activo' %}selected{% endif %}>Activo</option>
+                                                                <option value="Inactivo" {% if tipo_servicio.estado_tipoServicio == 'Inactivo' %}selected{% endif %}>Inactivo</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -220,7 +220,8 @@
 
     });
 
-    function confirmarEliminar(tipoServicioId) {
+    // JavaScript
+    function confirmarEliminarTipoServicio(tipoServicioId) {
         Swal.fire({
             title: '¿Estás seguro?',
             text: "¿Estás seguro que deseas eliminar este Tipo de Servicio?",
@@ -231,13 +232,13 @@
             confirmButtonText: 'Sí, eliminarlo'
         }).then((result) => {
             if (result.isConfirmed) {
-                eliminarPermiso(tipoServicioId);
+                eliminarTipoServicio(tipoServicioId);
             }
         });
     }
 
-    function eliminarPermiso(tipoServicioId) {
-        fetch('/pedidos/eliminar_tipo_servicios/' + tipoServicioId + '/', {
+    function eliminarTipoServicio(tipoServicioId) {
+        fetch('/pedidos/eliminar_tipo_servicio/' + tipoServicioId + '/', {
             method: 'DELETE',
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}'
@@ -248,7 +249,7 @@
                     // Eliminación exitosa
                     Swal.fire(
                         '¡Eliminado!',
-                        'El permiso ha sido eliminado exitosamente.',
+                        'El tipo de servicio ha sido eliminado exitosamente.',
                         'success'
                     ).then(() => {
                         location.reload(); // Recargar la página
@@ -257,21 +258,23 @@
                     // Manejar errores de eliminación si es necesario
                     Swal.fire(
                         'Error',
-                        'No se pudo eliminar el tipo_servicio.',
+                        'No se pudo eliminar el tipo de servicio.',
                         'error'
                     );
-                    console.error('Error al eliminar el permiso');
+                    console.error('Error al eliminar el tipo de servicio');
                 }
             })
             .catch(error => {
                 Swal.fire(
                     'Error de red',
-                    'Hubo un error de red al intentar eliminar el tipo_servicio.',
+                    'Hubo un error de red al intentar eliminar el tipo de servicio.',
                     'error'
                 );
                 console.error('Error de red:', error);
             });
     }
+
+    
 
 
     $('#TServiciosTable').on('click', 'td .change-status.btn-inverse-success, td .change-status.btn-inverse-danger', function () {
@@ -403,14 +406,13 @@
 
     function EditarTipoDeServicioxd(idTipoServicioxd) {
         event.preventDefault();
-
+    
         // Obtener el formulario
-        // const form = document.getElementById('editarUsuarioForm');
         const form = document.getElementById(`TipoServicioForm${idTipoServicioxd}`);
-
+    
         // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
-
+    
         // Realizar la solicitud POST utilizando fetch
         fetch("{% url 'pedidos:editar_tipo_servicio' %}", {
             method: 'POST',
@@ -419,50 +421,49 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                // Verificar si la solicitud fue exitosa
-                if (data.success) {
-                    // Mostrar SweetAlert de éxito
-                    Swal.fire({
-                        title: '¡Actualización exitosa!',
-                        text: 'Los datos del tipo de servicio se han actualizado correctamente.',
-                        icon: 'success',
-                        onClose: () => {
-                            // Recargar la página
-                            location.reload();
-                        }
-                    }).then(() => {
+        .then(response => response.json())
+        .then(data => {
+            // Verificar si la solicitud fue exitosa
+            if (data.success) {
+                // Mostrar SweetAlert de éxito
+                Swal.fire({
+                    title: '¡Actualización exitosa!',
+                    text: 'Los datos del tipo de servicio se han actualizado correctamente.',
+                    icon: 'success',
+                    onClose: () => {
                         location.reload();
-                    });
-                } else if (data.errors) { // Verificar si hay errores de validación
-                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
-                    for (const key in data.errors) {
-                        errorMessage += `${data.errors[key]}<br>`;
                     }
-                    Swal.fire({
-                        title: 'Error',
-                        html: errorMessage,
-                        icon: 'error',
-                    });
-                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
-                        icon: 'error'
-                    });
+                }).then(() => {
+                    location.reload();
+                });
+            } else if (data.errors) { // Verificar si hay errores de validación
+                let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                for (const key in data.errors) {
+                    errorMessage += `${data.errors[key]}<br>`;
                 }
-            })
-            .catch(errors => {
-                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    html: errorMessage,
+                    icon: 'error',
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
                     icon: 'error'
                 });
-                console.error('Error:', errors);
+            }
+        })
+        .catch(errors => {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
             });
+            console.error('Error:', errors);
+        });
     }
+    
 </script>
 
 <style>

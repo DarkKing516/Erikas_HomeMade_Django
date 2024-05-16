@@ -317,14 +317,17 @@ def listar_tipo_servicios(request):
         return render(request, 'tipo_servicios/listar_tipo_servicio.html', {'tipo_servicios': tipo_servicios, 'form': form})
     
 def eliminar_tipo_servicios(request, tipoServicioId):
-    permiso = get_object_or_404(TipoServicio, pk=tipoServicioId)
-    permiso.delete()
+    print("ID recibido:", tipoServicioId)  # Imprime el ID recibido en la consola
+    tipo_servicio = get_object_or_404(TipoServicio, pk=tipoServicioId)
+    tipo_servicio.delete()
     return JsonResponse({'message': 'Tipo de Servicio eliminado correctamente'})
 
 
 @require_POST
 def editar_tipo_servicio(request):
-    tipoServicioId = request.POST.get('tipoServicioId')
+    tipoServicioId = request.POST.get('idTipo_Servicio')  # Renombramos la variable aquí
+    print("ID del tipo de servicio:", tipoServicioId)
+
     tipoServicio = get_object_or_404(TipoServicio, pk=tipoServicioId)
 
     # Creamos una instancia del formulario con los datos recibidos y la instancia del tipoServicio
