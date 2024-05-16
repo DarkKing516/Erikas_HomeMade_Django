@@ -1,0 +1,58 @@
+{% extends 'layouts/navbar.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Catálogo de Productos</h2>
+    
+    <!-- Filtro por tipo de producto -->
+    <div class="form-group">
+        <label for="filterTipoProducto">Filtrar por Tipo de Producto</label>
+        <select class="form-control" id="filterTipoProducto">
+            <option value="">Todos</option>
+            {% for tipo in tipos_productos %}
+            <option value="{{ tipo.idTipo_Producto }}">{{ tipo.nombre_producto }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Productos en cartas -->
+    <div class="row" id="productCards">
+        {% for producto in productos %}
+        <div class="col-md-4 mb-4 product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
+            <div class="card h-100">
+                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">{{ producto.descripcion }}</p>
+                    <p class="card-text"><strong>Precio: </strong>${{ producto.precio }}</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Cantidad: {{ producto.cantidad }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- JavaScript para el filtrado -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filter = document.getElementById('filterTipoProducto');
+    const productCards = document.querySelectorAll('.product-card');
+
+    filter.addEventListener('change', function() {
+        const selectedTipo = this.value;
+        productCards.forEach(card => {
+            const tipoProducto = card.getAttribute('data-tipo-producto');
+            if (selectedTipo === "" || selectedTipo === tipoProducto) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
