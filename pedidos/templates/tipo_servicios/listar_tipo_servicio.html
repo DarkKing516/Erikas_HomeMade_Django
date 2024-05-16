@@ -48,10 +48,10 @@
                                 <td>
                                     {% if tipo_servicio.estado_tipoServicio == 'Activo' %}
                                     <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
-                                    data-permiso-id="{{ tipo_servicio.idTipo_Servicio }}">Activo</label>
+                                    data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">Activo</label>
                                     {% else %}
                                     <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
-                                    data-permiso-id="{{ tipo_servicio.idTipo_Servicio }}">Inactivo</label>
+                                    data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
