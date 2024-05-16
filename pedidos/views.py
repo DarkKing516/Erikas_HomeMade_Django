@@ -321,6 +321,7 @@ def eliminar_tipo_servicios(request, tipoServicioId):
     permiso.delete()
     return JsonResponse({'message': 'Tipo de Servicio eliminado correctamente'})
 
+
 @require_POST
 def editar_tipo_servicio(request):
     tipoServicioId = request.POST.get('tipoServicioId')
