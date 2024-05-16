@@ -139,7 +139,20 @@
             <div class="modal-body">
                 <form id="crearTipoProductoForm" class="forms-sample" method="post" onsubmit="validateForm()">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    
+                    <!-- Render other fields normally -->
+                    {{ form.nombre_producto.label_tag }}
+                    {{ form.nombre_producto }}
+
+                    <!-- Custom select for estado_producto -->
+                    <div class="form-group">
+                        <label for="id_estado_producto">Estado Producto</label>
+                        <select class="form-control" id="id_estado_producto" name="estado_producto">
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+
                     <div class="form-row">
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary mr-2">Crear Tipo de Producto</button>
@@ -151,6 +164,7 @@
         </div>
     </div>
 </div>
+
 
 
 <script>
