@@ -47,11 +47,10 @@
                                 <td>{{ tipo_servicio.nombre_tipoServicio }}</td>
                                 <td>
                                     {% if tipo_servicio.estado_tipoServicio == 'Activo' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
-                                    data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">Activo</label>
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}" data-esteeseliddelservicio-id="{{ tipo_servicio.idTipo_Servicio }}">Activo</label>
                                     {% else %}
                                     <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
-                                    data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">Inactivo</label>
+                                    data-esteeseliddelservicio-id="{{ tipo_servicio.idTipo_Servicio }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -279,8 +278,8 @@
         // Obtener la fila correspondiente
         var row = $(this).closest('tr');
 
-        // Obtener el permiso ID
-        var permiso_id = $(this).data('permiso-id');
+        // Obtener el tipoServicio-id
+        var tipo_servicio_id = $(this).data('esteeseliddelservicio-id');
 
         // Mostrar SweetAlert de confirmación
         Swal.fire({
@@ -297,14 +296,14 @@
                 var estadoLabel = row.find('.change-status');
 
                 // Realizar la solicitud fetch para cambiar el estado del permiso
-                return fetch("{% url 'usuarios:cambiar_estado_permiso' %}", {
+                return fetch("{% url 'pedidos:cambiar_estado_tipo_servicio' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
                     body: JSON.stringify({
-                        'permiso_id': permiso_id,
+                        'tipo_servicio_id': tipo_servicio_id,
                     }),
                 })
                     .then(response => {
