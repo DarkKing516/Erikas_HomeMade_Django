@@ -320,3 +320,21 @@ def eliminar_tipo_servicios(request, tipoServicioId):
     permiso.delete()
     return JsonResponse({'message': 'Tipo de Servicio eliminado correctamente'})
 
+@require_POST
+def editar_tipo_servicio(request):
+    tipoServicioId = request.POST.get('tipoServicioId')
+    tipoServicio = get_object_or_404(TipoServicio, pk=tipoServicioId)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del tipoServicio
+    form = TipoServicioForm(request.POST, instance=tipoServicio)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en el tipoServicio
+        form.save()
+        return JsonResponse({'success': True})
+    else:
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
+
