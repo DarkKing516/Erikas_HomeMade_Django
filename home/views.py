@@ -11,7 +11,7 @@ import random
 
 def index(request):
     productos = list(Producto.objects.all())
-    productos_aleatorios = random.sample(productos, 7)
+    productos_aleatorios = random.sample(productos, 3)
     return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios})
 
 

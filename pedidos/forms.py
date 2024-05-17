@@ -172,8 +172,8 @@ class TipoServicioForm(forms.ModelForm):
 
 class ServicioForm(forms.ModelForm):
     ESTADOS_SERVICIO = (
-        ('Activo', 'Activo'),
-        ('Inactivo', 'Inactivo'),
+        ('A', 'Activo'),
+        ('I', 'Inactivo'),
     )
 
     estado_servicio = forms.ChoiceField(choices=ESTADOS_SERVICIO, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))

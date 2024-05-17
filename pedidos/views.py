@@ -378,5 +378,6 @@ def listar_servicios(request):
             return JsonResponse({'success': False, 'errors': errors})
     else:
         servicios = Servicio.objects.all()
+        tipo_servicios = TipoServicio.objects.all()
         form = ServicioForm()
-        return render(request, 'servicios/listar_servicios.html', {'servicios': servicios, 'form': form})
+        return render(request, 'servicios/listar_servicios.html', {'servicios': servicios, 'tipo_servicios': tipo_servicios, 'form': form})
