@@ -195,6 +195,19 @@ def editar_evidencia_productos(request):
         # Si el formulario no es válido, devolvemos una respuesta con los errores
         errors = dict(form.errors.items())
         return JsonResponse({'success': False, 'errors': errors})
+    
+
+def eliminar_producto(request):
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto_id')
+        try:
+            producto = Producto.objects.get(pk=producto_id)
+            producto.delete()
+            return JsonResponse({'success': True})
+        except Producto.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'El producto no existe.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
 
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
