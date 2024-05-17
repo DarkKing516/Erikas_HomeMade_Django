@@ -360,3 +360,23 @@ def cambiar_estado_tipo_servicio(request):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'warning': False})
+    
+    
+def listar_servicios(request):
+    if request.method == 'POST':
+        form = ServicioForm(request.POST, request.FILES)
+        if form.is_valid():
+            nombre_servicio = form.cleaned_data['nombre_servicio']
+            if Servicio.objects.filter(nombre_servicio=nombre_servicio).exists():
+                return JsonResponse({'success': False, 'message': 'Nombre del servicio ya en uso'})
+            
+            servicio = form.save(commit=False)
+            servicio.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        servicios = Servicio.objects.all()
+        form = ServicioForm()
+        return render(request, 'servicios/listar_servicios.html', {'servicios': servicios, 'form': form})

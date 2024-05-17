@@ -1,0 +1,181 @@
+<title>Listar Servicios</title>
+
+{% extends 'layouts/navbar.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- endinject -->
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- End plugin css for this page -->
+<!-- inject:css -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Servicios</h4>
+                <div class="table-responsive">
+                    <table id="TServiciosTable" class="table table hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Nombre del T. Servicio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tipo_servicio in tipo_servicios %}
+                            <tr class="user-row">
+                                <td>{{ tipo_servicio.nombre_tipoServicio }}</td>
+                                <td>
+                                    {% if tipo_servicio.estado_tipoServicio == 'Activo' %}
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}" data-esteeseliddelservicio-id="{{ tipo_servicio.idTipo_Servicio }}">Activo</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Tipo Servicios' in request.session.permisos %}change-status{% endif %}"
+                                    data-esteeseliddelservicio-id="{{ tipo_servicio.idTipo_Servicio }}">Inactivo</label>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Tipo Servicios' in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-warning edit-permiso" data-toggle="modal" data-target="#editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}" data-nombre="{{ tipo_servicio.nombre_tipoServicio }}" data-estado="{{ tipo_servicio.estado_tipoServicio }}" data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">
+                                            <i class="mdi mdi-pencil"></i>
+                                        </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Tipo Servicios' in request.session.permisos %}
+                                        <a href="#" onclick="confirmarEliminarTipoServicio('{{ tipo_servicio.idTipo_Servicio }}')" class="btn btn-inverse-danger delete-tipo-servicio"><i class="mdi mdi-delete"></i></a>
+
+                                        {% endif %}
+                                        {% if 'Eliminar Tipo Servicios' not in request.session.permisos and 'Editar Tipo Servicios' not in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-primary">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            <div class="modal fade" id="editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editTipoServicioModal{{ tipo_servicio.idTipo_Servicio }}Label">Editar Tipo de servicio</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarTipoDeServicioxd('{{ tipo_servicio.idTipo_Servicio }}')"
+                                                id="TipoServicioForm{{ tipo_servicio.idTipo_Servicio }}" class="forms-sample" data-tipoServicio-id="{{ tipo_servicio.idTipo_Servicio }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="idTipo_Servicio" value="{{ tipo_servicio.idTipo_Servicio }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="nombre">Nombre</label>
+                                                            <input type="text" class="form-control" id="nombre_tipoServicio" name="nombre_tipoServicio"
+                                                                value="{{ tipo_servicio.nombre_tipoServicio }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="estado_tipoServicio">Estado</label>
+                                                            <select name="estado_tipoServicio" class="form-control">
+                                                                <option value="Activo" {% if tipo_servicio.estado_tipoServicio == 'Activo' %}selected{% endif %}>Activo</option>
+                                                                <option value="Inactivo" {% if tipo_servicio.estado_tipoServicio == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#TServiciosTable')) {
+            $('#TServiciosTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            // "pagingType": "full_numbers",
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#TServiciosTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#TServiciosTable_filter").detach().appendTo(".top");
+
+        // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        {% if "Crear Tipo Servicios" in request.session.permisos %}
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+        {% endif %}
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#TServiciosTable_filter input").addClass("form-control form-control-sm");
+
+        // Puedes agregar más personalizaciones según tus necesidades
+
+
+
+    });
+
+    
+
+</script>
