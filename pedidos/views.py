@@ -258,22 +258,20 @@ def editar_tipo_producto(request):
 def cambiar_estado_tipo_producto(request):
     if request.method == 'POST':
         tipo_producto_id = request.POST.get('tipo_producto_id')
+        print("Tipo Servicio ID:", tipo_producto_id)
         
-        # Obtener el tipo de producto
+        data = json.loads(request.body)
+        tipo_producto_id = data.get('tipo_producto_id')
+        print("Tipo Servicio ID:", tipo_producto_id)
         tipo_producto = TipoProducto.objects.get(pk=tipo_producto_id)
-        
-        # Cambiar el estado del tipo de producto
         if tipo_producto.estado_producto == 'Activo':
             tipo_producto.estado_producto = 'Inactivo'
         else:
             tipo_producto.estado_producto = 'Activo'
-        
-        # Guardar el cambio
         tipo_producto.save()
-        
         return JsonResponse({'success': True})
     else:
-        return JsonResponse({'success': False})
+        return JsonResponse({'warning': False})
 
 
 @require_POST
