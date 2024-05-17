@@ -21,7 +21,7 @@
     <!-- Productos en cartas -->
     <div class="row" id="productCards">
         {% for producto in productos %}
-        {% if producto.estado_catalogo %}
+        {% if producto.estado_catalogo and producto.id_TipoProducto.estado_producto == "Activo" %}
         <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
             <div class="custom-card">
                 <div class="custom-card-image-container">
@@ -29,7 +29,7 @@
                 </div>
                 <p class="custom-card-title">{{ producto.nombre }}</p>
                 <p class="custom-card-des">{{ producto.descripcion }}</p>
-                <p class="custom-card-price">${{ producto.precio }}</p>
+                <p class="custom-card-price">${{ producto.precio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
             </div>
         </div>
         {% endif %}
