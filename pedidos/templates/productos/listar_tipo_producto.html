@@ -39,11 +39,9 @@
                                 <td>{{ tipo_producto.nombre_producto }}</td>
                                 <td>
                                     {% if tipo_producto.estado_producto == 'Activo' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status"
-                                        data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">Activo</label>
+                                    <label class="badge btn-inverse-success hover-cursor change-status" data-cambiarestado-id="{{ tipo_producto.idTipo_Producto }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status"
-                                        data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}">Inactivo</label>
+                                    <label class="badge btn-inverse-danger hover-cursor change-status" data-cambiarestado-id="{{ tipo_producto.idTipo_Producto }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -205,9 +203,6 @@
         // Agregar el botón de crear al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#crearTipoProductoModal" style="margin: 5px">Crear</button>');
 
-        // Manejar el evento de cambio de estado del pedido
-        $('#tipoProductoTable').on('click', 'td .change-status', handleChangeStatus);
-        // Puedes agregar más personalizaciones según tus necesidades
     });
 
 
@@ -478,6 +473,66 @@
             }
         });
     }
+
+
+    $('#tipoProductoTable').on('click', 'td .change-status.btn-inverse-success, td .change-status.btn-inverse-danger', function () {
+        // Obtener la fila correspondiente
+        var row = $(this).closest('tr');
+
+        // Obtener el tipoServicio-id
+        var tipo_producto_id = $(this).data('cambiarestado-id');
+
+        // Mostrar SweetAlert de confirmación
+        Swal.fire({
+            title: 'Cambiar estado',
+            text: '¿Estás seguro de cambiar el estado?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cambiar estado'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Cambiar la clase y el texto de la etiqueta según el nuevo estado
+                var estadoLabel = row.find('.change-status');
+
+                // Realizar la solicitud fetch para cambiar el estado del permiso
+                return fetch("{% url 'pedidos:cambiar_estado_tipo_producto' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'tipo_producto_id': tipo_producto_id,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el estado.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Mostrar SweetAlert de éxito
+                        Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success');
+                        // Actualizar la etiqueta de estado en la interfaz
+                        if (estadoLabel.hasClass('btn-inverse-success')) {
+                            estadoLabel.removeClass('btn-inverse-success').addClass('btn-inverse-danger');
+                            estadoLabel.text('Inactivo');
+                        } else {
+                            estadoLabel.removeClass('btn-inverse-danger').addClass('btn-inverse-success');
+                            estadoLabel.text('Activo');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('¡Error!', 'El estado no se ha cambiado.', 'error');
+                    });
+            }
+        });
+    });
+
 
 
 </script>

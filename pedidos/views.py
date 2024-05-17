@@ -195,6 +195,20 @@ def editar_evidencia_productos(request):
         # Si el formulario no es válido, devolvemos una respuesta con los errores
         errors = dict(form.errors.items())
         return JsonResponse({'success': False, 'errors': errors})
+    
+
+def eliminar_producto(request):
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto_id')
+        print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
+        try:
+            producto = Producto.objects.get(pk=producto_id)
+            producto.delete()
+            return JsonResponse({'success': True})
+        except Producto.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'El producto no existe.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
 
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
@@ -258,22 +272,20 @@ def editar_tipo_producto(request):
 def cambiar_estado_tipo_producto(request):
     if request.method == 'POST':
         tipo_producto_id = request.POST.get('tipo_producto_id')
+        print("Tipo Servicio ID:", tipo_producto_id)
         
-        # Obtener el tipo de producto
+        data = json.loads(request.body)
+        tipo_producto_id = data.get('tipo_producto_id')
+        print("Tipo Servicio ID:", tipo_producto_id)
         tipo_producto = TipoProducto.objects.get(pk=tipo_producto_id)
-        
-        # Cambiar el estado del tipo de producto
         if tipo_producto.estado_producto == 'Activo':
             tipo_producto.estado_producto = 'Inactivo'
         else:
             tipo_producto.estado_producto = 'Activo'
-        
-        # Guardar el cambio
         tipo_producto.save()
-        
         return JsonResponse({'success': True})
     else:
-        return JsonResponse({'success': False})
+        return JsonResponse({'warning': False})
 
 
 @require_POST
