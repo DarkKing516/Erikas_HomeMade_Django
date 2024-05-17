@@ -38,5 +38,10 @@ urlpatterns = [
     path('editar_tipo_servicio/', views.editar_tipo_servicio, name='editar_tipo_servicio'),
     path('editar_tipo_servicio/<int:tipoServicioId>/', views.editar_tipo_servicio, name='editar_tipo_servicio'),
     path('cambiar_estado_tipo_servicio/', views.cambiar_estado_tipo_servicio, name='cambiar_estado_tipo_servicio'),
+    
+    # -------------------------------- Servicios --------------------------------
+    path('listar_servicios/', views.listar_servicios, name='listar_servicios'),
+
+    
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

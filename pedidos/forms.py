@@ -167,3 +167,32 @@ class TipoServicioForm(forms.ModelForm):
         if TipoServicio.objects.filter(nombre_tipoServicio=nombre_tipoServicio).exists():
             raise forms.ValidationError("¡El nombre del tipo de servicio ya existe!")
         return nombre_tipoServicio
+    
+    # ---------------- Servicios ----------------
+
+class ServicioForm(forms.ModelForm):
+    ESTADOS_SERVICIO = (
+        ('Activo', 'Activo'),
+        ('Inactivo', 'Inactivo'),
+    )
+
+    estado_servicio = forms.ChoiceField(choices=ESTADOS_SERVICIO, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))
+    estado_catalogo = forms.BooleanField(required=False, label='Estado en Catálogo', widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    nombre_servicio = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Servicio'}))
+    descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción', 'rows': 3}))
+    precio_servicio = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}))
+    img = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+
+    class Meta:
+        model = Servicio
+        fields = ['id_TipoServicio', 'nombre_servicio', 'descripcion', 'precio_servicio', 'estado_servicio', 'estado_catalogo', 'img']
+
+    def clean_nombre_servicio(self):
+        nombre_servicio = self.cleaned_data['nombre_servicio']
+        if self.instance.pk:  # Verifica si el servicio ya existe en la base de datos
+            original_servicio = Servicio.objects.get(pk=self.instance.pk)
+            if original_servicio.nombre_servicio == nombre_servicio:
+                return nombre_servicio  # El nombre del servicio no ha cambiado, no es necesario validar
+        if Servicio.objects.filter(nombre_servicio=nombre_servicio).exists():
+            raise forms.ValidationError("¡El nombre del servicio ya existe!")
+        return nombre_servicio
