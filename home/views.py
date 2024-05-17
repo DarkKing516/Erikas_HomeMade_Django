@@ -3,15 +3,16 @@ from django.http import HttpResponse
 from .models import *
 from reservas.forms import *
 from pedidos.models import Producto, TipoProducto
-
+import random
 
 # Create your views here.
 # def index(request):
 #     return HttpResponse("Pagina principal")
 
 def index(request):
-    form = ReservaFormIndex()
-    return render(request, 'index.html', {'form': form})
+    productos = list(Producto.objects.all())
+    productos_aleatorios = random.sample(productos, 7)
+    return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios})
 
 
 
