@@ -200,6 +200,7 @@ def editar_evidencia_productos(request):
 def eliminar_producto(request):
     if request.method == 'POST':
         producto_id = request.POST.get('producto_id')
+        print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
         try:
             producto = Producto.objects.get(pk=producto_id)
             producto.delete()

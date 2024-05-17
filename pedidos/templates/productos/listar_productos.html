@@ -690,7 +690,7 @@
             'Content-Type': 'application/json',
             'X-CSRFToken': '{{ csrf_token }}'
         },
-        body: JSON.stringify({'producto_id': parseInt(producto_id)})
+        body: JSON.stringify({'producto_id': producto_id})
     })
     .then(response => response.json())
     .then(data => {
@@ -720,11 +720,11 @@
 
 document.querySelectorAll('.delete-producto').forEach(button => {
     button.addEventListener('click', function() {
-        const productoId = this.getAttribute('data-producto-id');
-        // Confirmar antes de eliminar
+        const productoId = $(this).data('producto-id');
+        // Confirmar antes de eliminar, mostrando el ID del producto en la alerta
         Swal.fire({
             title: '¿Estás seguro?',
-            text: 'Esta acción no se puede deshacer',
+            text: `Esta acción no se puede deshacer para el producto con ID ${productoId}. ¿Deseas continuar?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -738,6 +738,7 @@ document.querySelectorAll('.delete-producto').forEach(button => {
         });
     });
 });
+
 
 
 </script>
