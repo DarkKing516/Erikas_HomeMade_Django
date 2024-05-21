@@ -10,12 +10,25 @@ import random
 #     return HttpResponse("Pagina principal")
 
 def index(request):
+    form = ReservaFormIndex()
+    tamanos_imagenes = [
+        {'width': 310, 'height': 585},
+        {'width': 631, 'height': 587},
+        {'width': 311, 'height': 289},
+        {'width': 631, 'height': 289},
+        {'width': 311, 'height': 289},
+        {'width': 311, 'height': 289},
+        {'width': 311, 'height': 289},
+    ]
+    # tamanos_imagenes = tamanos_imagenes[:len(productos_aleatorios)]
     productos = list(Producto.objects.all())
     if len(productos) >= 1:
         productos_aleatorios = random.sample(productos, min(7, len(productos)))
+        tamanos_imagenes = tamanos_imagenes[:len(productos_aleatorios)]
     else:
         productos_aleatorios = productos
-    return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios})
+    productos_tamanos = zip(productos_aleatorios, tamanos_imagenes)
+    return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios, 'tamanos_imagenes': tamanos_imagenes, 'form': form, 'productos_tamanos': productos_tamanos})
 
 
 
