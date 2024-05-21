@@ -130,13 +130,14 @@
   <div class="container-fluidd container-inset-0 isotope-wrap">
     <div class="row row-10 gutters-10 isotope" data-isotope-layout="masonry" data-isotope-group="gallery" data-lightgallery="group">
       
-      {% for producto, tamano_imagen in productos_tamanos %}
-      <div class="col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop">
+      {% for producto, tamano_imagen, clase_tamanos_imagene in productos_tamanos %}
+      <div class="{{ clase_tamanos_imagene.class }}">
           <!-- Thumbnail Mary-->
           <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInLeft">
               <a class="thumbnail-mary-figure" href="{% static 'images/gallery-' %}{{ forloop.counter }}-1200x800-original.jpg" data-lightgallery="item">
-                  <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="{{ tamano_imagen.width }}" height="{{ tamano_imagen.height }}" />
+                  <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="{{ tamano_imagen.width }}" height="{{ tamano_imagen.height }}"/>
               </a>
+              
               <div class="thumbnail-mary-caption">
                   <div>
                       <h6 class="thumbnail-mary-title"><a href="{% url 'home:catalogo' %}">{{ producto.nombre }}</a></h6>

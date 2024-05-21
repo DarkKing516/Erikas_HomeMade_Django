@@ -20,14 +20,24 @@ def index(request):
         {'width': 311, 'height': 289},
         {'width': 311, 'height': 289},
     ]
+    clase_tamanos_imagenes = [
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
+    ]
     # tamanos_imagenes = tamanos_imagenes[:len(productos_aleatorios)]
     productos = list(Producto.objects.all())
+    productos_aleatorios = productos
     if len(productos) >= 1:
-        productos_aleatorios = random.sample(productos, min(7, len(productos)))
+        productos_aleatorios = random.sample(productos, min(6, len(productos)))
         tamanos_imagenes = tamanos_imagenes[:len(productos_aleatorios)]
     else:
         productos_aleatorios = productos
-    productos_tamanos = zip(productos_aleatorios, tamanos_imagenes)
+    productos_tamanos = zip(productos_aleatorios, tamanos_imagenes, clase_tamanos_imagenes)
     return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios, 'tamanos_imagenes': tamanos_imagenes, 'form': form, 'productos_tamanos': productos_tamanos})
 
 
