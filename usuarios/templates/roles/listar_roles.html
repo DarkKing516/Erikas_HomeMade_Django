@@ -107,6 +107,25 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="permisos">Permisos</label>
+                                                            <!-- <select name="permisos" class="select2" id="id_permisosEditarform{{ rol.id }}" multiple>
+                                                                <option value="1">Listar Usuarios</option>
+                                                                <option value="2">Crear Usuarios</option>
+                                                                <option value="3">Editar Usuarios</option>
+                                                                <option value="4">Editar Rol Usuarios</option>
+                                                                <option value="5">Editar Estado Usuarios</option>
+                                                            </select> -->
+                                                            <select name="permisos" class="select2 form-control js-states form-control" multiple>
+                                                                {% for permiso in permisos %}
+                                                                    <option value="{{ permiso.id }}" {% if permiso in rol.permisos.all %}selected{% endif %}>{{ permiso.nombre_permiso }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
 
                                                 <!-- Botones -->
@@ -121,6 +140,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#id_permisosEditarform{{ rol.id }}').select2({
+                                        placeholder: 'Selecciona los permisos',
+                                        theme: "classic",
+                                        width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+                                        closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+                                    });
+                                });
+                            </script>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -487,7 +516,7 @@
 <script>
     $(document).ready(function () {
         $('.select2').select2({ // Inicializar Select2 para todos los elementos con la clase 'select2'
-            theme: 'bootstrap4', // Opcional: cambia el tema a Bootstrap 4 para que coincida con tu estilo
+            theme: 'classic', // Opcional: cambia el tema a Bootstrap 4 para que coincida con tu estilo
             width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
             placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
             closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
@@ -498,6 +527,14 @@
 <script>
     $(document).ready(function () {
         $('#id_permisos').select2({
+            placeholder: 'Selecciona los permisos',
+            theme: "classic",
+            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+            closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+        });
+    });
+    $(document).ready(function () {
+        $('#id_permisosEditar').select2({
             placeholder: 'Selecciona los permisos',
             theme: "classic",
             width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor

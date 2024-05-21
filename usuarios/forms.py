@@ -12,7 +12,7 @@ class RolForm(forms.ModelForm):
     nombre_rol = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
 
     # permisos = forms.ModelMultipleChoiceField(queryset=Permiso.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
-    permisos = forms.ModelMultipleChoiceField(queryset=Permiso.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'select2 form-control js-states form-control'}), required=False)
+    permisos = forms.ModelMultipleChoiceField(queryset=Permiso.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'select2 form-control js-states form-control select2-hidden-accessible', 'id': 'id_permisos'}), required=False)
 
 
 
