@@ -122,18 +122,18 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="usuario">nombre</label>
-                                                            <input type="text" class="form-control" id="nombre"
+                                                            <input type="text" class="form-control" id="nombre" name="nombre"
                                                                  value="{{ producto.nombre }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="fecha">descripcion</label>
-                                                            <input type="datetime-loca" class="form-control" id="descripcion" 
+                                                            <input type="datetime-loca" class="form-control" id="descripcion" name="descripcion" 
                                                                 value="{{ producto.descripcion }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="precio">precio</label>
-                                                            <input type="text" class="form-control" id="precio" 
-                                                                value="{{ producto.precio }}">
+                                                            <input type="number" class="form-control" id="precio" name="precio"
+                                                                value="{{ producto.precio|floatformat:"0" }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="estado_producto">Estado del Producto</label>
@@ -151,7 +151,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="cantidad">cantidad</label>
-                                                            <input type="text" class="form-control" id="cantidad" 
+                                                            <input type="text" class="form-control" id="cantidad" name="cantidad"
                                                                 value="{{ producto.cantidad }}">
                                                         </div>
                                                         
@@ -185,7 +185,7 @@
                                         <div class="modal-body">
                                             <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-Producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="pedido_id" value="{{ producto.idProducto }}">
+                                                <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
                                                 <div class="form-row">
                                                     <div class="col-md-12">
                                                         <div class="form-group">
@@ -742,6 +742,37 @@ document.querySelectorAll('.delete-producto').forEach(button => {
 
 
 </script>
+
+<script>
+    // Función para mostrar la vista previa de la imagen al seleccionar un archivo
+    function mostrarVistaPrevia(input, elementoVistaPrevia) {
+        var archivo = input.files[0];
+        var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
+
+        // Verificar si se seleccionó un archivo
+        if (archivo) {
+            // Crear un objeto URL para el archivo seleccionado
+            var objetoURL = URL.createObjectURL(archivo);
+
+            // Mostrar la vista previa de la imagen
+            imagenVistaPrevia.style.display = 'block';
+            imagenVistaPrevia.src = objetoURL;
+        } else {
+            // Ocultar la vista previa si no se seleccionó ningún archivo
+            imagenVistaPrevia.style.display = 'none';
+        }
+    }
+
+    // Agregar un evento change a cada input de tipo file para mostrar la vista previa
+    var inputsEvidenciaPago = document.querySelectorAll('.evidencia_pago_input');
+    inputsEvidenciaPago.forEach(function(input) {
+        input.addEventListener('change', function(event) {
+            var elementoVistaPrevia = this.dataset.vistaPrevia;
+            mostrarVistaPrevia(this, elementoVistaPrevia);
+        });
+    });
+</script>
+
 
 
 
