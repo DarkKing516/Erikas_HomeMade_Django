@@ -50,7 +50,7 @@
                             <tr class="pedido-row">
                                 <td>{{ servicio.nombre_servicio }}</td>
                                 <td>{{ servicio.id_TipoServicio }}</td>
-                                <td>${{ servicio.precio_servicio }}</td>
+                                <td>${{ servicio.precio_servicio|floatformat:"0" }}</td>
                                 <td>
                                     {% if servicio.estado_servicio == 'A' %}
                                     <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Servicio' in request.session.permisos %}change-status{% endif %}"
@@ -129,7 +129,7 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarPedidoxd('{{ servicio.idServicio }}')" id="editarPedidoform{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
+                                            <form method="post" onsubmit="EditarServicioxd('{{ servicio.idServicio }}')" id="editarServicioform{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="servicio_id" value="{{ servicio.idServicio }}">
                                                 <div class="form-row">
@@ -226,6 +226,51 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="modal fade" id="editevidenciapedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Evidecia
+                                                Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarEvidenciaPedidoxd('{{ pedido.idPedido }}')" id="EditarEvidenciaForm{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
+                                                            <br>
+                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
                             {% endfor %}
                         </tbody>
@@ -283,6 +328,70 @@
 
 
     });
+
+    function EditarServicioxd(servicioid) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById(`editarServicioform${servicioid}`);
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_pedido' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El servicio se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
 
     
 
