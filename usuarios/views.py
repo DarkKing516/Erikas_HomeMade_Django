@@ -126,8 +126,9 @@ def listar_roles(request):
             return JsonResponse({'success': False, 'errors': errors})
     else:
         roles = Rol.objects.all()
+        permisos = Permiso.objects.all()
         form = RolForm()
-        return render(request, 'roles/listar_roles.html', {'roles': roles, 'form': form})
+        return render(request, 'roles/listar_roles.html', {'roles': roles, 'form': form, 'permisos': permisos,})
 
 def crear_rol(request):
     if request.method == 'POST':
