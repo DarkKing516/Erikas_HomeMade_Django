@@ -77,7 +77,7 @@
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-inverse-warning edit-servicio"
-                                        data-toggle="modal" data-target="#editpedidoModal{{ servicio.idServicio }}"
+                                        data-toggle="modal" data-target="#editServicioModal{{ servicio.idServicio }}"
                                         data-servicio="{{ servicio.servicio.idServicio }}" 
                                         data-nombre="{{ servicio.nombre_servicio }}"
                                         data-Tservicio="{{ servicio.id_TipoServicio }}"
@@ -87,7 +87,7 @@
                                         <i class="mdi mdi-pencil"></i>
                                         </button>
                                         
-                                        <button type="button" class="btn btn-inverse-primary" data-servicio-id="{{ servicio.idServicio }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ servicio.idServicio }}">
+                                        <button type="button" class="btn btn-inverse-primary" data-servicio-id="{{ servicio.idServicio }}" data-toggle="modal" data-target="#editimgModal{{ servicio.idServicio }}">
                                             <i class="bi bi-file-earmark-image"></i>
                                         </button> 
                                         <button type="button" class="btn btn-inverse-danger delete-servicio" data-servicio-id="{{ servicio.idServicio }}">
@@ -97,7 +97,7 @@
                                 </td>
                             </tr>
 
-                            <!-- Modal Detalle del Pedido -->
+                            <!-- Modal Detalle del Servicio -->
                             <div class="modal fade" id="detalleServicioModal{{ servicio.idServicio }}" tabindex="-1" role="dialog" aria-labelledby="detalleServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
@@ -116,33 +116,33 @@
                             </div>
 
                     
-                            <!-- Modal para editar Pedido -->
-                            <div class="modal fade" id="editPedidoModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editPedidoModal{{ servicio.idServicio }}Label" aria-hidden="true">
+                            <!-- Modal para editar Servicio -->
+                            <div class="modal fade" id="editServicioModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editPedidoModal{{ servicio.idServicio }}Label">Editar
+                                            <h5 class="modal-title" id="editServicioModal{{ servicio.idServicio }}Label">Editar
                                                 Servicio</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarServicioxd('{{ servicio.idServicio }}')" id="editarServicioform{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
+                                            <form method="post" onsubmit="EditarServicioxd('{{ servicio.idServicio }}')" id="Servicioform{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="servicio_id" value="{{ servicio.idServicio }}">
+                                                <input type="hidden" name="idServicio" value="{{ servicio.idServicio }}">
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="nombre">Nombre</label>
-                                                            <input type="text" class="form-control" id="nombre"
+                                                            <label for="nombre_servicio">Nombre</label>
+                                                            <input type="text" class="form-control" id="nombre_servicio" name="nombre_servicio"
                                                                  value="{{ servicio.nombre_servicio }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="precio">Precio</label>
-                                                            <input type="text" class="form-control" id="precio"
-                                                                 value="{{ servicio.precio_servicio }}">
+                                                            <input type="number" class="form-control" name="precio_servicio" id="precio"
+                                                                 value="{{ servicio.precio_servicio|floatformat:"0" }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -181,31 +181,30 @@
                                 </div>
                             </div>
                             
-                            <div class="modal fade" id="editevidenciapedidoModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editPedidoModal{{ servicio.idServicio }}Label" aria-hidden="true">
+                            <div class="modal fade" id="editimgModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editPedidoModal{{ servicio.idServicio }}Label">Editar Evidecia
+                                            <h5 class="modal-title" id="editServicioModal{{ servicio.idServicio }}Label">Editar Evidecia
                                                 Pedido</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarEvidenciaPedidoxd('{{ servicio.idServicio }}')" id="EditarEvidenciaForm{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
+                                            <form method="post" onsubmit="EditarImgServicioxd('{{ servicio.idServicio }}')" id="EditarImgForm{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
                                                 {% csrf_token %}
-                                                <input type="hidden" name="pedido_id" value="{{ servicio.idServicio }}">
+                                                <input type="hidden" name="idServicio" value="{{ servicio.idServicio }}">
                                                 <div class="form-row">
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+                                                            <p><strong>Imagen actual:</strong> <img src="{{ servicio.img.url }}" alt="Imagen " style="max-width: 100%; height: auto;"></p>
                                                         </div>
-                                                        
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ servicio.idServicio }}">
+                                                            <input type="file" name="img" class="form-control-file img_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ servicio.idServicio }}">
                                                             <br>
                                                             <img src="#" id="imagen_vista_previa_{{ servicio.idServicio }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                                                         </div>
@@ -217,51 +216,6 @@
                                                 <div class="form-row">
                                                     <div class="col-md-12">
                                                         <button class="btn btn-primary mr-2">Editar {{ servicio.idServicio }}</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal fade" id="editevidenciapedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Evidecia
-                                                Pedido</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="post" onsubmit="EditarEvidenciaPedidoxd('{{ pedido.idPedido }}')" id="EditarEvidenciaForm{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
-                                                            <br>
-                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                                <!-- Botones -->
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Cancelar</button>
                                                     </div>
@@ -284,8 +238,8 @@
 <script>
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
-        if ($.fn.DataTable.isDataTable('#TServiciosTable')) {
-            $('#TServiciosTable').DataTable().destroy();
+        if ($.fn.DataTable.isDataTable('#ServiciosTable')) {
+            $('#ServiciosTable').DataTable().destroy();
         }
 
         // Configuración personalizada para DataTables
@@ -311,17 +265,17 @@
         };
 
         // Inicializar DataTable con la configuración personalizada
-        var table = $('#TServiciosTable').DataTable(dataTableConfig);
+        var table = $('#ServiciosTable').DataTable(dataTableConfig);
 
         // Mover el cuadro de búsqueda al lugar deseado
-        $("#TServiciosTable_filter").detach().appendTo(".top");
+        $("#ServiciosTable_filter").detach().appendTo(".top");
 
         // Mover el botón "Agregar" al lado del cuadro de búsqueda
         {% if "Crear Tipo Servicios" in request.session.permisos %}
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
         {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
-        $("#TServiciosTable_filter input").addClass("form-control form-control-sm");
+        $("#ServiciosTable_filter input").addClass("form-control form-control-sm");
 
         // Puedes agregar más personalizaciones según tus necesidades
 
@@ -329,11 +283,36 @@
 
     });
 
-    function EditarServicioxd(servicioid) {
+    // Agregar evento clic para el botón edit-servicio
+    $('.edit-servicio').on('click', function () {
+        // Obtener la información del pedido
+        var servicioInfo = {
+            Servicio: "Datos del servicio",
+            Tipo_servicio: "Datos del tipo de servicio",
+            Nombre_servicio: "Datos del nombre del servicio",
+            descripcion: "descripcion servicio",
+            precio_servicio: "precio servicio",
+            img: "imagen del servicio",
+
+        };
+
+        // Llenar la modal con la información del pedido
+        $('#editServicioModal #Servicio').val(servicioInfo.Servicio);
+        $('#editServicioModal #id_TipoServicio').val(servicioInfo.Tipo_servicio);
+        $('#editServicioModal #nombre_servicio').val(servicioInfo.Nombre_servicio);
+        $('#editServicioModal #precio_servicio').val(servicioInfo.precio_servicio);
+        $('#editServicioModal #img').val(servicioInfo.img);
+
+
+        // Mostrar la modal
+        $('#editServicioModal').modal('show');
+    });
+
+    function EditarServicioxd(servicioxd) {
         event.preventDefault();
 
         // Obtener el formulario
-        const form = document.getElementById(`editarServicioform${servicioid}`);
+        const form = document.getElementById(`Servicioform${servicioxd}`);
         // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
 
@@ -341,7 +320,7 @@
         const formString = form.outerHTML;
 
         // Realizar la solicitud POST utilizando fetch
-        fetch("{% url 'pedidos:editar_pedido' %}", {
+        fetch("{% url 'pedidos:editar_servicio' %}", {
             method: 'POST',
             body: formData,
             headers: {
@@ -392,6 +371,126 @@
                 console.error('Error:', errors);
             });
     }
+
+    function EditarImgServicioxd(servicioId) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById(`EditarImgForm${servicioId}`);
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_img_servicio' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El la imagen del servicio se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+        // Función para mostrar la vista previa de la imagen al seleccionar un archivo
+    function mostrarVistaPrevia(input, elementoVistaPrevia) {
+        var archivo = input.files[0];
+        var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
+
+        // Verificar si se seleccionó un archivo
+        if (archivo) {
+            // Crear un objeto URL para el archivo seleccionado
+            var objetoURL = URL.createObjectURL(archivo);
+
+            // Mostrar la vista previa de la imagen
+            imagenVistaPrevia.style.display = 'block';
+            imagenVistaPrevia.src = objetoURL;
+        } else {
+            // Ocultar la vista previa si no se seleccionó ningún archivo
+            imagenVistaPrevia.style.display = 'none';
+        }
+    }
+
+    // Agregar un evento change a cada input de tipo file para mostrar la vista previa
+    var inputsEvidenciaPago = document.querySelectorAll('.img_input');
+    inputsEvidenciaPago.forEach(function(input) {
+        input.addEventListener('change', function(event) {
+            var elementoVistaPrevia = this.dataset.vistaPrevia;
+            mostrarVistaPrevia(this, elementoVistaPrevia);
+        });
+    });
+
+
+        // Función para mostrar la vista previa de la imagen al seleccionar un archivo
+        function mostrarVistaPrevia(input, elementoVistaPrevia) {
+            var archivo = input.files[0];
+            var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
+    
+            // Verificar si se seleccionó un archivo
+            if (archivo) {
+                // Crear un objeto URL para el archivo seleccionado
+                var objetoURL = URL.createObjectURL(archivo);
+    
+                // Mostrar la vista previa de la imagen
+                imagenVistaPrevia.style.display = 'block';
+                imagenVistaPrevia.src = objetoURL;
+            } else {
+                // Ocultar la vista previa si no se seleccionó ningún archivo
+                imagenVistaPrevia.style.display = 'none';
+            }
+        }
+    
+        // Agregar un evento change a cada input de tipo file para mostrar la vista previa
+        var inputsEvidenciaPago = document.querySelectorAll('.img_input');
+        inputsEvidenciaPago.forEach(function(input) {
+            input.addEventListener('change', function(event) {
+                var elementoVistaPrevia = this.dataset.vistaPrevia;
+                mostrarVistaPrevia(this, elementoVistaPrevia);
+            });
+        });
 
     
 

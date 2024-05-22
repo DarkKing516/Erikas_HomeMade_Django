@@ -42,6 +42,10 @@ urlpatterns = [
     
     # -------------------------------- Servicios --------------------------------
     path('listar_servicios/', views.listar_servicios, name='listar_servicios'),
+    path('editar_servicio/', views.editar_servicio, name='editar_servicio'),
+    path('editar_servicio/<int:ServicioId>/', views.editar_servicio, name='editar_servicio'),
+    path('editar_img_servicio/', views.editar_img_servicio, name='editar_img_servicio'),
+
 
     
 

@@ -196,3 +196,29 @@ class ServicioForm(forms.ModelForm):
         if Servicio.objects.filter(nombre_servicio=nombre_servicio).exists():
             raise forms.ValidationError("¡El nombre del servicio ya existe!")
         return nombre_servicio
+    
+class EditarServicioForm(forms.ModelForm):
+    nombre_servicio = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Servicio'}))
+    descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción', 'rows': 3}))
+    precio_servicio = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}))
+
+    class Meta:
+        model = Servicio
+        fields = ['id_TipoServicio', 'nombre_servicio', 'descripcion', 'precio_servicio']
+
+    def clean_nombre_servicio(self):
+        nombre_servicio = self.cleaned_data['nombre_servicio']
+        if self.instance.pk:  # Verifica si el servicio ya existe en la base de datos
+            original_servicio = Servicio.objects.get(pk=self.instance.pk)
+            if original_servicio.nombre_servicio == nombre_servicio:
+                return nombre_servicio  # El nombre del servicio no ha cambiado, no es necesario validar
+        if Servicio.objects.filter(nombre_servicio=nombre_servicio).exists():
+            raise forms.ValidationError("¡El nombre del servicio ya existe!")
+        return nombre_servicio
+    
+class ServicioFormEditarImg(forms.ModelForm):
+    img = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+
+    class Meta:
+        model = Servicio
+        fields = ['img']

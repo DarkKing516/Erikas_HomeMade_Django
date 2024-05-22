@@ -393,3 +393,44 @@ def listar_servicios(request):
         tipo_servicios = TipoServicio.objects.all()
         form = ServicioForm()
         return render(request, 'servicios/listar_servicios.html', {'servicios': servicios, 'tipo_servicios': tipo_servicios, 'form': form})
+    
+    
+@require_POST
+def editar_servicio(request):
+    ServicioId = request.POST.get('idServicio')  # Renombramos la variable aquí
+    print("ID del servicio:", ServicioId)
+
+    servicio = get_object_or_404(Servicio, pk=ServicioId)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del Servicio
+    form = EditarServicioForm(request.POST, instance=servicio)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en el Servicio
+        form.save()
+        return JsonResponse({'success': True})
+    else:
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
+    
+@require_POST
+def editar_img_servicio(request):
+    servicio_id = request.POST.get('servicio_id')
+    print(servicio_id)
+    servicio = get_object_or_404(Servicio, pk=servicio_id)
+
+    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    form = ServicioFormEditarImg(request.POST, request.FILES, instance=servicio)
+
+    # Validamos el formulario
+    if form.is_valid():
+        # Guardamos los cambios en el servicio
+        saved_instance = form.save()
+        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+        return JsonResponse({'success': True})
+    else:
+        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        errors = dict(form.errors.items())
+        return JsonResponse({'success': False, 'errors': errors})
