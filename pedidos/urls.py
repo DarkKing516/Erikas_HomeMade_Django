@@ -44,7 +44,12 @@ urlpatterns = [
     path('listar_servicios/', views.listar_servicios, name='listar_servicios'),
     path('editar_servicio/', views.editar_servicio, name='editar_servicio'),
     path('editar_servicio/<int:ServicioId>/', views.editar_servicio, name='editar_servicio'),
+    path('eliminar_servicio/', views.eliminar_servicio, name='eliminar_servicio'),
+    path('eliminar_servicio/<int:ServicioId>/', views.eliminar_servicio, name='eliminar_servicio'),
     path('editar_img_servicio/', views.editar_img_servicio, name='editar_img_servicio'),
+    path('listar_servicios/', views.listar_servicios, name='listar_servicios'),
+    path('cambiar_estado_servicio/', views.cambiar_estado_servicio, name='cambiar_estado_servicio'),
+    path('cambiar_estado_servicio_catalogo/', views.cambiar_estado_servicio_catalogo, name='cambiar_estado_servicio_catalogo'),
 
 
     

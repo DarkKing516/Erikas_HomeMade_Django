@@ -62,11 +62,11 @@
                                 </td>
                                 <td>
                                     {% if servicio.estado_catalogo == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Servicio' in request.session.permisos %}change-status{% endif %}"
-                                    data-usuario-id="{{ servicio.idServicio }}">Activo</label>
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Servicio Catalogo' in request.session.permisos %}change-catalog-status{% endif %}"
+                                    data-servicio-id="{{ servicio.idServicio }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Servicio' in request.session.permisos %}change-status{% endif %}"
-                                    data-usuario-id="{{ servicio.idServicio }}">Inactivo</label>
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Servicio Catalogo' in request.session.permisos %}change-catalog-status{% endif %}"
+                                    data-servicio-id="{{ servicio.idServicio }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -90,9 +90,7 @@
                                         <button type="button" class="btn btn-inverse-primary" data-servicio-id="{{ servicio.idServicio }}" data-toggle="modal" data-target="#editimgModal{{ servicio.idServicio }}">
                                             <i class="bi bi-file-earmark-image"></i>
                                         </button> 
-                                        <button type="button" class="btn btn-inverse-danger delete-servicio" data-servicio-id="{{ servicio.idServicio }}">
-                                            <i class="mdi mdi-delete"></i>
-                                        </button> 
+                                        <a href="#" onclick="confirmarEliminarServicio('{{ servicio.idServicio }}')" class="btn btn-inverse-danger delete-servicio"><i class="mdi mdi-delete"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -180,14 +178,14 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
+                            <!-- Modal de editar imagen del servicio -->
                             <div class="modal fade" id="editimgModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editServicioModal{{ servicio.idServicio }}Label">Editar Evidecia
-                                                Pedido</h5>
+                                            <h5 class="modal-title" id="editServicioModal{{ servicio.idServicio }}Label">Editar Imagen de servicio</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -199,7 +197,7 @@
                                                 <div class="form-row">
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <p><strong>Imagen actual:</strong> <img src="{{ servicio.img.url }}" alt="Imagen " style="max-width: 100%; height: auto;"></p>
+                                                            <p><strong>Imagen actual:</strong> <img src="{{ servicio.img.url }}" alt="img" style="max-width: 100%; height: auto;"></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
@@ -235,7 +233,136 @@
     </div>
 </div>
 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro de Servicio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form method="post" onsubmit="validateServicioForm('{{ servicio.idServicio }}')" id="servicioForm{{ servicio.idServicio }}" class="forms-sample" data-pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre_servicio">Nombre</label>
+                                {{ form.nombre_servicio }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_TipoServicio">Tipo de servicio</label>
+                                {{ form.id_TipoServicio }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="precio_servicio">Precio</label>
+                                {{ form.precio_servicio }}
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="evidencia_pago">Imagen</label>
+                                <input type="file" name="img" class="form-control-file img_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ servicio.idServicio }}">
+                                <br>
+                                <img src="#" id="imagen_vista_previa_{{ servicio.idServicio }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="descripcion">Descripción</label>
+                                {{ form.descripcion }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
+
+    // Función para validar el formulario de creación de pedido
+    function validateServicioForm(servicioId) {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
+    
+        // Obtener el formulario correspondiente al pedido
+        const form = document.getElementById(`servicioForm${servicioId}`);
+    
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+    
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:listar_servicios' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'El servicio se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.message) { // Check if a message is provided in the response
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
         if ($.fn.DataTable.isDataTable('#ServiciosTable')) {
@@ -372,11 +499,11 @@
             });
     }
 
-    function EditarImgServicioxd(servicioId) {
+    function EditarImgServicioxd(idServicio) {
         event.preventDefault();
 
         // Obtener el formulario
-        const form = document.getElementById(`EditarImgForm${servicioId}`);
+        const form = document.getElementById(`EditarImgForm${idServicio}`);
         // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
 
@@ -465,32 +592,206 @@
 
 
         // Función para mostrar la vista previa de la imagen al seleccionar un archivo
-        function mostrarVistaPrevia(input, elementoVistaPrevia) {
-            var archivo = input.files[0];
-            var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
+    function mostrarVistaPrevia(input, elementoVistaPrevia) {
+        var archivo = input.files[0];
+        var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
     
-            // Verificar si se seleccionó un archivo
-            if (archivo) {
-                // Crear un objeto URL para el archivo seleccionado
-                var objetoURL = URL.createObjectURL(archivo);
+        // Verificar si se seleccionó un archivo
+         if (archivo) {
+            // Crear un objeto URL para el archivo seleccionado
+            var objetoURL = URL.createObjectURL(archivo);
     
-                // Mostrar la vista previa de la imagen
-                imagenVistaPrevia.style.display = 'block';
-                imagenVistaPrevia.src = objetoURL;
-            } else {
-                // Ocultar la vista previa si no se seleccionó ningún archivo
-                imagenVistaPrevia.style.display = 'none';
-            }
+            // Mostrar la vista previa de la imagen
+            imagenVistaPrevia.style.display = 'block';
+            imagenVistaPrevia.src = objetoURL;
+        } else {
+             // Ocultar la vista previa si no se seleccionó ningún archivo
+            imagenVistaPrevia.style.display = 'none';
         }
+    }
     
-        // Agregar un evento change a cada input de tipo file para mostrar la vista previa
-        var inputsEvidenciaPago = document.querySelectorAll('.img_input');
-        inputsEvidenciaPago.forEach(function(input) {
-            input.addEventListener('change', function(event) {
-                var elementoVistaPrevia = this.dataset.vistaPrevia;
-                mostrarVistaPrevia(this, elementoVistaPrevia);
-            });
+    // Agregar un evento change a cada input de tipo file para mostrar la vista previa
+    var inputsEvidenciaPago = document.querySelectorAll('.img_input');
+    inputsEvidenciaPago.forEach(function(input) {
+        input.addEventListener('change', function(event) {
+            var elementoVistaPrevia = this.dataset.vistaPrevia;
+            mostrarVistaPrevia(this, elementoVistaPrevia);
         });
+    });
+
+
+    function confirmarEliminarServicio(idServicio) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Estás seguro que deseas eliminar este Servicio?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarServicio(idServicio);
+            }
+        });
+    }
+
+    function eliminarServicio(idServicio) {
+        fetch('/pedidos/eliminar_servicio/' + idServicio + '/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Eliminación exitosa
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El servicio ha sido eliminado exitosamente.',
+                        'success'
+                    ).then(() => {
+                        location.reload(); // Recargar la página
+                    });
+                } else {
+                    // Manejar errores de eliminación si es necesario
+                    Swal.fire(
+                        'Error',
+                        'No se pudo eliminar el servicio.',
+                        'error'
+                    );
+                    console.error('Error al eliminar el servicio');
+                }
+            })
+            .catch(error => {
+                Swal.fire(
+                    'Error de red',
+                    'Hubo un error de red al intentar eliminar el tipo de servicio.',
+                    'error'
+                );
+                console.error('Error de red:', error);
+            });
+    }
+
+
+    $('#ServiciosTable').on('click', 'td .change-status.btn-inverse-success, td .change-status.btn-inverse-danger', function () {
+        // Obtener la fila correspondiente
+        var row = $(this).closest('tr');
+    
+        // Obtener el servicio ID
+        var servicio_id = $(this).data('servicioId');
+    
+        // Mostrar SweetAlert de confirmación
+        Swal.fire({
+            title: 'Cambiar estado',
+            text: '¿Estás seguro de cambiar el estado?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cambiar estado'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Cambiar la clase y el texto de la etiqueta según el nuevo estado
+                var estadoLabel = row.find('.change-status');
+    
+                // Realizar la solicitud fetch para cambiar el estado del permiso
+                return fetch("{% url 'pedidos:cambiar_estado_servicio' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'idServicio': servicio_id,  // Usar servicio_id aquí
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el estado.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success');
+                    // Actualizar la etiqueta de estado en la interfaz
+                    if (estadoLabel.hasClass('btn-inverse-success')) {
+                        estadoLabel.removeClass('btn-inverse-success').addClass('btn-inverse-danger');
+                        estadoLabel.text('Inactivo');
+                    } else {
+                        estadoLabel.removeClass('btn-inverse-danger').addClass('btn-inverse-success');
+                        estadoLabel.text('Activo');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('¡Error!', 'El estado no se ha cambiado.', 'error');
+                });
+            }
+        });
+    });
+
+    $('#ServiciosTable').on('click', 'td .change-catalog-status.btn-inverse-success, td .change-catalog-status.btn-inverse-danger', function () {
+        // Obtener la fila correspondiente
+        var row = $(this).closest('tr');
+    
+        // Obtener el servicio ID
+        var servicio_id = $(this).data('servicioId');
+    
+        // Mostrar SweetAlert de confirmación
+        Swal.fire({
+            title: 'Cambiar estado de catálogo',
+            text: '¿Estás seguro de cambiar el estado del catálogo?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cambiar estado'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Cambiar la clase y el texto de la etiqueta según el nuevo estado
+                var estadoLabel = row.find('.change-catalog-status');
+    
+                // Realizar la solicitud fetch para cambiar el estado del catálogo
+                return fetch("{% url 'pedidos:cambiar_estado_servicio_catalogo' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'idServicio': servicio_id,
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el estado del catálogo.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire('¡Estado cambiado!', 'El estado del catálogo se ha cambiado correctamente.', 'success');
+                    // Actualizar la etiqueta de estado en la interfaz
+                    if (estadoLabel.hasClass('btn-inverse-success')) {
+                        estadoLabel.removeClass('btn-inverse-success').addClass('btn-inverse-danger');
+                        estadoLabel.text('Inactivo');
+                    } else {
+                        estadoLabel.removeClass('btn-inverse-danger').addClass('btn-inverse-success');
+                        estadoLabel.text('Activo');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('¡Error!', 'El estado del catálogo no se ha cambiado.', 'error');
+                });
+            }
+        });
+    });
+    
+    
+        
 
     
 

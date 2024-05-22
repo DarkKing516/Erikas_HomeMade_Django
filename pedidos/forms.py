@@ -171,21 +171,16 @@ class TipoServicioForm(forms.ModelForm):
     # ---------------- Servicios ----------------
 
 class ServicioForm(forms.ModelForm):
-    ESTADOS_SERVICIO = (
-        ('A', 'Activo'),
-        ('I', 'Inactivo'),
-    )
-
-    estado_servicio = forms.ChoiceField(choices=ESTADOS_SERVICIO, label='Estado', widget=forms.Select(attrs={'class': 'form-control'}))
-    estado_catalogo = forms.BooleanField(required=False, label='Estado en Catálogo', widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    
     nombre_servicio = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Servicio'}))
+    id_TipoServicio = forms.ModelChoiceField(queryset=TipoServicio.objects.all(), empty_label=None, label='Tipo Servicio', widget=forms.Select(attrs={'class': 'form-control'}))
     descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción', 'rows': 3}))
     precio_servicio = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}))
     img = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
 
     class Meta:
         model = Servicio
-        fields = ['id_TipoServicio', 'nombre_servicio', 'descripcion', 'precio_servicio', 'estado_servicio', 'estado_catalogo', 'img']
+        fields = ['id_TipoServicio', 'nombre_servicio', 'descripcion', 'precio_servicio', 'img']
 
     def clean_nombre_servicio(self):
         nombre_servicio = self.cleaned_data['nombre_servicio']
@@ -217,7 +212,7 @@ class EditarServicioForm(forms.ModelForm):
         return nombre_servicio
     
 class ServicioFormEditarImg(forms.ModelForm):
-    img = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    img = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
 
     class Meta:
         model = Servicio

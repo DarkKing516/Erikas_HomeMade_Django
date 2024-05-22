@@ -417,9 +417,9 @@ def editar_servicio(request):
     
 @require_POST
 def editar_img_servicio(request):
-    servicio_id = request.POST.get('servicio_id')
-    print(servicio_id)
-    servicio = get_object_or_404(Servicio, pk=servicio_id)
+    idServicio = request.POST.get('idServicio')
+    print(idServicio)
+    servicio = get_object_or_404(Servicio, pk=idServicio)
 
     # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
     form = ServicioFormEditarImg(request.POST, request.FILES, instance=servicio)
@@ -434,3 +434,47 @@ def editar_img_servicio(request):
         # Si el formulario no es válido, devolvemos una respuesta con los errores
         errors = dict(form.errors.items())
         return JsonResponse({'success': False, 'errors': errors})
+    
+    
+def eliminar_servicio(request, ServicioId):
+    print("ID recibido:", ServicioId)  # Imprime el ID recibido en la consola
+    servicio = get_object_or_404(Servicio, pk=ServicioId)
+    servicio.delete()
+    return JsonResponse({'message': 'Servicio eliminado correctamente'})
+
+def cambiar_estado_servicio(request):
+    if request.method == 'POST':
+        servicio_id = request.POST.get('idServicio')
+        print("servicio ID:", servicio_id)
+        
+        data = json.loads(request.body)
+        servicio_id = data.get('idServicio')
+        print("servicio ID:", servicio_id)
+        servicio = Servicio.objects.get(pk=servicio_id)
+        if servicio.estado_servicio == 'A':
+            servicio.estado_servicio = 'I'
+        else:
+            servicio.estado_servicio = 'A'
+        servicio.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'warning': False})
+    
+    
+def cambiar_estado_servicio_catalogo(request):
+    if request.method == 'POST':
+        servicio_id = request.POST.get('idServicio')
+        print("servicio ID:", servicio_id)
+        
+        data = json.loads(request.body)
+        servicio_id = data.get('idServicio')
+        print("servicio ID:", servicio_id)
+        servicio = Servicio.objects.get(pk=servicio_id)
+        if servicio.estado_catalogo == 'A':
+            servicio.estado_catalogo = 'I'
+        else:
+            servicio.estado_catalogo = 'A'
+        servicio.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'warning': False})

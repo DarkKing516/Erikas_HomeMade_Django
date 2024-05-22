@@ -13,10 +13,10 @@ INSERT INTO permisos (nombre_permiso, estado_permiso) VALUES
 ('Editar Estado Roles', 'A'),
 ('Eliminar Roles', 'A'),
 ('Listar Permisos', 'A'),
--- ('Crear Permisos', 'A'),
+('Crear Permisos', 'A'),
 ('Editar Permisos', 'A'),
 ('Editar Estado Permisos', 'A'),
--- ('Eliminar Permisos', 'A'),
+('Eliminar Permisos', 'A'),
 ('Listar Productos', 'A'),
 ('Crear Productos', 'A'),
 ('Editar Productos', 'A'),
@@ -49,7 +49,12 @@ INSERT INTO permisos (nombre_permiso, estado_permiso) VALUES
 ('Eliminar Reservas', 'A'),
 ('Listar Ventas', 'A'),
 ('Crear Ventas', 'A'),
-('Listar Mis Ventas', 'A');
+('Listar Mis Ventas', 'A'),
+('Crear Servicios', 'A'),
+('Editar Servicios', 'A'),
+('Eliminar Servicios', 'A'),
+('Editar Estado Servicio Catalogo', 'A'),
+('Editar Estado Servicio', 'A');
 
 -- Insertar roles
 INSERT INTO roles (nombre_rol, estado_rol) VALUES
