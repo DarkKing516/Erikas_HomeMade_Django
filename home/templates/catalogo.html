@@ -3,10 +3,20 @@
 {% block content %}
 
 <div class="container mt-4">
-    <h2 class="mb-4">Catálogo de Productos</h2>
+    <h2 class="mb-4">Catálogo de Productos y Servicios</h2>
     
-    <!-- Filtro por tipo de producto -->
+    <!-- Filtro para mostrar todos, productos o servicios -->
     <div class="form-group">
+        <label for="filterTipo">Mostrar</label>
+        <select class="form-control" id="filterTipo">
+            <option value="todos">Todos</option>
+            <option value="productos">Productos</option>
+            <option value="servicios">Servicios</option>
+        </select>
+    </div>
+
+    <!-- Filtro interno por tipo de producto -->
+    <div class="form-group" id="filterProductoContainer" style="display: none;">
         <label for="filterTipoProducto">Filtrar por Tipo de Producto</label>
         <select class="form-control" id="filterTipoProducto">
             <option value="">Todos</option>
@@ -18,36 +28,110 @@
         </select>
     </div>
 
-    <!-- Productos en cartas -->
-    <div class="row" id="productCards">
-        {% for producto in productos %}
-        {% if producto.estado_catalogo and producto.id_TipoProducto.estado_producto == "Activo" %}
-        <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
-            <div class="custom-card">
-                <div class="custom-card-image-container">
-                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+    <!-- Filtro interno por tipo de servicio -->
+    <div class="form-group" id="filterServicioContainer" style="display: none;">
+        <label for="filterTipoServicio">Filtrar por Tipo de Servicio</label>
+        <select class="form-control" id="filterTipoServicio">
+            <option value="">Todos</option>
+            {% for tipo in tipos_servicios %}
+            {% if tipo.estado_tipoServicio == "Activo" %}
+            <option value="{{ tipo.idTipo_Servicio }}">{{ tipo.nombre_tipoServicio }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Contenedor para productos -->
+    <div id="productSection">
+        <h1>Productos</h1>
+        <div class="row" id="productCards">
+            {% for producto in productos %}
+            {% if producto.estado_catalogo and producto.id_TipoProducto.estado_producto == "Activo" %}
+            <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
+                <div class="custom-card">
+                    <div class="custom-card-image-container">
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                    </div>
+                    <p class="custom-card-title">{{ producto.nombre }}</p>
+                    <p class="custom-card-des">{{ producto.descripcion }}</p>
+                    <p class="custom-card-price">${{ producto.precio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
                 </div>
-                <p class="custom-card-title">{{ producto.nombre }}</p>
-                <p class="custom-card-des">{{ producto.descripcion }}</p>
-                <p class="custom-card-price">${{ producto.precio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-        {% endfor %}
+    </div>
+
+    <!-- Contenedor para servicios -->
+    <div id="serviceSection">
+        <h1>Servicios</h1>
+        <div class="row" id="serviceCards">
+            {% for servicio in servicios %}
+            {% if servicio.estado_catalogo and servicio.id_TipoServicio.estado_tipoServicio == "Activo" %}
+            <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
+                <div class="custom-card">
+                    <div class="custom-card-image-container">
+                        <img src="{{ servicio.img.url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+                    </div>
+                    <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
+                    <p class="custom-card-des">{{ servicio.descripcion }}</p>
+                    <p class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
     </div>
 </div>
 
 <!-- JavaScript para el filtrado -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const filter = document.getElementById('filterTipoProducto');
+    const filterTipo = document.getElementById('filterTipo');
+    const filterProductoContainer = document.getElementById('filterProductoContainer');
+    const filterServicioContainer = document.getElementById('filterServicioContainer');
+    const filterTipoProducto = document.getElementById('filterTipoProducto');
+    const filterTipoServicio = document.getElementById('filterTipoServicio');
     const productCards = document.querySelectorAll('.custom-product-card');
+    const serviceCards = document.querySelectorAll('.custom-service-card');
 
-    filter.addEventListener('change', function() {
+    filterTipo.addEventListener('change', function() {
+        const selectedTipo = this.value;
+        if (selectedTipo === "todos") {
+            filterProductoContainer.style.display = 'none';
+            filterServicioContainer.style.display = 'none';
+            productCards.forEach(card => card.style.display = 'block');
+            serviceCards.forEach(card => card.style.display = 'block');
+        } else if (selectedTipo === "productos") {
+            filterProductoContainer.style.display = 'block';
+            filterServicioContainer.style.display = 'none';
+            productCards.forEach(card => card.style.display = 'block');
+            serviceCards.forEach(card => card.style.display = 'none');
+        } else if (selectedTipo === "servicios") {
+            filterProductoContainer.style.display = 'none';
+            filterServicioContainer.style.display = 'block';
+            productCards.forEach(card => card.style.display = 'none');
+            serviceCards.forEach(card => card.style.display = 'block');
+        }
+    });
+
+    filterTipoProducto.addEventListener('change', function() {
         const selectedTipo = this.value;
         productCards.forEach(card => {
             const tipoProducto = card.getAttribute('data-tipo-producto');
             if (selectedTipo === "" || selectedTipo === tipoProducto) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    filterTipoServicio.addEventListener('change', function() {
+        const selectedTipo = this.value;
+        serviceCards.forEach(card => {
+            const tipoServicio = card.getAttribute('data-tipo-servicio');
+            if (selectedTipo === "" || selectedTipo === tipoServicio) {
                 card.style.display = 'block';
             } else {
                 card.style.display = 'none';

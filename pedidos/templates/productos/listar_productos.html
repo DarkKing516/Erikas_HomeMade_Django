@@ -70,13 +70,13 @@
                                 </td>
                                 <td>
                                     {% if producto.estado_catalogo == 'A' %}
-                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
-                                    data-catalogo-id="{{ producto.idProducto }}">Activo</label>
+                                    <label class="badge btn-inverse-secondary hover-cursor change-status-catalogo"
+                                    data-producto-id="{{ producto.idProducto }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status"
-                                    data-catalogo-id="{{ producto.idProducto }}">Inactivo</label>
+                                    <label class="badge btn-inverse-danger hover-cursor change-status-catalogo"
+                                    data-producto-id="{{ producto.idProducto }}">Inactivo</label>
                                     {% endif %}
-                                </td>
+                                </td>                                
                                 <td>{{ producto.cantidad }}</td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
@@ -88,7 +88,7 @@
                                         data-estado-producto="{{ producto.estado_producto }} " data-producto-id="{{ producto.idProducto }}" 
                                         data-estado-catalogo=" {{ producto.estado_catalogo }} " data-catalogo-id="{{ producto.idProducto }}"
                                         data-cantidad=" {{ producto.cantidad }} ">
-                                        <i class="mdi mdi-pencil">{{ producto.idProducto }}</i>
+                                        <i class="mdi mdi-pencil"></i>
                                         </button>
                                         
                                         <button type="button" class="btn btn-inverse-primary" data-producto-id="{{ producto.idProducto }}" data-toggle="modal" data-target="#editevidenciaproductoModal{{ producto.idProducto }}">
@@ -161,7 +161,7 @@
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ producto.idProducto }}</button>
+                                                        <button class="btn btn-primary mr-2">Editar</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Cancelar</button>
                                                     </div>
@@ -171,53 +171,48 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Modal para editar imagen de Producto -->
                             <div class="modal fade" id="editevidenciaproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar imagen de
-                                                Producto</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-Producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <p><strong>Imagen actual:</strong> <img src="{{ producto.imagen.url }}" alt="imagen" style="max-width: 100%; height: auto;"></p>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
-                                                            <br>
-                                                            <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
-                                                        </div>
-
+                            aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar imagen de
+                                            Producto</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <p><strong>Imagen actual:</strong> <img src="{{ producto.imagen.url }}" alt="imagen" style="max-width: 100%; height: auto;"></p>
                                                     </div>
                                                 </div>
-                                                
-
-                                                <!-- Botones -->
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ producto.idProducto }}</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
+                                                        <br>
+                                                        <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                                                     </div>
                                                 </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                            <!-- Botones -->
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-primary mr-2">Editar</button>
+                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -243,7 +238,7 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del formulario con Bootstrap grid system -->
-                <form method="post" onsubmit="validateProductoForm('{{ producto.idProducto }}')" id="productoForm{{ pedido.idPedido }}" class="forms-sample" data-pedido-id="{{ producto.idProducto }}" enctype="multipart/form-data">
+                <form method="post" onsubmit="validateProductoForm('{{ producto.idProducto }}')" id="productoForm{{ pedido.idPedido }}" class="forms-sample" data-producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-6">
@@ -403,14 +398,18 @@
         $('#editarproductoModal').modal('show');
     });
 
-    // Función para manejar el cambio de estado del pedido
+    $(document).ready(function() {
+        // Adjuntar evento de clic a los elementos con clase change-status
+        $('.change-status').click(handleChangeStatus);
+        $('.change-status-catalogo').click(handleChangeStatus2);
+    });
+    
+    // Función para manejar el cambio de estado del producto
     function handleChangeStatus(event) {
-        // Obtener el pedido ID
-        var producto_id = $(this).data('producto-id');
-
-        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        var producto_id = $(this).data('producto-id'); // Corrige esto
+    
         Swal.fire({
-            title: 'Cambiar Estado',
+            title: 'Cambiar Estado del Producto',
             html: '<select class="form-control" id="estado_producto2" name="estado_producto">'+
                 '<option value="A">Activo</option>' +
                 '<option value="I">Inactivo</option>' +
@@ -421,10 +420,8 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Cambiar',
             preConfirm: () => {
-                // Obtener el valor seleccionado del select
-                var nuevoProducto = $('#estado_producto2').val();
-
-                // Enviar los datos a través de AJAX incluyendo el token CSRF
+                var nuevoEstado = $('#estado_producto2').val();
+    
                 return fetch("{% url 'pedidos:cambiar_estado_productos' %}", {
                     method: 'POST',
                     headers: {
@@ -433,36 +430,34 @@
                     },
                     body: JSON.stringify({
                         'producto_id': producto_id,
-                        'estado_pedido': nuevoProducto,
+                        'estado_producto': nuevoEstado,
                     }),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Hubo un problema al cambiar el Estado.');
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el Estado.');
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                var nuevoRol = $('#estado_producto').val();
-
-                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                Swal.fire('Estado cambiado!', 'El estado del producto se ha cambiado correctamente.', 'success').then(() => {
                     location.reload();
                 });
             }
         });
     }
+    
+    // Función para manejar el cambio de estado del catálogo
     function handleChangeStatus2(event) {
-        // Obtener el pedido ID
-        var producto_id = $(this).data('producto-id');
-
-        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        var producto_id = $(this).data('producto-id'); // Corrige esto
+    
         Swal.fire({
-            title: 'Cambiar Estado',
+            title: 'Cambiar Estado del Catálogo',
             html: '<select class="form-control" id="estado_catalogo2" name="estado_catalogo">'+
                 '<option value="A">Activo</option>' +
                 '<option value="I">Inactivo</option>' +
@@ -473,11 +468,9 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Cambiar',
             preConfirm: () => {
-                // Obtener el valor seleccionado del select
-                var nuevoCatalogo = $('#estado_catalogo2').val();
-
-                // Enviar los datos a través de AJAX incluyendo el token CSRF
-                return fetch("{% url 'pedidos:cambiar_estado_productos' %}", {
+                var nuevoEstado = $('#estado_catalogo2').val();
+    
+                return fetch("{% url 'pedidos:cambiar_estado_catalogo' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -485,30 +478,28 @@
                     },
                     body: JSON.stringify({
                         'producto_id': producto_id,
-                        'estado_': nuevoCatalogo,
+                        'estado_catalogo': nuevoEstado,
                     }),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Hubo un problema al cambiar el Estado.');
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el Estado.');
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                var nuevoRol = $('#estado_catalogo').val();
-
-                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                Swal.fire('Estado cambiado!', 'El estado del catálogo se ha cambiado correctamente.', 'success').then(() => {
                     location.reload();
                 });
             }
         });
     }
-
+    
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
         if ($.fn.DataTable.isDataTable('#pedidoTable')) {

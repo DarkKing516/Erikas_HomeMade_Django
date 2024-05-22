@@ -116,11 +116,12 @@ class ProductoFormEditar(forms.ModelForm):
         fields = ['nombre', 'descripcion', 'precio', 'estado_producto', 'estado_catalogo', 'cantidad']        
 
 class ProductoFormEditarEvidencia(forms.ModelForm):
-    evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    imagen = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
 
     class Meta:
         model = Producto
         fields = ['imagen']
+
         
 #------------------------------------------------------------TIPO productos---------------------------------------------------------
         

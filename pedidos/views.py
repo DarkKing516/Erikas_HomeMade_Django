@@ -179,23 +179,23 @@ def editar_productos(request):
 @require_POST
 def editar_evidencia_productos(request):
     producto_id = request.POST.get('producto_id')
-    print(producto_id)
-    producto = get_object_or_404(Pedido, pk=producto_id)
+    producto = get_object_or_404(Producto, pk=producto_id)
 
-    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
-    form = ProductoFormEditarEvidencia(request.POST, request.FILES, instance=producto_id)
+    # Crear una instancia del formulario con los datos recibidos y la instancia del producto
+    form = ProductoFormEditarEvidencia(request.POST, request.FILES, instance=producto)
 
-    # Validamos el formulario
+    # Validar el formulario
     if form.is_valid():
-        # Guardamos los cambios en la reserva
+        # Guardar los cambios en el producto
         saved_instance = form.save()
         print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
         return JsonResponse({'success': True})
     else:
-        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        # Si el formulario no es válido, devolver una respuesta con los errores
         errors = dict(form.errors.items())
-        return JsonResponse({'success': False, 'errors': errors})
-    
+        return JsonResponse({'success': False, 'errors': errors})    
+
+
 
 def eliminar_producto(request):
     if request.method == 'POST':
@@ -211,36 +211,35 @@ def eliminar_producto(request):
         return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
     
 
+@require_POST
 def cambiar_estado_productos(request):
-    if request.method == 'POST':
-        # Verifica si la solicitud es POST
-        
-        # Lee los datos del cuerpo de la solicitud JSON
+    try:
         data = json.loads(request.body)
-        
-        # Extrae el ID del pedido y el nuevo estado del pedido
-        pedido_id = data.get('pedido_id')
-        nuevo_estado_pedido = data.get('estado_pedido')
-        
-        # Imprime los datos para depuración (opcional)
-        print("Pedido ID:", pedido_id)
-        print("Nuevo estado:", nuevo_estado_pedido)
-        
-        # Recupera la instancia del pedido de la base de datos utilizando el ID del pedido
-        pedido = Pedido.objects.get(pk=pedido_id)
-        
-        # Actualiza el estado del pedido
-        pedido.estado_pedido = nuevo_estado_pedido
-        
-        # Guarda los cambios en la base de datos
-        pedido.save()
-        
-        # Devuelve una respuesta JSON indicando que la operación fue exitosa
-        return JsonResponse({'success': True})
-    else:
-        # Si la solicitud no es POST, devuelve una respuesta JSON indicando que la operación falló
-        return JsonResponse({'success': False})
+        producto_id = data.get('producto_id')
+        nuevo_estado_producto = data.get('estado_producto')
 
+        producto = Producto.objects.get(pk=producto_id)
+        producto.estado_producto = nuevo_estado_producto
+        producto.save()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@require_POST
+def cambiar_estado_catalogo(request):
+    try:
+        data = json.loads(request.body)
+        producto_id = data.get('producto_id')
+        nuevo_estado_catalogo = data.get('estado_catalogo')
+
+        producto = Producto.objects.get(pk=producto_id)
+        producto.estado_catalogo = nuevo_estado_catalogo
+        producto.save()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
 
