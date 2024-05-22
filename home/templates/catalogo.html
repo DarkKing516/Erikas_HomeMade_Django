@@ -41,40 +41,46 @@
         </select>
     </div>
 
-    <!-- Productos en cartas -->
-    <div class="row" id="productCards">
-        {% for producto in productos %}
-        {% if producto.estado_catalogo and producto.id_TipoProducto.estado_producto == "Activo" %}
-        <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
-            <div class="custom-card">
-                <div class="custom-card-image-container">
-                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+    <!-- Contenedor para productos -->
+    <div id="productSection">
+        <h1>Productos</h1>
+        <div class="row" id="productCards">
+            {% for producto in productos %}
+            {% if producto.estado_catalogo and producto.id_TipoProducto.estado_producto == "Activo" %}
+            <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
+                <div class="custom-card">
+                    <div class="custom-card-image-container">
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                    </div>
+                    <p class="custom-card-title">{{ producto.nombre }}</p>
+                    <p class="custom-card-des">{{ producto.descripcion }}</p>
+                    <p class="custom-card-price">${{ producto.precio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
                 </div>
-                <p class="custom-card-title">{{ producto.nombre }}</p>
-                <p class="custom-card-des">{{ producto.descripcion }}</p>
-                <p class="custom-card-price">${{ producto.precio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-        {% endfor %}
     </div>
 
-    <!-- Servicios en cartas -->
-    <div class="row" id="serviceCards">
-        {% for servicio in servicios %}
-        {% if servicio.estado_catalogo and servicio.id_TipoServicio.estado_tipoServicio == "Activo" %}
-        <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
-            <div class="custom-card">
-                <div class="custom-card-image-container">
-                    <img src="{{ servicio.img.url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+    <!-- Contenedor para servicios -->
+    <div id="serviceSection">
+        <h1>Servicios</h1>
+        <div class="row" id="serviceCards">
+            {% for servicio in servicios %}
+            {% if servicio.estado_catalogo and servicio.id_TipoServicio.estado_tipoServicio == "Activo" %}
+            <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
+                <div class="custom-card">
+                    <div class="custom-card-image-container">
+                        <img src="{{ servicio.img.url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+                    </div>
+                    <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
+                    <p class="custom-card-des">{{ servicio.descripcion }}</p>
+                    <p class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
                 </div>
-                <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
-                <p class="custom-card-des">{{ servicio.descripcion }}</p>
-                <p class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-        {% endfor %}
     </div>
 </div>
 
