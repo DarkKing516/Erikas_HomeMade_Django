@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import *
 from reservas.forms import *
-from pedidos.models import Producto, TipoProducto
+from pedidos.models import Producto, TipoProducto, Servicio, TipoServicio
 import random
 
 # Create your views here.
@@ -44,5 +44,12 @@ def index(request):
 
 def catalogo_productos(request):
     productos = Producto.objects.all()
+    servicios = Servicio.objects.all()
     tipos_productos = TipoProducto.objects.all()
-    return render(request, 'catalogo.html', {'productos': productos, 'tipos_productos': tipos_productos})
+    tipos_servicios = TipoServicio.objects.all()
+    return render(request, 'catalogo.html', {
+        'productos': productos,
+        'servicios': servicios,
+        'tipos_productos': tipos_productos,
+        'tipos_servicios': tipos_servicios,
+    })
