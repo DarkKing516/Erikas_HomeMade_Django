@@ -15,6 +15,32 @@
         </select>
     </div>
 
+    <!-- Filtro interno por tipo de producto -->
+    <div class="form-group" id="filterProductoContainer" style="display: none;">
+        <label for="filterTipoProducto">Filtrar por Tipo de Producto</label>
+        <select class="form-control" id="filterTipoProducto">
+            <option value="">Todos</option>
+            {% for tipo in tipos_productos %}
+            {% if tipo.estado_producto == "Activo" %}
+            <option value="{{ tipo.idTipo_Producto }}">{{ tipo.nombre_producto }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Filtro interno por tipo de servicio -->
+    <div class="form-group" id="filterServicioContainer" style="display: none;">
+        <label for="filterTipoServicio">Filtrar por Tipo de Servicio</label>
+        <select class="form-control" id="filterTipoServicio">
+            <option value="">Todos</option>
+            {% for tipo in tipos_servicios %}
+            {% if tipo.estado_tipoServicio == "Activo" %}
+            <option value="{{ tipo.idTipo_Servicio }}">{{ tipo.nombre_tipoServicio }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
     <!-- Productos en cartas -->
     <div class="row" id="productCards">
         {% for producto in productos %}
@@ -35,7 +61,6 @@
 
     <!-- Servicios en cartas -->
     <div class="row" id="serviceCards">
-        
         {% for servicio in servicios %}
         {% if servicio.estado_catalogo and servicio.id_TipoServicio.estado_tipoServicio == "Activo" %}
         <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
@@ -57,21 +82,55 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterTipo = document.getElementById('filterTipo');
+    const filterProductoContainer = document.getElementById('filterProductoContainer');
+    const filterServicioContainer = document.getElementById('filterServicioContainer');
+    const filterTipoProducto = document.getElementById('filterTipoProducto');
+    const filterTipoServicio = document.getElementById('filterTipoServicio');
     const productCards = document.querySelectorAll('.custom-product-card');
     const serviceCards = document.querySelectorAll('.custom-service-card');
 
     filterTipo.addEventListener('change', function() {
         const selectedTipo = this.value;
         if (selectedTipo === "todos") {
+            filterProductoContainer.style.display = 'none';
+            filterServicioContainer.style.display = 'none';
             productCards.forEach(card => card.style.display = 'block');
             serviceCards.forEach(card => card.style.display = 'block');
         } else if (selectedTipo === "productos") {
+            filterProductoContainer.style.display = 'block';
+            filterServicioContainer.style.display = 'none';
             productCards.forEach(card => card.style.display = 'block');
             serviceCards.forEach(card => card.style.display = 'none');
         } else if (selectedTipo === "servicios") {
+            filterProductoContainer.style.display = 'none';
+            filterServicioContainer.style.display = 'block';
             productCards.forEach(card => card.style.display = 'none');
             serviceCards.forEach(card => card.style.display = 'block');
         }
+    });
+
+    filterTipoProducto.addEventListener('change', function() {
+        const selectedTipo = this.value;
+        productCards.forEach(card => {
+            const tipoProducto = card.getAttribute('data-tipo-producto');
+            if (selectedTipo === "" || selectedTipo === tipoProducto) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    filterTipoServicio.addEventListener('change', function() {
+        const selectedTipo = this.value;
+        serviceCards.forEach(card => {
+            const tipoServicio = card.getAttribute('data-tipo-servicio');
+            if (selectedTipo === "" || selectedTipo === tipoServicio) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     });
 });
 </script>
