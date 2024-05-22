@@ -143,10 +143,10 @@
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="estado_producto">Estado del Producto</label>
-                                                            <select class="form-control" id="estado_producto" name="estado_producto">
-                                                                <option value="1" {% if producto.estado_producto == 1 %} selected {% endif %}>Activo</option>
-                                                                <option value="0" {% if producto.estado_producto != 1 %} selected {% endif %}>Inactivo</option>
+                                                            <label for="estado_catalogo">Estado del catalogo</label>
+                                                            <select class="form-control" id="estado_catalogo" name="estado_catalogo">
+                                                                <option value="A" {% if producto.estado_catalogo == 'A' %} selected {% endif %}>Activo</option>
+                                                                <option value="I" {% if producto.estado_catalogo == 'I' %} selected {% endif %}>Inactivo</option>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -425,7 +425,7 @@
                 var nuevoProducto = $('#estado_producto2').val();
 
                 // Enviar los datos a través de AJAX incluyendo el token CSRF
-                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                return fetch("{% url 'pedidos:cambiar_estado_productos' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -477,15 +477,15 @@
                 var nuevoCatalogo = $('#estado_catalogo2').val();
 
                 // Enviar los datos a través de AJAX incluyendo el token CSRF
-                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                return fetch("{% url 'pedidos:cambiar_estado_productos' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
                     body: JSON.stringify({
-                        'pedido_id': producto_id,
-                        'estado_pedido': nuevoCatalogo,
+                        'producto_id': producto_id,
+                        'estado_': nuevoCatalogo,
                     }),
                 })
                     .then(response => {

@@ -209,6 +209,37 @@ def eliminar_producto(request):
             return JsonResponse({'success': False, 'message': 'El producto no existe.'})
     else:
         return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
+    
+
+def cambiar_estado_productos(request):
+    if request.method == 'POST':
+        # Verifica si la solicitud es POST
+        
+        # Lee los datos del cuerpo de la solicitud JSON
+        data = json.loads(request.body)
+        
+        # Extrae el ID del pedido y el nuevo estado del pedido
+        pedido_id = data.get('pedido_id')
+        nuevo_estado_pedido = data.get('estado_pedido')
+        
+        # Imprime los datos para depuración (opcional)
+        print("Pedido ID:", pedido_id)
+        print("Nuevo estado:", nuevo_estado_pedido)
+        
+        # Recupera la instancia del pedido de la base de datos utilizando el ID del pedido
+        pedido = Pedido.objects.get(pk=pedido_id)
+        
+        # Actualiza el estado del pedido
+        pedido.estado_pedido = nuevo_estado_pedido
+        
+        # Guarda los cambios en la base de datos
+        pedido.save()
+        
+        # Devuelve una respuesta JSON indicando que la operación fue exitosa
+        return JsonResponse({'success': True})
+    else:
+        # Si la solicitud no es POST, devuelve una respuesta JSON indicando que la operación falló
+        return JsonResponse({'success': False})
 
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 

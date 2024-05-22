@@ -50,7 +50,7 @@ class Producto(models.Model):
     imagen = models.ImageField(upload_to='producto_imgs/')  # Ajusta la ruta según tu estructura de carpetas
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     estado_producto = models.CharField(max_length=1)
-    estado_catalogo = models.BooleanField(default=False)
+    estado_catalogo = models.CharField(max_length=1)
     cantidad = models.IntegerField()
 
     def __str__(self):

@@ -102,7 +102,7 @@ class CreateProductoForm(forms.ModelForm):
     imagen = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
     precio = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Precio'}))
     estado_producto = forms.CharField(max_length=1, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado del Producto'}))
-    estado_catalogo = forms.BooleanField(initial=False, required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    estado_catalogo = forms.CharField(max_length=1, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado del Catalogo'}))
     cantidad = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad'}))
 
     class Meta:
