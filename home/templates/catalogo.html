@@ -43,7 +43,7 @@
 
     <!-- Contenedor para productos -->
     <div id="productSection">
-        <h1>Productos</h1>
+        <h1 id="TituloProducto">Productos</h1>
         <div class="row" id="productCards">
             {% for producto in productos %}
             {% if producto.estado_catalogo and producto.id_TipoProducto.estado_producto == "Activo" %}
@@ -64,7 +64,7 @@
 
     <!-- Contenedor para servicios -->
     <div id="serviceSection">
-        <h1>Servicios</h1>
+        <h1 id="TituloServicios">Servicios</h1>
         <div class="row" id="serviceCards">
             {% for servicio in servicios %}
             {% if servicio.estado_catalogo and servicio.id_TipoServicio.estado_tipoServicio == "Activo" %}
@@ -92,6 +92,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterServicioContainer = document.getElementById('filterServicioContainer');
     const filterTipoProducto = document.getElementById('filterTipoProducto');
     const filterTipoServicio = document.getElementById('filterTipoServicio');
+    const TituloProducto = document.getElementById('TituloProducto');
+    const TituloServicios = document.getElementById('TituloServicios');
     const productCards = document.querySelectorAll('.custom-product-card');
     const serviceCards = document.querySelectorAll('.custom-service-card');
 
@@ -100,16 +102,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedTipo === "todos") {
             filterProductoContainer.style.display = 'none';
             filterServicioContainer.style.display = 'none';
+            TituloProducto.style.display = 'block';
+            TituloServicios.style.display = 'block';
             productCards.forEach(card => card.style.display = 'block');
             serviceCards.forEach(card => card.style.display = 'block');
         } else if (selectedTipo === "productos") {
             filterProductoContainer.style.display = 'block';
             filterServicioContainer.style.display = 'none';
+            TituloProducto.style.display = 'block';
+            TituloServicios.style.display = 'none';
             productCards.forEach(card => card.style.display = 'block');
             serviceCards.forEach(card => card.style.display = 'none');
         } else if (selectedTipo === "servicios") {
             filterProductoContainer.style.display = 'none';
             filterServicioContainer.style.display = 'block';
+            TituloServicios.style.display = 'block';
+            TituloProducto.style.display = 'none';
             productCards.forEach(card => card.style.display = 'none');
             serviceCards.forEach(card => card.style.display = 'block');
         }

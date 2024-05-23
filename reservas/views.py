@@ -96,3 +96,41 @@ def eliminar_reserva(request):
             return JsonResponse({'success': False, 'message': 'La reserva no existe'})
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+def listar_reservas_cliente(request):
+    if not request.session.get('usuario_id'):
+        return JsonResponse({'success': False, 'message': 'Usuario no autenticado'}, status=401)
+
+    usuario_id = request.session['usuario_id']
+
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.usuario_id = usuario_id  # Asigna el usuario a la reserva
+            reserva.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'message': 'Hubo un error de validación', 'errors': errors})
+    else:
+        reservas = Reserva.objects.filter(usuario_id=usuario_id)
+        form = ReservaForm()
+        return render(request, 'mis_reservas.html', {'reservas': reservas, 'form': form})
+    
+
+def cambiar_estado_reserva(request, reserva_id):
+    if request.method == 'POST' and request.is_ajax():
+        try:
+            reserva = Reserva.objects.get(id=reserva_id)
+            nuevo_estado = request.POST.get('estado')
+            reserva.estado = nuevo_estado
+            reserva.save()
+            return JsonResponse({'success': True})
+        except Reserva.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'La reserva especificada no existe'}, status=404)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': 'Hubo un error al actualizar el estado de la reserva', 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido o no es una solicitud AJAX'}, status=400)

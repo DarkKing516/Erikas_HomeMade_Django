@@ -489,7 +489,7 @@
                         {% endif %}
                         {% if request.session.id_rol != 1 and "Listar Mis Reservas" in request.session.permisos %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
+                            <a class="nav-link" href="{% url 'reservas:listar_reserva_cliente' %}">
                                 <i class="mdi mdi-calendar menu-icon"></i>
                                 <span class="menu-title">Mis Reservas </span>
                             </a>
