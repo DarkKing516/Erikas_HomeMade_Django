@@ -28,7 +28,6 @@
                                 <th>Fecha Reserva</th>
                                 <th>Descripción</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,12 +36,7 @@
                                 <td>{{ reserva.usuario.nombre }}</td>
                                 <td>{{ reserva.fecha_cita }}</td>
                                 <td>{{ reserva.descripcion }}</td>
-                                <td>{{ reserva.estado }}</td>
-                                <td>
-                                    <button type="button" class="btn btn-primary cambiar-estado" data-reserva-id="{{ reserva.id }}">
-                                        Cambiar Estado
-                                    </button>
-                                </td>                                
+                                <td><label class="badge badge-outline-primary hover-cursor change-estado" data-reserva-id="{{ reserva.id }}">{{ reserva.estado }}</label></td>                                                              
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -80,59 +74,60 @@
         };
 
         $('#reservaTable').DataTable(dataTableConfig);
-    });
 
-    // Función para manejar el cambio de estado de la reserva
-$(document).on('click', '.cambiar-estado', function() {
-    const reservaId = $(this).data('reserva-id');
-    
-    // Mostrar SweetAlert de cambio de estado
-    Swal.fire({
-        title: 'Cambiar Estado',
-        icon: 'info',
-        html: '<select class="form-control" id="estadoReserva">' +
-                '<option value="Pendiente">Pendiente</option>' +
-                '<option value="En Proceso">En Proceso</option>' +
-                '<option value="Completada">Completada</option>' +
-              '</select>',
-        showCancelButton: true,
-        confirmButtonText: 'Cambiar',
-        cancelButtonText: 'Cancelar',
-        showLoaderOnConfirm: true,
-        preConfirm: () => {
-            const nuevoEstado = $('#estadoReserva').val();
+        $('#reservaTable').on('click', 'td .change-estado', function () {
+            var reserva_id = $(this).data('reserva-id');
 
-            // Enviar la solicitud AJAX para cambiar el estado de la reserva
-            return fetch(`/cambiar_estado_reserva/${reservaId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
+            console.log("ID de la reserva:", reserva_id);  // Imprime el ID de la reserva en la consola
+
+            Swal.fire({
+                title: 'Cambiar Estado',
+                html: '<select id="estadoSelect" class="form-control">' +
+                    '<option value="Pendiente">Pendiente</option>' +
+                    '<option value="En Proceso">En Proceso</option>' +
+                    '<option value="Completada">Completada</option>' +
+                    '</select>',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Cambiar',
+                preConfirm: () => {
+                    var nuevoEstado = $('#estadoSelect').val();
+
+                    return fetch("{% url 'reservas:cambiar_estado_reserva' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            'estado': nuevoEstado,
+                            'reserva_id': reserva_id  // Añadir el ID de la reserva al cuerpo de la petición
+                        }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el estado.');
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    });
                 },
-                body: JSON.stringify({ estado: nuevoEstado })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.statusText);
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('¡Estado cambiado!', 'El estado de la reserva se ha cambiado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
                 }
-                return response.json();
-            })
-            .catch(error => {
-                Swal.showValidationMessage(`Hubo un error al cambiar el estado: ${error}`);
             });
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
-    .then(result => {
-        if (result.isConfirmed) {
-            Swal.fire('¡Estado cambiado!', 'El estado de la reserva ha sido actualizado.', 'success').then(() => {
-                location.reload();
-            });
-        }
+        });
     });
-});
-
 </script>
+
+
 {% if not request.session.usuario_id %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";

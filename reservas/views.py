@@ -119,18 +119,22 @@ def listar_reservas_cliente(request):
         form = ReservaForm()
         return render(request, 'mis_reservas.html', {'reservas': reservas, 'form': form})
     
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def cambiar_estado_reserva(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        reserva_id = data.get('reserva_id')
+        nuevo_estado = data.get('estado')
+        
+        print("ID de la reserva:", reserva_id)
+        print("Nuevo estado:", nuevo_estado)
 
-def cambiar_estado_reserva(request, reserva_id):
-    if request.method == 'POST' and request.is_ajax():
-        try:
-            reserva = Reserva.objects.get(id=reserva_id)
-            nuevo_estado = request.POST.get('estado')
-            reserva.estado = nuevo_estado
-            reserva.save()
-            return JsonResponse({'success': True})
-        except Reserva.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'La reserva especificada no existe'}, status=404)
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': 'Hubo un error al actualizar el estado de la reserva', 'error': str(e)})
+        reserva = Reserva.objects.get(pk=reserva_id)
+        reserva.estado = nuevo_estado
+        reserva.save()
+        
+        return JsonResponse({'success': True})
     else:
-        return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido o no es una solicitud AJAX'}, status=400)
+        return JsonResponse({'success': False})
+
