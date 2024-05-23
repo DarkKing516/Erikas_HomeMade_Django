@@ -36,7 +36,15 @@
                                 <td>{{ reserva.usuario.nombre }}</td>
                                 <td>{{ reserva.fecha_cita }}</td>
                                 <td>{{ reserva.descripcion }}</td>
-                                <td><label class="badge badge-outline-primary hover-cursor change-estado" data-reserva-id="{{ reserva.id }}">{{ reserva.estado }}</label></td>                                                              
+                                <td>
+                                    <label 
+                                        class="badge badge-outline-primary hover-cursor change-estado" 
+                                        data-reserva-id="{{ reserva.id }}"
+                                        {% if reserva.estado == 'Completada' or reserva.estado == 'Cancelada' %}style="pointer-events: none; color: grey;"{% endif %}
+                                    >
+                                        {{ reserva.estado }}
+                                    </label>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -77,6 +85,12 @@
 
         $('#reservaTable').on('click', 'td .change-estado', function () {
             var reserva_id = $(this).data('reserva-id');
+            var estado_actual = $(this).text().trim();
+
+            // Verificar si el estado es "Completada" o "Cancelada"
+            if (estado_actual === 'Completada' || estado_actual === 'Cancelada') {
+                return;  // Salir de la función si no se permite la edición
+            }
 
             console.log("ID de la reserva:", reserva_id);  // Imprime el ID de la reserva en la consola
 
@@ -85,7 +99,7 @@
                 html: '<select id="estadoSelect" class="form-control">' +
                     '<option value="Pendiente">Pendiente</option>' +
                     '<option value="En Proceso">En Proceso</option>' +
-                    '<option value="Completada">Completada</option>' +
+                    '<option value="Cancelada">Cancelada</option>' +
                     '</select>',
                 icon: 'info',
                 showCancelButton: true,
@@ -126,7 +140,6 @@
         });
     });
 </script>
-
 
 {% if not request.session.usuario_id %}
 <script>
