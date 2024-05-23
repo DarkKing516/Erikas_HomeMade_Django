@@ -101,15 +101,13 @@
                                 </td>                              
                             </tr>
                     
-                            <!-- Modal para editar Pedido -->
-                            
-                            <div class="modal fade" id="editarProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
+                                <!-- Modal para editar Pedido -->
+                                <div class="modal fade" id="editarProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editarProductoModal{{ producto.idProducto }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar
-                                                Producto</h5>
+                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar Producto</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -121,20 +119,11 @@
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="usuario">nombre</label>
-                                                            <input type="text" class="form-control" id="nombre" name="nombre"
-                                                                 value="{{ producto.nombre }}">
+                                                            <label for="nombre">Nombre</label>
+                                                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ producto.nombre }}">
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha">descripcion</label>
-                                                            <input type="datetime-loca" class="form-control" id="descripcion" name="descripcion" 
-                                                                value="{{ producto.descripcion }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="precio">precio</label>
-                                                            <input type="number" class="form-control" id="precio" name="precio"
-                                                                value="{{ producto.precio|floatformat:"0" }}">
-                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="estado_producto">Estado del Producto</label>
                                                             <select class="form-control" id="estado_producto" name="estado_producto">
@@ -142,35 +131,52 @@
                                                                 <option value="I" {% if producto.estado_producto == 'I' %} selected {% endif %}>Inactivo</option>
                                                             </select>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="estado_catalogo">Estado del catalogo</label>
+                                                            <label for="descripcion">Descripción</label>
+                                                            <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ producto.descripcion }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="estado_catalogo">Estado del Catálogo</label>
                                                             <select class="form-control" id="estado_catalogo" name="estado_catalogo">
                                                                 <option value="A" {% if producto.estado_catalogo == 'A' %} selected {% endif %}>Activo</option>
                                                                 <option value="I" {% if producto.estado_catalogo == 'I' %} selected {% endif %}>Inactivo</option>
                                                             </select>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="cantidad">cantidad</label>
-                                                            <input type="text" class="form-control" id="cantidad" name="cantidad"
-                                                                value="{{ producto.cantidad }}">
-                                                        </div>
-                                                        
                                                     </div>
                                                 </div>
-
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="precio">Precio</label>
+                                                            <input type="number" class="form-control" id="precio" name="precio" value="{{ producto.precio|floatformat:"0" }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="cantidad">Cantidad</label>
+                                                            <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ producto.cantidad }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
+                                                        <button class="btn btn-primary mr-2" type="submit">Editar</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                                                     </div>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+
                             <!-- Modal para editar imagen de Producto -->
                             <div class="modal fade" id="editevidenciaproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
                             aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
@@ -187,6 +193,7 @@
                                         <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
                                             {% csrf_token %}
                                             <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
+
                                             <div class="form-row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
@@ -226,7 +233,7 @@
 
 
 
-<!-- Modal Crear Pedido -->
+<!-- Modal Crear Producto -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -240,47 +247,75 @@
                 <!-- Contenido del formulario con Bootstrap grid system -->
                 <form method="post" onsubmit="validateProductoForm('{{ producto.idProducto }}')" id="productoForm{{ pedido.idPedido }}" class="forms-sample" data-producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
                     {% csrf_token %}
+
+                    <!-- Primera fila con dos columnas -->
                     <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="id_TipoProducto">id_TipoProducto</label>
+                                <label for="id_TipoProducto">Tipo de Producto</label>
                                 {{ formCreate.id_TipoProducto }}
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="nombre">nombre</label>
+                                <label for="nombre">Nombre</label>
                                 {{ formCreate.nombre }}
                             </div>
+                        </div>
+                    </div>
+                    <!-- Segunda fila con dos columnas -->
+                    <div class="form-row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="descripcion">Descripción del Producto</label>
-                                {{ formCreate.descripcion }}
+                                <label for="precio">Precio</label>
+                                {{ formCreate.precio }}
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
+                                <label for="imagen">Imagen</label>
                                 <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
                                 <br>
                                 <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                             </div>
+                        </div>
+                    </div>
+                    <!-- Tercera fila con dos columnas -->
+                    <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="precio">precio</label>
-                                {{ formCreate.precio }}
-                            </div>
-                            <div class="form-group">
-                                <label for="estado_producto">Estado del Productos</label>
+                                <label for="estado_producto">Estado del Producto</label>
                                 <select class="form-control" id="estado_producto" name="estado_producto">
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
+                                    <option value="A" {% if producto.estado_producto == 'A' %} selected {% endif %}>Activo</option>
+                                    <option value="I" {% if producto.estado_producto == 'I' %} selected {% endif %}>Inactivo</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="estado_catalogo">Estado del Catalogo</label>
+                                <label for="estado_catalogo">Estado del Catálogo</label>
                                 <select class="form-control" id="estado_catalogo" name="estado_catalogo">
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
+                                    <option value="A" {% if producto.estado_catalogo == 'A' %} selected {% endif %}>Activo</option>
+                                    <option value="I" {% if producto.estado_catalogo == 'I' %} selected {% endif %}>Inactivo</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                    <!-- Cuarta fila con una columna -->
+                    <div class="form-row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="Cantidad">Cantidad</label>
+                                <label for="cantidad">Cantidad</label>
                                 {{ formCreate.cantidad }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quinta fila con una columna -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="descripcion">Descripción del Producto</label>
+                                {{ formCreate.descripcion }}
                             </div>
                         </div>
                     </div>
@@ -297,6 +332,7 @@
         </div>
     </div>
 </div>
+
 
 
 <!-- Fin del Modal Crear Pedido -->
@@ -729,7 +765,6 @@ document.querySelectorAll('.delete-producto').forEach(button => {
         });
     });
 });
-
 
 
 </script>
