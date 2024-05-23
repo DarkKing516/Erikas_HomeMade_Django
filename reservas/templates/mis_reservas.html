@@ -95,12 +95,8 @@
             console.log("ID de la reserva:", reserva_id);  // Imprime el ID de la reserva en la consola
 
             Swal.fire({
-                title: 'Cambiar Estado',
-                html: '<select id="estadoSelect" class="form-control">' +
-                    '<option value="Pendiente">Pendiente</option>' +
-                    '<option value="En Proceso">En Proceso</option>' +
-                    '<option value="Cancelada">Cancelada</option>' +
-                    '</select>',
+                title: '¿Estás seguro de cambiar estado?',
+                html: '<h3>Esta opcion no es reversible</h3>'+' <input type="hidden" name="" id="estadoSelect" value="Cancelada">',
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
