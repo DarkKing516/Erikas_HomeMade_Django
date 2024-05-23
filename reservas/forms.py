@@ -8,10 +8,9 @@ class ReservaForm(forms.ModelForm):
         model = Reserva
         fields = ['usuario', 'fecha_cita', 'descripcion']
         widgets = {
-            # 'fecha': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_cita': forms.DateTimeInput(attrs={'type': 'datetime-local'})  # Usa DateTimeInput para fechas y horas
-            # 'descripcion': forms.Textarea(attrs={'type': 'textarea'})
-
+            'usuario': forms.Select(attrs={'class': 'form-control'}),
+            'fecha_cita': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):

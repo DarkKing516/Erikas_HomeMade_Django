@@ -134,7 +134,7 @@
       <div class="{{ clase_tamanos_imagene.class }}">
           <!-- Thumbnail Mary-->
           <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInLeft">
-              <a class="thumbnail-mary-figure" href="{% static 'images/gallery-' %}{{ forloop.counter }}-1200x800-original.jpg" data-lightgallery="item">
+              <a class="thumbnail-mary-figure" href="{% url 'home:catalogo' %}" data-lightgallery="item">
                   <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" width="{{ tamano_imagen.width }}" height="{{ tamano_imagen.height }}"/>
               </a>
               
