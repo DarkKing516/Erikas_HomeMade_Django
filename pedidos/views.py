@@ -215,6 +215,7 @@ def eliminar_producto(request):
     else:
         return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
 
+
 @require_POST
 def cambiar_estado_productos(request):
     try:
