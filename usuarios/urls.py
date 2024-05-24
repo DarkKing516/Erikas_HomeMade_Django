@@ -34,6 +34,8 @@ urlpatterns = [
 
     path('iniciar_sesion/', viewsUsuarios.iniciar_sesion, name='login'),
     path('registrarse/', viewsUsuarios.registrarse, name='register'),
+    path('editar_perfil/', viewsUsuarios.editar_account, name='editar_account'),
+    path('editar_contraseña/', viewsUsuarios.editar_contraseña, name='editar_contraseña'),
     path('cerrar_sesion/', viewsUsuarios.cerrar_sesion, name='logout'),
     path('requestLogin/', viewsUsuarios.requestLogin, name='requestLogin'),
 ]

@@ -96,3 +96,45 @@ def eliminar_reserva(request):
             return JsonResponse({'success': False, 'message': 'La reserva no existe'})
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+def listar_reservas_cliente(request):
+    if not request.session.get('usuario_id'):
+        return JsonResponse({'success': False, 'message': 'Usuario no autenticado'}, status=401)
+
+    usuario_id = request.session['usuario_id']
+
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.usuario_id = usuario_id  # Asigna el usuario a la reserva
+            reserva.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'message': 'Hubo un error de validación', 'errors': errors})
+    else:
+        reservas = Reserva.objects.filter(usuario_id=usuario_id)
+        form = ReservaForm()
+        return render(request, 'mis_reservas.html', {'reservas': reservas, 'form': form})
+    
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def cambiar_estado_reserva(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        reserva_id = data.get('reserva_id')
+        nuevo_estado = data.get('estado')
+        
+        print("ID de la reserva:", reserva_id)
+        print("Nuevo estado:", nuevo_estado)
+
+        reserva = Reserva.objects.get(pk=reserva_id)
+        reserva.estado = nuevo_estado
+        reserva.save()
+        
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
+

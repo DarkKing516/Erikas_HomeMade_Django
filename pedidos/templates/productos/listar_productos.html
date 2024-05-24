@@ -70,13 +70,13 @@
                                 </td>
                                 <td>
                                     {% if producto.estado_catalogo == 'A' %}
-                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
-                                    data-catalogo-id="{{ producto.idProducto }}">Activo</label>
+                                    <label class="badge btn-inverse-secondary hover-cursor change-status-catalogo"
+                                    data-producto-id="{{ producto.idProducto }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status"
-                                    data-catalogo-id="{{ producto.idProducto }}">Inactivo</label>
+                                    <label class="badge btn-inverse-danger hover-cursor change-status-catalogo"
+                                    data-producto-id="{{ producto.idProducto }}">Inactivo</label>
                                     {% endif %}
-                                </td>
+                                </td>                                
                                 <td>{{ producto.cantidad }}</td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
@@ -88,7 +88,7 @@
                                         data-estado-producto="{{ producto.estado_producto }} " data-producto-id="{{ producto.idProducto }}" 
                                         data-estado-catalogo=" {{ producto.estado_catalogo }} " data-catalogo-id="{{ producto.idProducto }}"
                                         data-cantidad=" {{ producto.cantidad }} ">
-                                        <i class="mdi mdi-pencil">{{ producto.idProducto }}</i>
+                                        <i class="mdi mdi-pencil"></i>
                                         </button>
                                         
                                         <button type="button" class="btn btn-inverse-primary" data-producto-id="{{ producto.idProducto }}" data-toggle="modal" data-target="#editevidenciaproductoModal{{ producto.idProducto }}">
@@ -101,15 +101,13 @@
                                 </td>                              
                             </tr>
                     
-                            <!-- Modal para editar Pedido -->
-                            
-                            <div class="modal fade" id="editarProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
+                                <!-- Modal para editar Pedido -->
+                                <div class="modal fade" id="editarProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editarProductoModal{{ producto.idProducto }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar
-                                                Producto</h5>
+                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar Producto</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -121,20 +119,11 @@
                                                 <div class="form-row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="usuario">nombre</label>
-                                                            <input type="text" class="form-control" id="nombre" name="nombre"
-                                                                 value="{{ producto.nombre }}">
+                                                            <label for="nombre">Nombre</label>
+                                                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ producto.nombre }}">
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha">descripcion</label>
-                                                            <input type="datetime-loca" class="form-control" id="descripcion" name="descripcion" 
-                                                                value="{{ producto.descripcion }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="precio">precio</label>
-                                                            <input type="number" class="form-control" id="precio" name="precio"
-                                                                value="{{ producto.precio|floatformat:"0" }}">
-                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="estado_producto">Estado del Producto</label>
                                                             <select class="form-control" id="estado_producto" name="estado_producto">
@@ -142,82 +131,95 @@
                                                                 <option value="I" {% if producto.estado_producto == 'I' %} selected {% endif %}>Inactivo</option>
                                                             </select>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="estado_producto">Estado del Producto</label>
-                                                            <select class="form-control" id="estado_producto" name="estado_producto">
-                                                                <option value="1" {% if producto.estado_producto == 1 %} selected {% endif %}>Activo</option>
-                                                                <option value="0" {% if producto.estado_producto != 1 %} selected {% endif %}>Inactivo</option>
+                                                            <label for="descripcion">Descripción</label>
+                                                            <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ producto.descripcion }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="estado_catalogo">Estado del Catálogo</label>
+                                                            <select class="form-control" id="estado_catalogo" name="estado_catalogo">
+                                                                <option value="A" {% if producto.estado_catalogo == 'A' %} selected {% endif %}>Activo</option>
+                                                                <option value="I" {% if producto.estado_catalogo == 'I' %} selected {% endif %}>Inactivo</option>
                                                             </select>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="cantidad">cantidad</label>
-                                                            <input type="text" class="form-control" id="cantidad" name="cantidad"
-                                                                value="{{ producto.cantidad }}">
-                                                        </div>
-                                                        
                                                     </div>
                                                 </div>
-
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="precio">Precio</label>
+                                                            <input type="number" class="form-control" id="precio" name="precio" value="{{ producto.precio|floatformat:"0" }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="cantidad">Cantidad</label>
+                                                            <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ producto.cantidad }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ producto.idProducto }}</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
+                                                        <button class="btn btn-primary mr-2" type="submit">Editar</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                                                     </div>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                </div>
+
+                            <!-- Modal para editar imagen de Producto -->
                             <div class="modal fade" id="editevidenciaproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar imagen de
-                                                Producto</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-Producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <p><strong>Imagen actual:</strong> <img src="{{ producto.imagen.url }}" alt="imagen" style="max-width: 100%; height: auto;"></p>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
-                                                            <br>
-                                                            <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
-                                                        </div>
+                            aria-labelledby="editarproductoModal{{ producto.idProducto }}Label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editarproductoModal{{ producto.idProducto }}Label">Editar imagen de
+                                            Producto</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" onsubmit="EditarEvidenciaProductoxd('{{ producto.idProducto }}')" id="EditarEvidenciaForm{{ producto.idProducto }}" class="forms-sample" data-producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="producto_id" value="{{ producto.idProducto }}">
 
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <p><strong>Imagen actual:</strong> <img src="{{ producto.imagen.url }}" alt="imagen" style="max-width: 100%; height: auto;"></p>
                                                     </div>
                                                 </div>
-                                                
-
-                                                <!-- Botones -->
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ producto.idProducto }}</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
+                                                        <br>
+                                                        <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                                                     </div>
                                                 </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                            <!-- Botones -->
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-primary mr-2">Editar</button>
+                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -231,7 +233,7 @@
 
 
 
-<!-- Modal Crear Pedido -->
+<!-- Modal Crear Producto -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -243,49 +245,77 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del formulario con Bootstrap grid system -->
-                <form method="post" onsubmit="validateProductoForm('{{ producto.idProducto }}')" id="productoForm{{ pedido.idPedido }}" class="forms-sample" data-pedido-id="{{ producto.idProducto }}" enctype="multipart/form-data">
+                <form method="post" onsubmit="validateProductoForm('{{ producto.idProducto }}')" id="productoForm{{ pedido.idPedido }}" class="forms-sample" data-producto-id="{{ producto.idProducto }}" enctype="multipart/form-data">
                     {% csrf_token %}
+
+                    <!-- Primera fila con dos columnas -->
                     <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="id_TipoProducto">id_TipoProducto</label>
+                                <label for="id_TipoProducto">Tipo de Producto</label>
                                 {{ formCreate.id_TipoProducto }}
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="nombre">nombre</label>
+                                <label for="nombre">Nombre</label>
                                 {{ formCreate.nombre }}
                             </div>
+                        </div>
+                    </div>
+                    <!-- Segunda fila con dos columnas -->
+                    <div class="form-row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="descripcion">Descripción del Producto</label>
-                                {{ formCreate.descripcion }}
+                                <label for="precio">Precio</label>
+                                {{ formCreate.precio }}
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
+                                <label for="imagen">Imagen</label>
                                 <input type="file" name="imagen" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ producto.idProducto }}">
                                 <br>
                                 <img src="#" id="imagen_vista_previa_{{ producto.idProducto }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                             </div>
+                        </div>
+                    </div>
+                    <!-- Tercera fila con dos columnas -->
+                    <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="precio">precio</label>
-                                {{ formCreate.precio }}
-                            </div>
-                            <div class="form-group">
-                                <label for="estado_producto">Estado del Productos</label>
+                                <label for="estado_producto">Estado del Producto</label>
                                 <select class="form-control" id="estado_producto" name="estado_producto">
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
+                                    <option value="A" {% if producto.estado_producto == 'A' %} selected {% endif %}>Activo</option>
+                                    <option value="I" {% if producto.estado_producto == 'I' %} selected {% endif %}>Inactivo</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="estado_catalogo">Estado del Catalogo</label>
+                                <label for="estado_catalogo">Estado del Catálogo</label>
                                 <select class="form-control" id="estado_catalogo" name="estado_catalogo">
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
+                                    <option value="A" {% if producto.estado_catalogo == 'A' %} selected {% endif %}>Activo</option>
+                                    <option value="I" {% if producto.estado_catalogo == 'I' %} selected {% endif %}>Inactivo</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                    <!-- Cuarta fila con una columna -->
+                    <div class="form-row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="Cantidad">Cantidad</label>
+                                <label for="cantidad">Cantidad</label>
                                 {{ formCreate.cantidad }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quinta fila con una columna -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="descripcion">Descripción del Producto</label>
+                                {{ formCreate.descripcion }}
                             </div>
                         </div>
                     </div>
@@ -302,6 +332,7 @@
         </div>
     </div>
 </div>
+
 
 
 <!-- Fin del Modal Crear Pedido -->
@@ -403,14 +434,18 @@
         $('#editarproductoModal').modal('show');
     });
 
-    // Función para manejar el cambio de estado del pedido
+    $(document).ready(function() {
+        // Adjuntar evento de clic a los elementos con clase change-status
+        $('.change-status').click(handleChangeStatus);
+        $('.change-status-catalogo').click(handleChangeStatus2);
+    });
+    
+    // Función para manejar el cambio de estado del producto
     function handleChangeStatus(event) {
-        // Obtener el pedido ID
-        var producto_id = $(this).data('producto-id');
-
-        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        var producto_id = $(this).data('producto-id'); // Corrige esto
+    
         Swal.fire({
-            title: 'Cambiar Estado',
+            title: 'Cambiar Estado del Producto',
             html: '<select class="form-control" id="estado_producto2" name="estado_producto">'+
                 '<option value="A">Activo</option>' +
                 '<option value="I">Inactivo</option>' +
@@ -421,11 +456,9 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Cambiar',
             preConfirm: () => {
-                // Obtener el valor seleccionado del select
-                var nuevoProducto = $('#estado_producto2').val();
-
-                // Enviar los datos a través de AJAX incluyendo el token CSRF
-                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                var nuevoEstado = $('#estado_producto2').val();
+    
+                return fetch("{% url 'pedidos:cambiar_estado_productos' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -433,36 +466,34 @@
                     },
                     body: JSON.stringify({
                         'producto_id': producto_id,
-                        'estado_pedido': nuevoProducto,
+                        'estado_producto': nuevoEstado,
                     }),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Hubo un problema al cambiar el Estado.');
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el Estado.');
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                var nuevoRol = $('#estado_producto').val();
-
-                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                Swal.fire('Estado cambiado!', 'El estado del producto se ha cambiado correctamente.', 'success').then(() => {
                     location.reload();
                 });
             }
         });
     }
+    
+    // Función para manejar el cambio de estado del catálogo
     function handleChangeStatus2(event) {
-        // Obtener el pedido ID
-        var producto_id = $(this).data('producto-id');
-
-        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        var producto_id = $(this).data('producto-id'); // Corrige esto
+    
         Swal.fire({
-            title: 'Cambiar Estado',
+            title: 'Cambiar Estado del Catálogo',
             html: '<select class="form-control" id="estado_catalogo2" name="estado_catalogo">'+
                 '<option value="A">Activo</option>' +
                 '<option value="I">Inactivo</option>' +
@@ -473,42 +504,38 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Cambiar',
             preConfirm: () => {
-                // Obtener el valor seleccionado del select
-                var nuevoCatalogo = $('#estado_catalogo2').val();
-
-                // Enviar los datos a través de AJAX incluyendo el token CSRF
-                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                var nuevoEstado = $('#estado_catalogo2').val();
+    
+                return fetch("{% url 'pedidos:cambiar_estado_catalogo' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
                     body: JSON.stringify({
-                        'pedido_id': producto_id,
-                        'estado_pedido': nuevoCatalogo,
+                        'producto_id': producto_id,
+                        'estado_catalogo': nuevoEstado,
                     }),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Hubo un problema al cambiar el Estado.');
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el Estado.');
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                var nuevoRol = $('#estado_catalogo').val();
-
-                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                Swal.fire('Estado cambiado!', 'El estado del catálogo se ha cambiado correctamente.', 'success').then(() => {
                     location.reload();
                 });
             }
         });
     }
-
+    
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
         if ($.fn.DataTable.isDataTable('#pedidoTable')) {
@@ -738,7 +765,6 @@ document.querySelectorAll('.delete-producto').forEach(button => {
         });
     });
 });
-
 
 
 </script>

@@ -179,37 +179,71 @@ def editar_productos(request):
 @require_POST
 def editar_evidencia_productos(request):
     producto_id = request.POST.get('producto_id')
-    print(producto_id)
-    producto = get_object_or_404(Pedido, pk=producto_id)
+    producto = get_object_or_404(Producto, pk=producto_id)
 
-    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
-    form = ProductoFormEditarEvidencia(request.POST, request.FILES, instance=producto_id)
+    # Crear una instancia del formulario con los datos recibidos y la instancia del producto
+    form = ProductoFormEditarEvidencia(request.POST, request.FILES, instance=producto)
 
-    # Validamos el formulario
+    # Validar el formulario
     if form.is_valid():
-        # Guardamos los cambios en la reserva
+        # Guardar los cambios en el producto
         saved_instance = form.save()
         print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
         return JsonResponse({'success': True})
     else:
-        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        # Si el formulario no es válido, devolver una respuesta con los errores
         errors = dict(form.errors.items())
-        return JsonResponse({'success': False, 'errors': errors})
-    
+        return JsonResponse({'success': False, 'errors': errors})    
 
+
+
+@csrf_exempt  # Solo si no tienes el CSRF token configurado correctamente
 def eliminar_producto(request):
     if request.method == 'POST':
-        producto_id = request.POST.get('producto_id')
-        print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
         try:
-            producto = Producto.objects.get(pk=producto_id)
-            producto.delete()
-            return JsonResponse({'success': True})
-        except Producto.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'El producto no existe.'})
+            data = json.loads(request.body)
+            producto_id = data.get('producto_id')
+            print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
+            try:
+                producto = Producto.objects.get(pk=producto_id)
+                producto.delete()
+                return JsonResponse({'success': True})
+            except Producto.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'El producto no existe.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
     else:
         return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
 
+@require_POST
+def cambiar_estado_productos(request):
+    try:
+        data = json.loads(request.body)
+        producto_id = data.get('producto_id')
+        nuevo_estado_producto = data.get('estado_producto')
+
+        producto = Producto.objects.get(pk=producto_id)
+        producto.estado_producto = nuevo_estado_producto
+        producto.save()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@require_POST
+def cambiar_estado_catalogo(request):
+    try:
+        data = json.loads(request.body)
+        producto_id = data.get('producto_id')
+        nuevo_estado_catalogo = data.get('estado_catalogo')
+
+        producto = Producto.objects.get(pk=producto_id)
+        producto.estado_catalogo = nuevo_estado_catalogo
+        producto.save()
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
 
