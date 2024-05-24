@@ -54,7 +54,7 @@
                             {% comment %}{% if usuario.id != 1 %}{% endcomment %}
                             <tr class="user-row">
                                 <td class=" py-1">
-                                    <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg"
+                                    <img src="{% static 'images/iconosesion.jpg' %}"
                                         alt="image" />
                                 </td>
                                 <td>{{ usuario.nombre }}</td>
@@ -441,7 +441,6 @@
             // Obtener el usuario ID
             var usuario_id = $(this).data('usuario-id');
 
-
             // Mostrar SweetAlert con el campo de selección y el token CSRF
             Swal.fire({
                 title: 'Cambiar Rol',
@@ -471,15 +470,16 @@
                             'rol_id': nuevoRol,
                         }),
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Hubo un problema al cambiar el rol.');
-                            }
-                            return response.json();
-                        })
-                        .catch(error => {
-                            Swal.showValidationMessage(`Request failed: ${error}`);
-                        });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar el rol.');
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                        throw error;
+                    });
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -489,12 +489,17 @@
                     // Actualizar el contenido del label con el nuevo rol
                     //row.find('.change-rol').text(nuevoRol);
                     // Mostrar SweetAlert de éxito
-                    Swal.fire('¡Rol cambiado!', 'El rol se ha cambiado correctamente.', 'success').then(() => {
-                        location.reload();
-                    });
+                    if (result.value && result.value.success) {
+                        Swal.fire('¡Rol cambiado!', 'El rol se ha cambiado correctamente.', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('¡Error!', 'El cambio de rol no se ha realizado correctamente.', 'error');
+                    }
                 }
             });
         });
+
 
 
         // Agregar evento clic para el botón edit-user

@@ -84,7 +84,7 @@
                                         <!-- <button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button> -->
                                         <!-- </label> -->
                                     </div>
-                                    {% if 'Editar Rol Usuarios' in request.session.permisos %}
+                                    {% if 'Editar Rol Usuarios' in request.session.permisos and  request.session.usuario_id != 1%}
                                     <div class="form-group">
                                         <label for="rol">Rol</label>
                                         <select class="form-control" id="rol" name="idRol">
@@ -314,13 +314,15 @@
                             'usuario_id': usuario_id,
                         }),
                     })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Hubo un problema al cambiar el estado.');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
+                    .then(data => {
+                        if (!data.success) {
+                            // Mostrar SweetAlert de error
+                            Swal.fire({
+                                title: '¡Error!',
+                                text: 'No se puede Deshabilitar la cuenta de este usuario.',
+                                icon: 'error',
+                            });
+                        } else {
                             // Mostrar SweetAlert de éxito
                             Swal.fire({
                                 title: '¡Estado cambiado!',
@@ -329,11 +331,14 @@
                             }).then((result) => {
                                 window.location.reload(); // Esto actualizará la página
                             });
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire('¡Error!', 'El estado no se ha cambiado.', 'error');
-                        });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Mostrar SweetAlert de error en caso de problemas de red u otros errores
+                        Swal.fire('¡Error!', 'Hubo un problema al cambiar el estado.', 'error');
+                    });
+
                 }
             });
         });
