@@ -281,7 +281,8 @@ def cambiar_estado(request):
             usuario.estado = 'I'
         else:
             usuario.estado = 'A'
-        if request.session.get('estado') == 'A':
+        if request.session.get('estado') == 'A' and usuario_id == request.session.get('usuario_id'):
+            usuario.save()
             cerrar_sesion(request)
             return JsonResponse({'success': True})
         usuario.save()
@@ -436,6 +437,8 @@ def iniciar_sesion(request):
             usuario = backend.authenticate(request, correo=correo, contraseña=contraseña)
             
             if usuario is not None:
+                if usuario.estado != 'A':
+                     return JsonResponse({'success': False, 'message': 'Su Cuenta ha sido deshabilitada.'})
                 # Obtener el rol del usuario y guardar en la sesión
                 request.session['estado'] = usuario.estado
                 request.session['rol'] = usuario.idRol.nombre_rol

@@ -50,8 +50,8 @@
                         <tbody>
                             {% for usuario in usuarios %}
                             <!-- <tr class="table-info user-row"> -->
-                            {% comment %}{% if usuario.id != 1 and request.session.usuario_id != usuario.id %}{% endcomment %}
-                            {% if usuario.id != 1 %}
+                            {% if usuario.id != 1 and request.session.usuario_id != usuario.id %}
+                            {% comment %}{% if usuario.id != 1 %}{% endcomment %}
                             <tr class="user-row">
                                 <td class=" py-1">
                                     <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg"
