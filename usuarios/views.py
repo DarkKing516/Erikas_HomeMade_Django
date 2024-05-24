@@ -251,6 +251,9 @@ def cambiar_rol(request):
         usuario_id = data.get('usuario_id')
         nuevo_rol_id = data.get('rol_id')
         
+        if usuario_id == 1:
+            return JsonResponse({'success': False})
+        
         print("Usuario ID:", usuario_id)
         print("Rol ID:", nuevo_rol_id)
         usuario = Usuario.objects.get(pk=usuario_id)
@@ -277,6 +280,10 @@ def cambiar_estado(request):
         usuario_id = data.get('usuario_id')
         print("Usuario ID:", usuario_id)
         usuario = Usuario.objects.get(pk=usuario_id)
+        if usuario_id == 1:
+            print("Error UwU")
+            return JsonResponse({'success': False, 'warning': False})
+        
         if usuario.estado == 'A':
             usuario.estado = 'I'
         else:
