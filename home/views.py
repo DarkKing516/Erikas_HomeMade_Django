@@ -12,23 +12,33 @@ import random
 def index(request):
     form = ReservaFormIndex()
     tamanos_imagenes = [
-        {'width': 310, 'height': 585},
-        {'width': 631, 'height': 587},
-        {'width': 311, 'height': 289},
-        {'width': 631, 'height': 289},
-        {'width': 311, 'height': 289},
-        {'width': 311, 'height': 289},
-        {'width': 311, 'height': 289},
+        'thumbnail-size-1',
+        'thumbnail-size-2',
+        'thumbnail-size-3',
+        'thumbnail-size-4',
+        'thumbnail-size-5',
+        'thumbnail-size-6',
+        'thumbnail-size-7',
     ]
+    # tamanos_imagenes = [
+    #     {'width': 310, 'height': 585},
+    #     {'width': 631, 'height': 587},
+    #     {'width': 311, 'height': 289},
+    #     {'width': 631, 'height': 289},
+    #     {'width': 311, 'height': 289},
+    #     {'width': 311, 'height': 289},
+    #     {'width': 311, 'height': 289},
+    # ]
     clase_tamanos_imagenes = [
-        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
-        {'class': 'col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop'},
-        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
-        {'class': 'col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop'},
-        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
-        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
-        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary thumbnail-mary-2 wow slideInLeft'},
+        {'class': 'col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary thumbnail-mary-big wow slideInRight'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary thumbnail-mary-2 wow slideInDown'},
+        {'class': 'col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary wow slideInUp'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary thumbnail-mary-2 wow slideInUp'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary thumbnail-mary-2 wow slideInRight'},
+        {'class': 'col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop', 'hijo': 'thumbnail thumbnail-mary thumbnail-mary-2 wow slideInLeft'},
     ]
+    
     # tamanos_imagenes = tamanos_imagenes[:len(productos_aleatorios)]
     productos = list(Producto.objects.all())
     productos_aleatorios = productos
