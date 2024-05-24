@@ -171,24 +171,9 @@ let carrito = [];
 function addToCart(id, tipo) {
     // Lógica para añadir al carrito
     if (tipo === 'producto') {
-        // Buscar el producto por su ID
-        const producto = productos.find(p => p.idProducto === id);
-        if (!producto) {
-            console.error(`Producto con ID ${id} no encontrado.`);
-            return;
-        }
-
-        // Verificar si hay suficiente cantidad disponible
-        if (producto.cantidad <= 0) {
-            console.error(`No hay suficiente cantidad disponible del producto ${producto.nombre}.`);
-            return;
-        }
-
         console.log(`Añadir al carrito el producto con ID: ${id}`);
         // Agregar el producto al array del carrito
         carrito.push({ tipo: 'producto', id: id });
-        // Reducir la cantidad disponible del producto
-        producto.cantidad--;
     } else if (tipo === 'servicio') {
         console.log(`Añadir al carrito el servicio con ID: ${id}`);
         // Agregar el servicio al array del carrito
@@ -200,7 +185,6 @@ function addToCart(id, tipo) {
     // Imprimir el contenido del carrito
     console.log('Contenido del carrito:', carrito);
 }
-
 
 
 </script>
