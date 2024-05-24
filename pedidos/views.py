@@ -197,19 +197,23 @@ def editar_evidencia_productos(request):
 
 
 
+@csrf_exempt  # Solo si no tienes el CSRF token configurado correctamente
 def eliminar_producto(request):
     if request.method == 'POST':
-        producto_id = request.POST.get('producto_id')
-        print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
         try:
-            producto = Producto.objects.get(pk=producto_id)
-            producto.delete()
-            return JsonResponse({'success': True})
-        except Producto.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'El producto no existe.'})
+            data = json.loads(request.body)
+            producto_id = data.get('producto_id')
+            print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
+            try:
+                producto = Producto.objects.get(pk=producto_id)
+                producto.delete()
+                return JsonResponse({'success': True})
+            except Producto.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'El producto no existe.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
     else:
         return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
-    
 
 @require_POST
 def cambiar_estado_productos(request):
