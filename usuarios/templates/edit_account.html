@@ -326,10 +326,8 @@
                                 title: '¡Estado cambiado!',
                                 text: 'El estado se ha cambiado correctamente. Cerrando su sesión',
                                 icon: 'success',
-                                onClose: () => {
-                                    // Recargar la página
-                                    location.reload();
-                                }
+                            }).then((result) => {
+                                window.location.reload(); // Esto actualizará la página
                             });
                         })
                         .catch(error => {
