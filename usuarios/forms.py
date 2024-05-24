@@ -136,7 +136,7 @@ class CreateUsuario(forms.ModelForm):
         if not telefono.isdigit():
             raise forms.ValidationError("El teléfono debe contener solo números.")
         return telefono
-    
+
 
 class EditarUsuario(forms.ModelForm):
     nombre = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
@@ -175,3 +175,8 @@ class EditarUsuario(forms.ModelForm):
                 raise forms.ValidationError("Este correo electrónico ya está en uso.")
         except Usuario.DoesNotExist:  # Aquí cambiamos 'User' a 'Usuario'
             return correo
+
+class EditarContraseñaUsuario(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['contraseña']

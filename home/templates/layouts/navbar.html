@@ -53,6 +53,7 @@
     <!-- End custom js for this page-->
     <script src="{% static 'js/preloader.js' %}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" />
 </head>
 
 <body>
@@ -386,9 +387,9 @@
                                     <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_permisos' %}">
                                             Permisos </a></li>
                                     {% endif %}
-                                    {% if request.session.id_rol != 1 and "Editar Perfil" in request.session.permisos %}
-                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:listar_roles' %}">
-                                            Editar Cuenta </a></li>
+                                    {% if "Editar Perfil" in request.session.permisos %}
+                                    <li class="nav-item"> <a class="nav-link" href="{% url 'usuarios:editar_account' %}">
+                                            Editar Perfil </a></li>
                                     {% endif %}
                                 </ul>
                             </div>
@@ -463,19 +464,19 @@
                             </a>
                         </li>
                         {% endif %}
+                        {% if request.session.id_rol != 1 and "Listar Mis Pedidos" in request.session.permisos %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
+                                <i class="mdi mdi-calendar menu-icon"></i>
+                                <span class="menu-title">Mis Pedidos </span>
+                            </a>
+                        </li>
+                        {% endif %}
                         {% if "Listar Ventas" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'ventas:listar_ventas' %}">
                                 <i class="mdi mdi-tag-outline menu-icon"></i>
                                 <span class="menu-title"> Ventas </span>
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if "Listar Reservas" in request.session.permisos %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'reservas:listar_reserva' %}">
-                                <i class="mdi mdi-calendar menu-icon"></i>
-                                <span class="menu-title"> Reservas </span>
                             </a>
                         </li>
                         {% endif %}
@@ -487,19 +488,19 @@
                             </a>
                         </li>
                         {% endif %}
+                        {% if "Listar Reservas" in request.session.permisos %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'reservas:listar_reserva' %}">
+                                <i class="mdi mdi-calendar menu-icon"></i>
+                                <span class="menu-title"> Reservas </span>
+                            </a>
+                        </li>
+                        {% endif %}
                         {% if request.session.id_rol != 1 and "Listar Mis Reservas" in request.session.permisos %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'reservas:listar_reserva_cliente' %}">
                                 <i class="mdi mdi-calendar menu-icon"></i>
                                 <span class="menu-title">Mis Reservas </span>
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if request.session.id_rol != 1 and "Listar Mis Pedidos" in request.session.permisos %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'ventas:listar_mis_ventas' %}">
-                                <i class="mdi mdi-calendar menu-icon"></i>
-                                <span class="menu-title">Mis Pedidos </span>
                             </a>
                         </li>
                         {% endif %}

@@ -1,4 +1,4 @@
-<title>Listar Usuarios</title>
+<title>Editar Cuenta</title>
 {% extends 'layouts/navbar.html' %}
 
 {% load static %}
@@ -27,153 +27,99 @@
 
 
 <!-- Contenido principal -->
-<div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Usuarios</h4>
-                <div class="table-responsive">
-                    <table id="userTable" class="table table hover row-border" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Nombre</th>
-                                <th>Usuario</th>
-                                <th>Rol</th>
-                                <th>Documento</th>
-                                <th>Teléfono</th>
-                                <th>Correo</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for usuario in usuarios %}
-                            <!-- <tr class="table-info user-row"> -->
-                            {% comment %}{% if usuario.id != 1 and request.session.usuario_id != usuario.id %}{% endcomment %}
-                            {% if usuario.id != 1 %}
-                            <tr class="user-row">
-                                <td class=" py-1">
-                                    <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg"
-                                        alt="image" />
-                                </td>
-                                <td>{{ usuario.nombre }}</td>
-                                <td>{{ usuario.usuario }}</td>
-                                <td><label class="badge badge-outline-primary hover-cursor {% if 'Editar Rol Usuarios' in request.session.permisos %}change-rol{% endif %}" data-usuario-id="{{ usuario.id }}">
-                                        {{ usuario.idRol.nombre_rol }}</label>
-                                </td>
-                                <td>{{ usuario.documento }}</td>
-                                <td>{{ usuario.telefono }}</td>
-                                <td>{{ usuario.correo }}</td>
-                                <td>
-                                    <!-- Aquí puedes acceder al estado del usuario -->
-                                    {% if usuario.estado == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Usuarios' in request.session.permisos %}change-status{% endif %}"
-                                    data-usuario-id="{{ usuario.id }}">Activo</label>
-                                    {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Usuarios' in request.session.permisos %}change-status{% endif %}"
-                                    data-usuario-id="{{ usuario.id }}">Inactivo</label>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Basic example">
-                                        {% if 'Editar Usuarios' in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-warning edit-user" data-toggle="modal" data-target="#editUserModal{{ usuario.id }}" data-nombre="{{ usuario.nombre }}" data-documento="{{ usuario.documento }}" data-telefono="{{ usuario.telefono }}" data-correo="{{ usuario.correo }}" data-rol="{{ usuario.idRol.id }}" data-usuario-id="{{ usuario.id }}">
-                                            <i class="mdi mdi-pencil"></i>
-                                        </button>
-                                        {% endif %}
-                                        {% if 'Eliminar Usuarios' in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-danger delete-user" data-usuario-id="{{ usuario.id }}">
-                                            <i class="mdi mdi-delete"></i>
-                                        </button>
-                                        {% endif %}
-                                        {% if 'Eliminar Usuarios' not in request.session.permisos and 'Editar Usuarios' not in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-primary">
-                                            <i class="bi bi-exclamation-circle"></i>
-                                        </button>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endif %}
-                            <!-- Modal para editar usuario -->
-                            <div class="modal fade" id="editUserModal{{ usuario.id }}" tabindex="-1" role="dialog" aria-labelledby="editUserModal{{ usuario.id }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editUserModal{{ usuario.id }}Label">Editar Usuario</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- <form method="post" action="{% url 'usuarios:editar_usuario_' usuario.id %}" id="editarUsuarioForm" class="forms-sample" data-usuario-id="{{ usuario.id }}"> -->
-                                            <form method="post" onsubmit="EditarUsuarioxd('{{ usuario.id }}')" id="editarUsuarioForm{{ usuario.id }}" class="forms-sample" data-usuario-id="{{ usuario.id }}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                                                <div class="form-row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="nombre">Nombre</label>
-                                                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ usuario.nombre }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="documento">Documento</label>
-                                                            <input type="text" class="form-control" id="documento" name="documento" value="{{ usuario.documento }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="usuario">Usuario</label>
-                                                            <input type="text" class="form-control" id="usuario" name="usuario" value="{{ usuario.usuario }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="telefono">Teléfono</label>
-                                                            <input type="text" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="correo">Correo</label>
-                                                            <input type="email" class="form-control" id="correo" name="correo" value="{{ usuario.correo }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="rol">Rol</label>
-                                                            <select class="form-control" id="rol" name="idRol">
-                                                                {% for rol in roles %}
-                                                                <option value="{{ rol.id }}" {% if usuario.idRol|lower == rol.nombre_rol|lower %} selected {% endif %}>{{ rol.nombre_rol }}</option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="content-wrapper d-flex align-items-center auth px-0">
+            <div class="row w-100 mx-0">
+                <div class="col-lg-6 mx-auto">
+                    <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                        <div class="brand-logo">
+                            <img src="{% static 'images/logo-lg.png' %}" alt="logo">
+                        </div>
+                        <h4>Hola, {{ request.session.nombre_usuario }}!</h4>
+                        <!-- <h4>Hola, {{ request.session.estado }}!</h4> -->
 
-                                                <!-- Botones -->
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar</button>
-                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
+                        <!-- <h4>Hola, {{ request.session.estado }}!</h4> -->
+                        <!-- <h6 class="font-weight-light">Registrarse es fácil. Solo se necesitan unos pocos pasos</h6> -->
+                        <form class="pt-3" method="post" onsubmit="EditarUsuarioxd('{{ usuario.id }}')" id="editarUsuarioForm{{ usuario.id }}" class="forms-sample" data-usuario-id="{{ usuario.id }}">
+                            {% csrf_token %}
+                            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                            <input type="hidden" name="idRol" value="{{ usuario.idRol.id }}">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" class="form-control form-control-lg" placeholder="Nombre" id="nombre" name="nombre" value="{{ usuario.nombre }}" >
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="telefono">Teléfono</label>
+                                    <input type="tel" class="form-control form-control-lg" placeholder="Teléfono" id="telefono" name="telefono" value="{{ usuario.telefono }}">
                                 </div>
                             </div>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="documento">Documento</label>
+                                    <input type="text" class="form-control form-control-lg" placeholder="Documento" id="documento" name="documento" value="{{ usuario.documento }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="correo">Correo</label>
+                                    <input type="email" class="form-control form-control-lg" placeholder="Correo" id="correo" name="correo" value="{{ usuario.correo }}">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="usuario">Usuario</label>
+                                    <input type="text" class="form-control form-control-lg" placeholder="Usuario" id="usuario" name="usuario" value="{{ usuario.usuario }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <br><br>
+                                    <!-- <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Contraseña" value="{{ usuario.contraseña }}"> -->
+                                    <button type="button" class="btn btn-inverse-primary btn-fw ml-1" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <div class="form-check">
+                                        <!-- <label class="form-check-label text-muted"> -->
+                                        <!-- <input type="checkbox" class="form-check-input"> -->
+                                        <!-- <button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button> -->
+                                        <!-- </label> -->
+                                    </div>
+                                    {% if 'Editar Rol Usuarios' in request.session.permisos %}
+                                    <div class="form-group">
+                                        <label for="rol">Rol</label>
+                                        <select class="form-control" id="rol" name="idRol">
+                                            {% for rol in roles %}
+                                            <option value="{{ rol.id }}" {% if usuario.idRol|lower == rol.nombre_rol|lower %} selected {% endif %}>{{ rol.nombre_rol }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div> 
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
+                                Registrarse
+                                </button>
+                            </div>
+                            <div class="text-center mt-4 font-weight-light">
+                                <span>¿Deseas Deshabilitar Tú cuenta?<a data-usuario-id="{{ usuario.id }}" href="#" class="text-primary"> Deshabilitar Mi Cuenta</a></span>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- content-wrapper ends -->
     </div>
+    <!-- page-body-wrapper ends -->
 </div>
+  
 <!-- Fin del contenido principal -->
 
 
-
-
-
-<!-- Modal Crear Usuario -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Editar Contraseña -->
+<div class="modal fade" id="EditarPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -187,41 +133,12 @@
                 <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm()">
                     {% csrf_token %}
                     <div class="form-row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
-                                <label for="nombre">Nombre</label>
-                                {{ formCreate.nombre }}
-                            </div>
-                            <div class="form-group">
-                                <label for="documento">Documento</label>
-                                {{ formCreate.documento }}
-                            </div>
-                            <div class="form-group">
-                                <label for="usuario">Usuario</label>
-                                {{ formCreate.usuario }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="telefono">Teléfono</label>
-                                {{ formCreate.telefono }}
-                            </div>
-                            <div class="form-group">
-                                <label for="correo">Correo</label>
-                                {{ formCreate.correo }}
-                            </div>
-                            <div class="form-group">
+                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
                                 <label for="contrasena">Contraseña</label>
-                                {{ formCreate.contraseña }}
+                                <input type="password" class="form-control form-control-lg" placeholder="contraseña" id="contraseña" name="contraseña">
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Fila adicional para el rol -->
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="rol">Rol</label>
-                            {{ formCreate.idRol }}
                         </div>
                     </div>
 
@@ -256,7 +173,7 @@
         const formData = new FormData(form);
 
         // Realizar la solicitud POST utilizando fetch
-        fetch("{% url 'usuarios:listar_usuarios' %}", {
+        fetch("{% url 'usuarios:editar_contraseña' %}", {
             method: 'POST',
             body: formData,
             headers: {
@@ -270,7 +187,7 @@
                     // Mostrar SweetAlert de éxito
                     Swal.fire({
                         title: '¡Registro exitoso!',
-                        text: 'El usuario se ha registrado correctamente.',
+                        text: 'Contraseña Editada correctamente.',
                         icon: 'success',
                         onClose: () => {
                             // Recargar la página
@@ -370,29 +287,22 @@
 
 
     $(document).ready(function () {
-        // ... Tu código existente ...
-
-        $('#userTable').on('click', 'td .change-status.btn-inverse-success, td .change-status.btn-inverse-danger', function () {
-            // Obtener la fila correspondiente
-            var row = $(this).closest('tr');
-
+        $('span a.text-primary').on('click', function (event) {
+            event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
             // Obtener el usuario ID
             var usuario_id = $(this).data('usuario-id');
 
             // Mostrar SweetAlert de confirmación
             Swal.fire({
-                title: 'Cambiar estado',
-                text: '¿Estás seguro de cambiar el estado?',
+                title: 'Deshabilitar Mi Cuenta',
+                text: '¿Estás seguro de cambiar el estado? \nLuego de esto no podrás iniciar sesión',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, cambiar estado'
+                confirmButtonText: 'Sí, Deshabilitar Mi Cuenta'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Cambiar la clase y el texto de la etiqueta según el nuevo estado
-                    var estadoLabel = row.find('.change-status');
-
                     // Realizar la solicitud fetch para cambiar el estado del usuario
                     return fetch("{% url 'usuarios:cambiar_estado' %}", {
                         method: 'POST',
@@ -412,15 +322,15 @@
                         })
                         .then(data => {
                             // Mostrar SweetAlert de éxito
-                            Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success');
-                            // Actualizar la etiqueta de estado en la interfaz
-                            if (estadoLabel.hasClass('btn-inverse-success')) {
-                                estadoLabel.removeClass('btn-inverse-success').addClass('btn-inverse-danger');
-                                estadoLabel.text('Inactivo');
-                            } else {
-                                estadoLabel.removeClass('btn-inverse-danger').addClass('btn-inverse-success');
-                                estadoLabel.text('Activo');
-                            }
+                            Swal.fire({
+                                title: '¡Estado cambiado!',
+                                text: 'El estado se ha cambiado correctamente. Cerrando su sesión',
+                                icon: 'success',
+                                onClose: () => {
+                                    // Recargar la página
+                                    location.reload();
+                                }
+                            });
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -664,7 +574,7 @@
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 
 </script>
-{% elif "Listar Usuarios" not in request.session.permisos %}
+{% elif "Editar Perfil" not in request.session.permisos %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 

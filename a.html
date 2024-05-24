@@ -1,1 +1,35 @@
-<br>
+<div class="modal fade" id="EditarPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro de Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm()">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="contrasena">Contraseña</label>
+                                {{ formCreate.contraseña }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
