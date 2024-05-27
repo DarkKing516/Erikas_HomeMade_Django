@@ -1,7 +1,5 @@
 {
-<<<<<<< HEAD
-    "workbench.colorTheme": "Default Dark Modern"
-=======
-    "workbench.colorTheme": "c262185d-9682-413b-9143-85a2dda76b2f"
->>>>>>> 5faaa5a1aaf505ddc13d20aa856dd9cc172ac3ae
+    // "workbench.colorTheme": "c262185d-9682-413b-9143-85a2dda76b2f",
+    "doki.sticker.css": "",
+    "doki.sticker.path": "C:\\Users\\Sena\\Videos\\Captures\\Erikas_HomeMade_Django\\media\\pedidos\\papigojo.gif",
 }
