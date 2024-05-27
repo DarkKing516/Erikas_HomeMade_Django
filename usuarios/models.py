@@ -28,7 +28,6 @@ class Usuario(models.Model):
     correo = models.EmailField(max_length=50, unique=True)
     usuario = models.CharField(max_length=20)
     contraseña = models.CharField(max_length=255)
-    img = models.ImageField(upload_to='usuario/')  # Ajusta la ruta según tu estructura de carpetas
     estado = models.CharField(max_length=1, default='A')
 
     def verificar_contraseña(self, contraseña):
