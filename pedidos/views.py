@@ -182,6 +182,7 @@ def editar_productos(request):
 def editar_evidencia_productos(request):
     producto_id = request.POST.get('producto_id')
     producto = get_object_or_404(Producto, pk=producto_id)
+    imagen_antigua_path = producto.imagen.path  # Guardar la ruta de la imagen antigua
 
     # Crear una instancia del formulario con los datos recibidos y la instancia del producto
     form = ProductoFormEditarEvidencia(request.POST, request.FILES, instance=producto)
@@ -190,12 +191,20 @@ def editar_evidencia_productos(request):
     if form.is_valid():
         # Guardar los cambios en el producto
         saved_instance = form.save()
-        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+
+        # Eliminar la imagen antigua si se ha subido una nueva
+        if 'imagen' in request.FILES:
+            if os.path.exists(imagen_antigua_path):
+                try:
+                    os.remove(imagen_antigua_path)
+                except Exception as e:
+                    print(f"Error al eliminar la imagen antigua: {e}")
+
         return JsonResponse({'success': True})
     else:
         # Si el formulario no es válido, devolver una respuesta con los errores
         errors = dict(form.errors.items())
-        return JsonResponse({'success': False, 'errors': errors})    
+        return JsonResponse({'success': False, 'errors': errors}) 
 
 
 
