@@ -5,6 +5,8 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+import os
+
 
 
 
@@ -206,7 +208,14 @@ def eliminar_producto(request):
             print("ID del tipo de producto recibido en el backend:", producto_id)  # Mensaje de depuración
             try:
                 producto = Producto.objects.get(pk=producto_id)
+                imagen_path = producto.imagen.path
                 producto.delete()
+                # Eliminar el archivo de imagen
+                if os.path.exists(imagen_path):
+                    try:
+                        os.remove(imagen_path)
+                    except Exception as e:
+                        print(f"Error al eliminar la imagen: {e}")
                 return JsonResponse({'success': True})
             except Producto.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'El producto no existe.'})
