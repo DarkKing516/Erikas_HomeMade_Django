@@ -1,3 +1,19 @@
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+import string  # ¡No olvides importar el módulo string!
+import random
+from django.views.decorators.csrf import csrf_exempt
+
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.conf import settings
+
 from django.views.decorators.http import require_POST
 import json
 from django.http import HttpResponseRedirect
@@ -545,3 +561,49 @@ def registrarse(request):
 
 def requestLogin(request):
     return render(request, 'splash_screen.html')
+
+def forgotPassword(request):
+    if request.method == "POST":
+        import json
+        data = json.loads(request.body.decode('utf-8'))
+        email = data.get("email")
+        if Usuario.objects.filter(correo=email).exists():
+            letters = ''.join(random.choices(string.ascii_letters, k=4))
+            digits = ''.join(random.choices(string.digits, k=4))
+            codigo = ''.join(random.sample(letters + digits, 8))
+            mensajeJs = f"Hemos enviado un correo con instrucciones para recuperar tu contraseña."
+            
+            # mensaje = f"Hemos enviado un correo con instrucciones para recuperar tu contraseña. Tu código de verificación es: {codigo}"
+            # send_mail(
+            #     'Recuperación de Contraseña',
+            #     mensaje,
+            #     'Holisnegros1312@gmail.com',  # Remitente
+            #     [email],  # Destinatario
+            #     fail_silently=False,
+            # )
+            # Renderizar el mensaje HTML usando una plantilla
+            html_message = render_to_string('email_template.html', {'codigo': codigo})
+
+            # Configurar el correo electrónico
+            subject = 'Recuperación de Contraseña'
+            from_email = 'Holisnegros1312@gmail.com'
+            to_email = [email]
+
+            # Crear el correo electrónico
+            msg = EmailMultiAlternatives(subject, 'Mensaje vacío', from_email, to_email)
+            msg.attach_alternative(html_message, "text/html")
+
+            # Enviar el correo electrónico
+            msg.send()
+            
+            # Actualizar la contraseña en la base de datos
+            usuario = Usuario.objects.get(correo=email)
+            usuario.contraseña = make_password(codigo)  # Se establece la nueva contraseña como el código generado
+            usuario.save()
+            
+            return JsonResponse({"exists": True, "codigo": mensajeJs})
+        else:
+            return JsonResponse({"exists": False})
+    else:
+        form= ForgotForm()
+        return render(request, 'forgot.html', {'form': form})
