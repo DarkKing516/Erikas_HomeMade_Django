@@ -54,8 +54,8 @@
                             {% comment %}{% if usuario.id != 1 %}{% endcomment %}
                             <tr class="user-row">
                                 <td class=" py-1">
-                                    <img src="{% static 'images/iconosesion.jpg' %}"
-                                        alt="image" />
+                                    <!-- <img src="{% static 'images/iconosesion.jpg' %}" alt="image" /> -->
+                                    <img src="{{ usuario.imagen.url }}" alt="image" />
                                 </td>
                                 <td>{{ usuario.nombre }}</td>
                                 <td>{{ usuario.usuario }}</td>
@@ -360,11 +360,6 @@
         {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#userTable_filter input").addClass("form-control form-control-sm");
-
-        // Puedes agregar más personalizaciones según tus necesidades
-
-
-
     });
 
 
