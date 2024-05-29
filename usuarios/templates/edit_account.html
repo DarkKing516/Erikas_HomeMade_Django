@@ -71,11 +71,17 @@
                                     <input type="text" class="form-control form-control-lg" placeholder="Usuario" id="usuario" name="usuario" value="{{ usuario.usuario }}">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <br><br>
-                                    <!-- <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Contraseña" value="{{ usuario.contraseña }}"> -->
-                                    <button type="button" class="btn btn-inverse-primary btn-fw ml-1" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button>
+                                    <label for="usuario">Acciones</label>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <!-- <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Contraseña" value="{{ usuario.contraseña }}"> -->
+                                        <button type="button" class="btn btn-inverse-primary btn-fw ml-1" data-toggle="modal" data-target="#EditarPerfil">Cambiar Contraseña</button>
+                                        <button type="button" class="btn btn-inverse-info btn-fw ml-1" data-toggle="modal" data-target="#editarFotoUwU">
+                                            <i class="bi bi-person-bounding-box"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                            {% if 'Editar Rol Usuarios' in request.session.permisos and  request.session.usuario_id != 1%}
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <div class="form-check">
@@ -84,7 +90,6 @@
                                         <!-- <button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button> -->
                                         <!-- </label> -->
                                     </div>
-                                    {% if 'Editar Rol Usuarios' in request.session.permisos and  request.session.usuario_id != 1%}
                                     <div class="form-group">
                                         <label for="rol">Rol</label>
                                         <select class="form-control" id="rol" name="idRol">
@@ -93,12 +98,12 @@
                                             {% endfor %}
                                         </select>
                                     </div> 
-                                    {% endif %}
                                 </div>
                             </div>
+                            {% endif %}
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
-                                Registrarse
+                                Editar
                                 </button>
                             </div>
                             <div class="text-center mt-4 font-weight-light">
@@ -145,7 +150,43 @@
                     <!-- Botones -->
                     <div class="form-row">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="submit" class="btn btn-primary mr-2">Editar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Editar Foto de Perfil -->
+<div class="modal fade" id="editarFotoUwU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cambiar Foto de Perfil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="myForm" class="forms-sample" method="post" onsubmit="validateFormFotoPerfil()">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                                <label for="contrasena">foto de Perfil</label>
+                                <input type="password" class="form-control form-control-lg" placeholder="contraseña" id="contraseña" name="contraseña">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Editar</button>
                             <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
