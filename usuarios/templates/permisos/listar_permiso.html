@@ -356,16 +356,12 @@
                 // Verificar si la solicitud fue exitosa
                 if (data.success) {
                     // Mostrar SweetAlert de éxito
-                    Swal.fire({
-                        title: '¡Registro exitoso!',
-                        text: 'El Permiso se ha registrado correctamente.',
-                        icon: 'success',
-                        onClose: () => {
-                            // Recargar la página
-                            location.reload();
-                        }
-                    }).then(() => {
-                        location.reload();
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El Permiso se ha registrado correctamente.',
+                        'success'
+                    ).then(() => {
+                        location.reload(); // Recargar la página
                     });
                 } else if (data.message) { // Check if a message is provided in the response
                     Swal.fire({

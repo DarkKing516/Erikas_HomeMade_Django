@@ -6,6 +6,7 @@ INSERT INTO permisos (nombre_permiso, estado_permiso) VALUES
 ('Editar Rol Usuarios', 'A'),
 ('Editar Estado Usuarios', 'A'),
 ('Editar Perfil', 'A'),
+('Editar Foto Perfil', 'A'),
 ('Eliminar Usuarios', 'A'),
 ('Listar Roles', 'A'),
 ('Crear Roles', 'A'),

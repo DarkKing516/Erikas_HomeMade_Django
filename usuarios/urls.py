@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 from . import views as viewsUsuarios
 app_name = 'usuarios'
 
@@ -39,4 +41,6 @@ urlpatterns = [
     path('cerrar_sesion/', viewsUsuarios.cerrar_sesion, name='logout'),
     path('requestLogin/', viewsUsuarios.requestLogin, name='requestLogin'),
     path('recuperar Contraseña/', viewsUsuarios.forgotPassword, name='forgotPassword'),
-]
+    path('editar_foto_perfil/', viewsUsuarios.editar_foto_perfil, name='editar_foto_perfil'),
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

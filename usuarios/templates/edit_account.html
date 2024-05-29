@@ -171,16 +171,25 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del formulario con Bootstrap grid system -->
-                <form id="myForm" class="forms-sample" method="post" onsubmit="validateFormFotoPerfil()">
+                <form id="myFormPerfil" class="forms-sample" method="post" onsubmit="validateFormFotoPerfil()" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-12">
+                            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
                             <div class="form-group">
-                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                                <label for="contrasena">foto de Perfil</label>
-                                <input type="password" class="form-control form-control-lg" placeholder="contraseña" id="contraseña" name="contraseña">
+                                <input type="file" name="img[]" class="file-upload-default">
+                                <div class="input-group col-xs-12">
+                                    <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                                    <span class="input-group-append">
+                                        <button class="file-upload-browse btn btn-primary" type="button">Subir</button>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                            <div class="preview-container col-md-12">
+                                <center><img id="image-preview" src="#" alt="Image Preview" style="display: none;"></center>
+                            </div>
+                            <br>
+                        </div>                        
                     </div>
 
                     <!-- Botones -->
@@ -610,6 +619,51 @@
     });
 }
 
+function validateFormFotoPerfil() {
+    event.preventDefault();
+
+    const form = document.getElementById('myFormPerfil');
+    const formData = new FormData(form);
+
+    fetch("{% url 'usuarios:editar_foto_perfil' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Verificar si la solicitud fue exitosa
+        if (data.success) {
+            Swal.fire(
+                '¡Foto de perfil actualizada!',
+                'La foto de perfil se ha actualizado correctamente.',
+                'success'
+            ).then(() => {
+                location.reload(); // Recargar la página
+            });
+        } else {
+            // Mostrar SweetAlert de error
+            Swal.fire({
+                title: 'Error',
+                text: data.message || 'Hubo un error al procesar su solicitud.',
+                icon: 'error',
+            });
+        }
+    })
+    .catch(errors => {
+        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error'
+        });
+        console.error('Error:', errors);
+    });
+}
+
+
 </script>
 
 
@@ -626,28 +680,66 @@
 {% endif %}
 
 <!-- plugins:js -->
-<script src="vendors/js/vendor.bundle.base.js"></script>
+<script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
 <!-- endinject -->
 <!-- Plugin js for this page -->
-<script src="vendors/chart.js/Chart.min.js"></script>
-<script src="vendors/datatables.net/jquery.dataTables.js"></script>
-<script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
-<script src="js/dataTables.select.min.js"></script>
+<script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'vendors/datatables.net/jquery.dataTables.js' %}"></script>
+<script src="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+<script src="{% static 'js/dataTables.select.min.js' %}"></script>
 
 <!-- End plugin js for this page -->
 <!-- inject:js -->
-<script src="js/off-canvas.js"></script>
-<script src="js/hoverable-collapse.js"></script>
-<script src="js/template.js"></script>
-<script src="js/settings.js"></script>
-<script src="js/todolist.js"></script>
+<script src="{% static 'js/off-canvas.js' %}"></script>
+<script src="{% static 'js/hoverable-collapse.js' %}"></script>
+<script src="{% static 'js/template.js' %}"></script>
+<script src="{% static 'js/settings.js' %}"></script>
+<script src="{% static 'js/todolist.js' %}"></script>
 <!-- endinject -->
 <!-- Custom js for this page-->
-<script src="js/dashboard.js"></script>
-<script src="js/Chart.roundedBarCharts.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script>
 <!-- End custom js for this page-->
-<script src="js/preloader.js"></script>
-
+<script src="{% static 'js/preloader.js' %}"></script>
+<script src="{% static 'js/vendor.bundle.base.js' %}"></script>
+<!-- <script>
+(function($) {
+  'use strict';
+  $(function() {
+    $('.file-upload-browse').on('click', function() {
+      var file = $(this).parent().parent().parent().find('.file-upload-default');
+      file.trigger('click');
+    });
+    $('.file-upload-default').on('change', function() {
+      $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+    });
+  });
+})(jQuery);
+</script> -->
+<script>
+(function($) {
+    'use strict';
+    $(function() {
+    $('.file-upload-browse').on('click', function() {
+        var file = $(this).parent().parent().parent().find('.file-upload-default');
+        file.trigger('click');
+    });
+    $('.file-upload-default').on('change', function(event) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function(){
+        var dataURL = reader.result;
+        var img = document.getElementById('image-preview');
+        img.src = dataURL;
+        img.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+        $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+    });
+    });
+})(jQuery);
+</script>
+    
 
 <style>
     .top {
@@ -673,5 +765,18 @@
         border-bottom: none
     }
 </style>
+<style>
+.preview-container {
+    margin-top: 10px;
+}
 
+#image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block;
+}
+</style>
+    
 {% endblock %}

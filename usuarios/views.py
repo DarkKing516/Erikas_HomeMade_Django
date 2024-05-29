@@ -501,6 +501,8 @@ def iniciar_sesion(request):
                 request.session['nombre_usuario'] = usuario.nombre
                 request.session['usuario'] = usuario.usuario
                 request.session['correo_usuario'] = usuario.correo
+                request.session['imagen_perfil'] = usuario.imagen.url if usuario.imagen else None
+
                 # print(request.session)  # Imprimir el contenido de la sesión para depuración
                 # print(usuario.nombre)  # Imprime el nombre del usuario en la consola
                 # return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión
@@ -634,3 +636,22 @@ def forgotPassword(request):
     else:
         form= ForgotForm()
         return render(request, 'forgot.html', {'form': form})
+
+@require_POST
+def editar_foto_perfil(request):
+    usuario_id = request.POST.get('usuario_id')
+    usuario = get_object_or_404(Usuario, pk=usuario_id)
+
+    # Verificar si la solicitud contiene archivos
+    if request.FILES:
+        imagen = request.FILES['img[]']
+        usuario.imagen = imagen
+        usuario.save()
+        request.session['imagen_perfil'] = usuario.imagen.url if usuario.imagen else None
+
+
+        # Devolver una respuesta exitosa
+        return JsonResponse({'success': True})
+    else:
+        # Devolver un mensaje de error si no se proporciona ninguna imagen
+        return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna imagen.'})
