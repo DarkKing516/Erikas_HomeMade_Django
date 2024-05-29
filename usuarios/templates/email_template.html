@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperación de Contraseña</title>
+    <style>
+        /* Aquí puedes agregar estilos CSS para dar formato al correo electrónico */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .code {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recuperación de Contraseña</h1>
+        <p>Hemos enviado un correo con instrucciones para recuperar tu contraseña.</p>
+        <p>Tu código de verificación es: <span class="code">{{ codigo }}</span></p>
+        <p>Por favor, sigue las instrucciones del correo electrónico para completar el proceso de recuperación.</p>
+        <p>Ve a <a href="{% url 'usuarios:login' %}">la página de inicio de sesión</a> para iniciar sesión con la nueva contraseña.</p>
+        <p class="footer">Este es un mensaje automático. Por favor, no respondas a este correo electrónico.</p>
+    </div>
+</body>
+</html>

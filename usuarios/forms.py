@@ -180,3 +180,6 @@ class EditarContraseñaUsuario(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['contraseña']
+        
+class ForgotForm(forms.Form):
+    correo = forms.EmailField(label='Correo electrónico', widget=forms.EmailInput(attrs={'class': 'inputField', 'id': 'email', 'placeholder': 'Email'}))
