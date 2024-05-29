@@ -34,7 +34,7 @@ class Usuario(models.Model):
     def verificar_contraseña(self, contraseña):
         return check_password(contraseña, self.contraseña)
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} - {self.documento}"
     class Meta:
         db_table = 'usuarios'  # Personalizando el nombre de la tabla
 
