@@ -1,13 +1,15 @@
 from django import forms
-from .models import Venta
-from .models import Pedido
+from .models import Venta, Pedido
 
 class VentaForm(forms.ModelForm):
     idPedido = forms.ModelChoiceField(queryset=Pedido.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'form-control'}))
 
+    # Convierte el campo usuario en un campo CharField y deshabilítalo
+    usuario = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
+
     class Meta:
         model = Venta
-        fields = ['idPedido']
+        fields = ['idPedido', 'metodo_pago', 'descuento', 'total', 'total_pedido']
 
     METODO_PAGO_CHOICES = [
         ('nequi', 'Nequi'),
