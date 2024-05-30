@@ -47,7 +47,7 @@
                         </thead>
                         <tbody>
                             {% for servicio in servicios %}
-                            <tr class="pedido-row">
+                            <tr class="pedido-row" data-servicio-id="{{ servicio.idServicio }}">
                                 <td>{{ servicio.nombre_servicio }}</td>
                                 <td>{{ servicio.id_TipoServicio }}</td>
                                 <td>${{ servicio.precio_servicio|floatformat:"0" }}</td>
@@ -111,9 +111,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                    
+                            </div>                   
                             <!-- Modal para editar Servicio -->
                             <div class="modal fade" id="editServicioModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
@@ -181,7 +179,7 @@
 
                             <!-- Modal de editar imagen del servicio -->
                             <div class="modal fade" id="editimgModal{{ servicio.idServicio }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
+                            aria-labelledby="editServicioModal{{ servicio.idServicio }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -191,7 +189,7 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form method="post" onsubmit="EditarImgServicioxd('{{ servicio.idServicio }}')" id="EditarImgForm{{ servicio.idServicio }}" class="forms-sample" data-Pedido-id="{{ servicio.idServicio }}" enctype="multipart/form-data">
+                                            <form method="post" id="EditarImgForm{{ servicio.idServicio }}" class="forms-sample" enctype="multipart/form-data">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="idServicio" value="{{ servicio.idServicio }}">
                                                 <div class="form-row">
@@ -206,16 +204,13 @@
                                                             <br>
                                                             <img src="#" id="imagen_vista_previa_{{ servicio.idServicio }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
                                                         </div>
-
                                                     </div>
                                                 </div>
-
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ servicio.idServicio }}</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
+                                                        <button type="button" class="btn btn-primary mr-2" onclick="EditarImgServicioxd('{{ servicio.idServicio }}')">Editar {{ servicio.idServicio }}</button>
+                                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -223,6 +218,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             
                             {% endfor %}
                         </tbody>
@@ -501,15 +497,12 @@
 
     function EditarImgServicioxd(idServicio) {
         event.preventDefault();
-
+    
         // Obtener el formulario
         const form = document.getElementById(`EditarImgForm${idServicio}`);
         // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
-
-        const formDataString = JSON.stringify(Object.fromEntries(formData));
-        const formString = form.outerHTML;
-
+    
         // Realizar la solicitud POST utilizando fetch
         fetch("{% url 'pedidos:editar_img_servicio' %}", {
             method: 'POST',
@@ -518,50 +511,51 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                // Verificar si la solicitud fue exitosa
-                if (data.success) {
-                    // Mostrar SweetAlert de éxito
-                    Swal.fire({
-                        title: '¡Actualización exitosa!',
-                        text: 'El la imagen del servicio se ha editado correctamente.',
-                        icon: 'success',
-                        onClose: () => {
-                            // Recargar la página   
-                            location.reload();
-                        }
-                    }).then(() => {
+        .then(response => response.json())
+        .then(data => {
+            // Verificar si la solicitud fue exitosa
+            if (data.success) {
+                // Mostrar SweetAlert de éxito
+                Swal.fire({
+                    title: '¡Actualización exitosa!',
+                    text: 'La imagen del servicio se ha editado correctamente.',
+                    icon: 'success',
+                    onClose: () => {
+                        // Recargar la página   
                         location.reload();
-                    });
-                } else if (data.errors) { // Verificar si hay errores de validación
-                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
-                    for (const key in data.errors) {
-                        errorMessage += `${data.errors[key]}<br>`;
                     }
-                    Swal.fire({
-                        title: 'Error',
-                        html: errorMessage,
-                        icon: 'error',
-                    });
-                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
-                        icon: 'error'
-                    });
+                }).then(() => {
+                    location.reload();
+                });
+            } else if (data.errors) { // Verificar si hay errores de validación
+                let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                for (const key in data.errors) {
+                    errorMessage += `${data.errors[key]}<br>`;
                 }
-            })
-            .catch(errors => {
-                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    html: errorMessage,
+                    icon: 'error',
+                });
+            } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
                     icon: 'error'
                 });
-                console.error('Error:', errors);
+            }
+        })
+        .catch(errors => {
+            // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
             });
+            console.error('Error:', errors);
+        });
     }
+    
         // Función para mostrar la vista previa de la imagen al seleccionar un archivo
     function mostrarVistaPrevia(input, elementoVistaPrevia) {
         var archivo = input.files[0];
@@ -636,41 +630,48 @@
         });
     }
 
-    function eliminarServicio(idServicio) {
-        fetch('/pedidos/eliminar_servicio/' + idServicio + '/', {
-            method: 'DELETE',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
+    function confirmarEliminarServicio(servicioId) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminarlo'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("{% url 'pedidos:eliminar_servicio' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'servicio_id': servicioId
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al eliminar el servicio.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('¡Eliminado!', 'El servicio ha sido eliminado.', 'success');
+                        // Actualizar la tabla eliminando la fila correspondiente
+                        document.querySelector(`tr[data-servicio-id='${servicioId}']`).remove();
+                    } else {
+                        Swal.fire('¡Error!', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('¡Error!', 'No se pudo eliminar el servicio.', 'error');
+                });
             }
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Eliminación exitosa
-                    Swal.fire(
-                        '¡Eliminado!',
-                        'El servicio ha sido eliminado exitosamente.',
-                        'success'
-                    ).then(() => {
-                        location.reload(); // Recargar la página
-                    });
-                } else {
-                    // Manejar errores de eliminación si es necesario
-                    Swal.fire(
-                        'Error',
-                        'No se pudo eliminar el servicio.',
-                        'error'
-                    );
-                    console.error('Error al eliminar el servicio');
-                }
-            })
-            .catch(error => {
-                Swal.fire(
-                    'Error de red',
-                    'Hubo un error de red al intentar eliminar el tipo de servicio.',
-                    'error'
-                );
-                console.error('Error de red:', error);
-            });
+        });
     }
 
 
