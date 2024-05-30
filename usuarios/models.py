@@ -29,11 +29,12 @@ class Usuario(models.Model):
     usuario = models.CharField(max_length=20)
     contraseña = models.CharField(max_length=255)
     estado = models.CharField(max_length=1, default='A')
+    imagen = models.ImageField(upload_to='user_images/', default='user_images/iconosesion.jpg')  # Campo de imagen con valor predeterminado
 
     def verificar_contraseña(self, contraseña):
         return check_password(contraseña, self.contraseña)
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} - {self.documento}"
     class Meta:
         db_table = 'usuarios'  # Personalizando el nombre de la tabla
 

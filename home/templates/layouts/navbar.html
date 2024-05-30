@@ -135,7 +135,13 @@
                             <span>Bienvenido, {{ request.session.nombre_usuario }}!</span>
                         </a>
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                            <img src="{% static 'images/iconosesion.jpg' %}" alt="profile" />
+                            {% if request.session.imagen_perfil %}
+                                <img src="{{ request.session.imagen_perfil }}" alt="profile" />
+                            {% else %}
+                                <!-- Si el usuario no tiene una imagen de perfil, muestra una imagen predeterminada -->
+                                <img src="{% static 'images/iconosesion.jpg' %}" alt="profile" />
+                            {% endif %}
+                            <!-- <img src="{% static 'images/iconosesion.jpg' %}" alt="profile" /> -->
                             <!-- <img src="https://content.wepik.com/statics/20247441/preview-page0.jpg" alt="profile" /> -->
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"

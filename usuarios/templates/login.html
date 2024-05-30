@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html class="wide wow-animation" lang="en">
+<html class="wide wow-animation" lang="es">
 
 <head>
     <title>Erika's HomeMade</title>
@@ -42,7 +42,7 @@
 
             <button type="submit" id="button">Ingresar</button>
             <div style="z-index: 5; text-align: center">
-                <a class="forgotLink" href="./forgot.html">Olvidé mi contraseña</a>
+                <a class="forgotLink" href="{% url 'usuarios:forgotPassword' %}">Olvidé mi contraseña</a>
                 <a class="forgotLink" href="{% url 'usuarios:register' %}">Registrarme</a>
                 <a class="btn btn-secondary" href="{% url 'home:index' %}">Atrás</a>
             </div>

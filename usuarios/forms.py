@@ -102,13 +102,25 @@ class RegistroForm(forms.ModelForm):
         # Validar si el documento contiene solo números
         if not documento.isdigit():
             raise forms.ValidationError("El documento debe contener solo números.")
+
+        # Verificar si el documento ya está en uso
+        if Usuario.objects.filter(documento=documento).exists():
+            raise forms.ValidationError("Este documento ya está en uso.")
         return documento
+
     def clean_telefono(self):
         telefono = self.cleaned_data['telefono']
         # Validar si el teléfono contiene solo números
         if not telefono.isdigit():
             raise forms.ValidationError("El teléfono debe contener solo números.")
         return telefono
+
+    def clean_correo(self):
+        correo = self.cleaned_data['correo']
+        # Verificar si el correo ya está en uso
+        if Usuario.objects.filter(correo=correo).exists():
+            raise forms.ValidationError("Este correo electrónico ya está en uso.")
+        return correo
 
 
 class CreateUsuario(forms.ModelForm):
@@ -125,9 +137,13 @@ class CreateUsuario(forms.ModelForm):
         
     def clean_documento(self):
         documento = self.cleaned_data['documento']
+        user_id = self.instance.id
+
         # Validar si el documento contiene solo números
         if not documento.isdigit():
             raise forms.ValidationError("El documento debe contener solo números.")
+        if Usuario.objects.exclude(id=user_id).filter(documento=documento).exists():
+            raise forms.ValidationError("Este documento ya está en uso.")
         return documento
 
     def clean_telefono(self):
@@ -136,6 +152,14 @@ class CreateUsuario(forms.ModelForm):
         if not telefono.isdigit():
             raise forms.ValidationError("El teléfono debe contener solo números.")
         return telefono
+    
+    def clean_correo(self):  
+        correo = self.cleaned_data['correo']  
+        user_id = self.instance.id
+
+        if Usuario.objects.exclude(id=user_id).filter(correo=correo).exists():
+            raise forms.ValidationError("Este correo electrónico ya está en uso.")
+        return correo
 
 
 class EditarUsuario(forms.ModelForm):
@@ -151,10 +175,20 @@ class EditarUsuario(forms.ModelForm):
         
     def clean_documento(self):
         documento = self.cleaned_data['documento']
+        user_id = self.instance.id
+
         # Validar si el documento contiene solo números
         if not documento.isdigit():
             raise forms.ValidationError("El documento debe contener solo números.")
-        return documento
+
+        try:
+            existing_user = Usuario.objects.exclude(id=user_id).get(documento=documento)
+            if existing_user.documento == self.instance.documento:
+                return documento
+            else:
+                raise forms.ValidationError("Este documento ya está en uso.")
+        except Usuario.DoesNotExist:
+            return documento
 
     def clean_telefono(self):
         telefono = self.cleaned_data['telefono']
@@ -180,3 +214,6 @@ class EditarContraseñaUsuario(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['contraseña']
+        
+class ForgotForm(forms.Form):
+    correo = forms.EmailField(label='Correo electrónico', widget=forms.EmailInput(attrs={'class': 'inputField', 'id': 'email', 'placeholder': 'Email'}))

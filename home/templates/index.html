@@ -45,11 +45,69 @@
     background-color: #dc3545;
   }
 
-
   .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     width: 100%;
     padding: 2rem;
     box-sizing: border-box;
+    position: relative;
+    color: white;
+    text-align: left;
+    z-index: 1;
+    margin-bottom: 2rem; /* Añadir margen inferior */
+  }
+  .hero-servicios {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+    position: relative;
+    color: black;
+    text-align: left;
+    z-index: 1;
+    margin-bottom: 2rem; /* Añadir margen inferior */
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'%3E%3Cpath fill='%23CEF2EA' d='M0 30 Q 20 0 40 30 T 80 30 Q 100 60 120 30 T 160 30 Q 180 0 200 30 V 100 H 0 Z' /%3E%3C/svg%3E");
+    background-size: cover; /* Ajuste para cubrir completamente el área sin repetir */
+    background-repeat: no-repeat;
+}
+
+  .hero-background {
+    background-image: url('{% static "images/fondoindex.jpeg" %}');
+    background-size: cover; /* Para cubrir toda el área */
+    background-position: center; /* Centrar la imagen */
+    background-repeat: no-repeat; /* Evitar que la imagen se repita */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Altura completa de la ventana */
+    position: relative; /* Agregado */
+  }
+
+  
+  .hero-left, .hero-right {
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .hero-right {
+    padding-left: 2rem;
+  }
+
+  .hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero p {
+    font-size: 1.125rem;
+    line-height: 1.5;
+    max-width: 800px;
+    margin: 0 auto;
   }
 
   .hero:nth-child(1) {
@@ -72,21 +130,11 @@
     background-color: #adb5bd;
   }
 
-  .hero h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
   .hero img {
     width: 100%;
     max-width: 300px;
     display: block;
     margin: 0 auto;
-  }
-
-  .hero p {
-    font-size: 1.125rem;
-    line-height: 1.5;
   }
 
   .hero ul {
@@ -98,38 +146,55 @@
   .hero li {
     margin-bottom: 0.5rem;
   }
+
+  /* Estilos para las ondas */
+  .wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Cambiado */
+    height: 100px; /* Ajusta la altura de las ondas */
+    background-image: linear-gradient(to right, #ffffff 0%, #ffffff 50%, #f0f0f0 50%, #f0f0f0 100%);
+  }
 </style>
+
+
 
 
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 <!-- <link rel="stylesheet" href="{% static 'css/fonts.css' %}"> -->
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-<div class="hero">
+<div class="hero hero-background">
+  <center>
   <h1>Bienvenidos a Erika's HomeMade</h1>
-  {% comment %} <p>{{ request.session.permisos }}</p> {% endcomment %}
-  <img src="{% static 'slide-1-1920x753.jpg' %}" alt="">
+</center>
+  <p>En Erika's HomeMade, nos especializamos en confección a medida, ofreciendo diseños exclusivos y personalizados para cada cliente. Nuestra pasión es crear piezas únicas que realcen tu estilo y personalidad.</p>
 </div>
 
-<div class="hero">
-  <p>Contenido de la sección 2</p>
+<div class="hero-servicios">
+  <div class="hero-left">
+    <h3>Acerca de Nosotros</h3>
+    <p>En Erika's HomeMade, combinamos tradición y modernidad para crear prendas a medida que son tanto elegantes como cómodas. Desde nuestro inicio, hemos trabajado con dedicación para ofrecer una experiencia de confección personalizada y de alta calidad.</p>
+  </div>
+  <div class="hero-right">
+    <h3>Servicios</h3>
+    <ul>
+      <li>Confección a medida: Trajes, vestidos y prendas personalizadas hechas a tu medida exacta.</li>
+      <li>Arreglos y ajustes: Modificaciones y ajustes para que tu ropa se ajuste perfectamente.</li>
+      <li>Diseño de moda: Asesoramiento y creación de diseños exclusivos para eventos especiales.</li>
+    </ul>
+  </div>
 </div>
 
-<div class="hero">
-  <h2>Servicios</h2>
-  <ul>
-    <li>Servicio 1</li>
-    <li>Servicio 2</li>
-    <li>Servicio 3</li>
-  </ul>
-</div>
+
 
 
 
 <section class="section section-last bg-default">
   <div class="container-fluidd container-inset-0 isotope-wrap">
     <div class="row row-10 gutters-10 isotope" data-isotope-layout="masonry" data-isotope-group="gallery" data-lightgallery="group">
-      
+      <br>
       {% for producto, tamano, clase in productos_tamanos %}
       <div class="{{ clase.class }}">
           <!-- Thumbnail Mary-->
@@ -152,12 +217,48 @@
   </div>
 </section>
 
-
+<!-- Section Services  Last section-->
+<section class="section section-sm bg-default">
+  <div class="container">
+    <div class="owl-carousel owl-style-11 dots-style-2" data-items="1" data-sm-items="1" data-lg-items="2" data-xl-items="4" data-margin="30" data-dots="true" data-mouse-drag="true" data-rtl="true">
+      <article class="box-icon-megan wow fadeInUp">
+        <div class="box-icon-megan-header">
+          <div class="box-icon-megan-icon linearicons-bag"></div>
+        </div>
+        <h5 class="box-icon-megan-title"><a href="#">Free Delivery</a></h5>
+        <p class="box-icon-megan-text">If you order more than 3 pizzas, we will gladly deliver them to you for free.</p>
+      </article>
+      <article class="box-icon-megan wow fadeInUp" data-wow-delay=".05s">
+        <div class="box-icon-megan-header">
+          <div class="box-icon-megan-icon linearicons-map2"></div>
+        </div>
+        <h5 class="box-icon-megan-title"><a href="#">Convenient Location</a></h5>
+        <p class="box-icon-megan-text">Our pizzeria is situated in the downtown and is very easy to reach even on weekends.</p>
+      </article>
+      <article class="box-icon-megan wow fadeInUp" data-wow-delay=".1s">
+        <div class="box-icon-megan-header">
+          <div class="box-icon-megan-icon linearicons-radar"></div>
+        </div>
+        <h5 class="box-icon-megan-title"><a href="#">Free Wi-Fi</a></h5>
+        <p class="box-icon-megan-text">We have free Wi-Fi available to all clients and visitors of our pizzeria.</p>
+      </article>
+      <article class="box-icon-megan wow fadeInUp" data-wow-delay=".15s">
+        <div class="box-icon-megan-header">
+          <div class="box-icon-megan-icon linearicons-thumbs-up"></div>
+        </div>
+        <h5 class="box-icon-megan-title"><a href="#">Best Service</a></h5>
+        <p class="box-icon-megan-text">The client is our #1 priority as we deliver top-notch customer service.</p>
+      </article>
+    </div>
+  </div>
+</section>
 
 
 <section class="section section-sm section-first bg-default">
   <div class="container">
+    <center>
     <h3 class="heading-3">RESERVAS</h3>
+  </center>
     <form class="rd-form rd-mailform form-style-1" data-form-output="form-output-global" data-form-type="contact"
       action="{% url 'reservas:crear_reserva' %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}

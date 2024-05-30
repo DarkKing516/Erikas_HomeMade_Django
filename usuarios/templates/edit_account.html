@@ -71,11 +71,17 @@
                                     <input type="text" class="form-control form-control-lg" placeholder="Usuario" id="usuario" name="usuario" value="{{ usuario.usuario }}">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <br><br>
-                                    <!-- <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Contraseña" value="{{ usuario.contraseña }}"> -->
-                                    <button type="button" class="btn btn-inverse-primary btn-fw ml-1" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button>
+                                    <label for="usuario">Acciones</label>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <!-- <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Contraseña" value="{{ usuario.contraseña }}"> -->
+                                        <button type="button" class="btn btn-inverse-primary btn-fw ml-1" data-toggle="modal" data-target="#EditarPerfil">Cambiar Contraseña</button>
+                                        <button type="button" class="btn btn-inverse-info btn-fw ml-1" data-toggle="modal" data-target="#editarFotoUwU">
+                                            <i class="bi bi-person-bounding-box"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                            {% if 'Editar Rol Usuarios' in request.session.permisos and  request.session.usuario_id != 1%}
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <div class="form-check">
@@ -84,7 +90,6 @@
                                         <!-- <button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#EditarPerfil"  style="margin: 5px">Cambiar Contraseña</button> -->
                                         <!-- </label> -->
                                     </div>
-                                    {% if 'Editar Rol Usuarios' in request.session.permisos and  request.session.usuario_id != 1%}
                                     <div class="form-group">
                                         <label for="rol">Rol</label>
                                         <select class="form-control" id="rol" name="idRol">
@@ -93,12 +98,12 @@
                                             {% endfor %}
                                         </select>
                                     </div> 
-                                    {% endif %}
                                 </div>
                             </div>
+                            {% endif %}
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
-                                Registrarse
+                                Editar
                                 </button>
                             </div>
                             <div class="text-center mt-4 font-weight-light">
@@ -145,7 +150,52 @@
                     <!-- Botones -->
                     <div class="form-row">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="submit" class="btn btn-primary mr-2">Editar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Editar Foto de Perfil -->
+<div class="modal fade" id="editarFotoUwU" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cambiar Foto de Perfil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del formulario con Bootstrap grid system -->
+                <form id="myFormPerfil" class="forms-sample" method="post" onsubmit="validateFormFotoPerfil()" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                            <div class="form-group">
+                                <input type="file" name="img[]" class="file-upload-default">
+                                <div class="input-group col-xs-12">
+                                    <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                                    <span class="input-group-append">
+                                        <button class="file-upload-browse btn btn-primary" type="button">Subir</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="preview-container col-md-12">
+                                <center><img id="image-preview" src="#" alt="Image Preview" style="display: none;"></center>
+                            </div>
+                            <br>
+                        </div>                        
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Editar</button>
                             <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -569,6 +619,51 @@
     });
 }
 
+function validateFormFotoPerfil() {
+    event.preventDefault();
+
+    const form = document.getElementById('myFormPerfil');
+    const formData = new FormData(form);
+
+    fetch("{% url 'usuarios:editar_foto_perfil' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Verificar si la solicitud fue exitosa
+        if (data.success) {
+            Swal.fire(
+                '¡Foto de perfil actualizada!',
+                'La foto de perfil se ha actualizado correctamente.',
+                'success'
+            ).then(() => {
+                location.reload(); // Recargar la página
+            });
+        } else {
+            // Mostrar SweetAlert de error
+            Swal.fire({
+                title: 'Error',
+                text: data.message || 'Hubo un error al procesar su solicitud.',
+                icon: 'error',
+            });
+        }
+    })
+    .catch(errors => {
+        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error'
+        });
+        console.error('Error:', errors);
+    });
+}
+
+
 </script>
 
 
@@ -585,28 +680,66 @@
 {% endif %}
 
 <!-- plugins:js -->
-<script src="vendors/js/vendor.bundle.base.js"></script>
+<script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
 <!-- endinject -->
 <!-- Plugin js for this page -->
-<script src="vendors/chart.js/Chart.min.js"></script>
-<script src="vendors/datatables.net/jquery.dataTables.js"></script>
-<script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
-<script src="js/dataTables.select.min.js"></script>
+<script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+<script src="{% static 'vendors/datatables.net/jquery.dataTables.js' %}"></script>
+<script src="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+<script src="{% static 'js/dataTables.select.min.js' %}"></script>
 
 <!-- End plugin js for this page -->
 <!-- inject:js -->
-<script src="js/off-canvas.js"></script>
-<script src="js/hoverable-collapse.js"></script>
-<script src="js/template.js"></script>
-<script src="js/settings.js"></script>
-<script src="js/todolist.js"></script>
+<script src="{% static 'js/off-canvas.js' %}"></script>
+<script src="{% static 'js/hoverable-collapse.js' %}"></script>
+<script src="{% static 'js/template.js' %}"></script>
+<script src="{% static 'js/settings.js' %}"></script>
+<script src="{% static 'js/todolist.js' %}"></script>
 <!-- endinject -->
 <!-- Custom js for this page-->
-<script src="js/dashboard.js"></script>
-<script src="js/Chart.roundedBarCharts.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script>
 <!-- End custom js for this page-->
-<script src="js/preloader.js"></script>
-
+<script src="{% static 'js/preloader.js' %}"></script>
+<script src="{% static 'js/vendor.bundle.base.js' %}"></script>
+<!-- <script>
+(function($) {
+  'use strict';
+  $(function() {
+    $('.file-upload-browse').on('click', function() {
+      var file = $(this).parent().parent().parent().find('.file-upload-default');
+      file.trigger('click');
+    });
+    $('.file-upload-default').on('change', function() {
+      $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+    });
+  });
+})(jQuery);
+</script> -->
+<script>
+(function($) {
+    'use strict';
+    $(function() {
+    $('.file-upload-browse').on('click', function() {
+        var file = $(this).parent().parent().parent().find('.file-upload-default');
+        file.trigger('click');
+    });
+    $('.file-upload-default').on('change', function(event) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function(){
+        var dataURL = reader.result;
+        var img = document.getElementById('image-preview');
+        img.src = dataURL;
+        img.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+        $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+    });
+    });
+})(jQuery);
+</script>
+    
 
 <style>
     .top {
@@ -632,5 +765,18 @@
         border-bottom: none
     }
 </style>
+<style>
+.preview-container {
+    margin-top: 10px;
+}
 
+#image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block;
+}
+</style>
+    
 {% endblock %}
