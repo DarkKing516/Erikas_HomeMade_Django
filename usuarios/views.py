@@ -149,6 +149,7 @@ def listar_roles(request):
             
             rol = form.save(commit=False)
             rol.save()
+            form.save_m2m()  # Esto es importante para guardar las relaciones Many-to-Many
             return JsonResponse({'success': True})
         else:
             # Si el formulario no es válido, se envían los errores de validación
