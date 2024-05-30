@@ -470,30 +470,56 @@ def editar_servicio(request):
     
 @require_POST
 def editar_img_servicio(request):
-    idServicio = request.POST.get('idServicio')
-    print(idServicio)
-    servicio = get_object_or_404(Servicio, pk=idServicio)
+    servicio_id = request.POST.get('idServicio')
+    servicio = get_object_or_404(Servicio, pk=servicio_id)
+    imagen_antigua_path = servicio.img.path  # Guardar la ruta de la imagen antigua
 
-    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
+    # Crear una instancia del formulario con los datos recibidos y la instancia del servicio
     form = ServicioFormEditarImg(request.POST, request.FILES, instance=servicio)
 
-    # Validamos el formulario
+    # Validar el formulario
     if form.is_valid():
-        # Guardamos los cambios en el servicio
+        # Guardar los cambios en el servicio
         saved_instance = form.save()
-        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
+
+        # Eliminar la imagen antigua si se ha subido una nueva
+        if 'img' in request.FILES:
+            if os.path.exists(imagen_antigua_path):
+                try:
+                    os.remove(imagen_antigua_path)
+                except Exception as e:
+                    print(f"Error al eliminar la imagen antigua: {e}")
+
         return JsonResponse({'success': True})
     else:
-        # Si el formulario no es válido, devolvemos una respuesta con los errores
+        # Si el formulario no es válido, devolver una respuesta con los errores
         errors = dict(form.errors.items())
-        return JsonResponse({'success': False, 'errors': errors})
+        return JsonResponse({'success': False, 'errors': errors})   
     
-    
-def eliminar_servicio(request, ServicioId):
-    print("ID recibido:", ServicioId)  # Imprime el ID recibido en la consola
-    servicio = get_object_or_404(Servicio, pk=ServicioId)
-    servicio.delete()
-    return JsonResponse({'message': 'Servicio eliminado correctamente'})
+@csrf_exempt
+def eliminar_servicio(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            servicio_id = data.get('servicio_id')
+            print("ID del servicio recibido en el backend:", servicio_id)  # Mensaje de depuración
+            try:
+                servicio = Servicio.objects.get(pk=servicio_id)
+                imagen_path = servicio.img.path
+                servicio.delete()
+                # Eliminar el archivo de imagen
+                if os.path.exists(imagen_path):
+                    try:
+                        os.remove(imagen_path)
+                    except Exception as e:
+                        print(f"Error al eliminar la imagen: {e}")
+                return JsonResponse({'success': True})
+            except Servicio.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'El servicio no existe.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método de solicitud no permitido.'})
 
 def cambiar_estado_servicio(request):
     if request.method == 'POST':
