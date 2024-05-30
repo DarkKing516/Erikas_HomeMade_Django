@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="es">
-  <head>
+<head>
     <title>Erikka's HomeMade</title>
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -12,39 +12,52 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="{% static 'css/signin.css' %}" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  </head>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
 
-  <body>
+<body>
     <div class="body">
-      <form action="" class="form_main" onsubmit="return recoverPassword()">
-        {% csrf_token %}
-        <p class="heading">Recuperar Contraseña</p>
-        <p class="labelForgot">
-          Digita tu correo electrónico
-        </p>
-        <div class="inputContainer">
-          <i class="bi bi-envelope inputIcon"></i>
-          {{ form.correo }}
-        </div>
+        <form action="" class="form_main" onsubmit="return recoverPassword()">
+            {% csrf_token %}
+            <p class="heading">Recuperar Contraseña</p>
+            <p class="labelForgot">
+                Digita tu correo electrónico
+            </p>
+            <div class="inputContainer">
+                <i class="bi bi-envelope inputIcon"></i>
+                {{ form.correo }}
+            </div>
 
-        <button type="button" id="button" onclick="recoverPassword()">
-          Enviar Correo
-        </button>
+            <button type="button" id="button" onclick="recoverPassword()">
+                Enviar Correo
+            </button>
 
-        <a class="forgotLink" href="javascript:history.go(-1)">Recordé mi contraseña</a>
-      </form>
+            <div id="loadingMessage" style="display: none; z-index: 99;">
+                Enviando correo, por favor espera...
+            </div>
+
+            <a class="forgotLink" href="javascript:history.go(-1)">Recordé mi contraseña</a>
+        </form>
     </div>
-  </body>
+</body>
 </html>
 <script>
   function recoverPassword() {
-    var email = document.getElementById("email").value;
+    var email = document.getElementById("email").value; // Cambiado a "id_correo" para coincidir con el id del campo de correo
+
+    // Desactivar el botón y mostrar el mensaje de carga
+    var button = document.getElementById("button");
+    var loadingMessage = document.getElementById("loadingMessage");
+    
+    button.classList.add("hidden");
+    loadingMessage.style.display = "block";
 
     fetch("{% url 'usuarios:forgotPassword' %}", {
         method: "POST",
@@ -56,6 +69,10 @@
     })
     .then(response => response.json())
     .then(data => {
+        // Reactivar el botón y ocultar el mensaje de carga
+        button.classList.remove("hidden");
+        loadingMessage.style.display = "none";
+
         if (data.exists) {
             // Mostrar mensaje de éxito
             Swal.fire({
@@ -76,7 +93,13 @@
             });
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        // Reactivar el botón y ocultar el mensaje de carga
+        button.classList.remove("hidden");
+        loadingMessage.style.display = "none";
+
+        console.error('Error:', error);
+    });
 
     return false;
   }

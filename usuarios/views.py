@@ -1,3 +1,5 @@
+from django.core.files.storage import default_storage
+import os
 from django.db import transaction
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -641,14 +643,26 @@ def forgotPassword(request):
 def editar_foto_perfil(request):
     usuario_id = request.POST.get('usuario_id')
     usuario = get_object_or_404(Usuario, pk=usuario_id)
+    default_image_path = 'iconosesion.jpg'
 
     # Verificar si la solicitud contiene archivos
     if request.FILES:
         imagen = request.FILES['img[]']
+        current_image_path = usuario.imagen.path if usuario.imagen else None
+
         usuario.imagen = imagen
         usuario.save()
         request.session['imagen_perfil'] = usuario.imagen.url if usuario.imagen else None
 
+        # Extraer la parte relevante de la ruta para la comparación
+        if current_image_path:
+            relative_image_path = os.path.relpath(current_image_path, os.path.join(settings.MEDIA_ROOT, 'user_images'))
+        print(default_image_path, relative_image_path)
+
+        # Eliminar la imagen anterior si no es la imagen por defecto
+        if current_image_path and relative_image_path != default_image_path:
+            if os.path.exists(current_image_path):
+                os.remove(current_image_path)
 
         # Devolver una respuesta exitosa
         return JsonResponse({'success': True})
