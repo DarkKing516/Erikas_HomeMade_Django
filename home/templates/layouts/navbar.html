@@ -600,7 +600,7 @@
 <script>
     function removeCartItem(itemId) {
         $.ajax({
-            url: '{% url "pedidosremove_cart_item" %}',
+            url: '{% url "pedidos:remove_cart_item" %}',
             type: 'POST',
             data: {
                 'item_id': itemId,
