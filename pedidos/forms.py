@@ -218,3 +218,17 @@ class ServicioFormEditarImg(forms.ModelForm):
     class Meta:
         model = Servicio
         fields = ['img']
+        
+        
+        
+# --------------------------- Detalles ---------------------------
+        
+class DetallePedidoProductoForm(forms.ModelForm):
+    class Meta:
+        model = DetallePedidoProducto
+        fields = ['idProducto', 'cant_productos', 'nombre_productos', 'descripcion', 'precio_inicial_producto', 'subtotal_productos']
+
+class DetallePedidoServicioForm(forms.ModelForm):
+    class Meta:
+        model = DetallePedidoServicio
+        fields = ['idServicio', 'cantidad_servicios', 'descripcion', 'precio_inicial_servicio', 'subtotal_servicios']

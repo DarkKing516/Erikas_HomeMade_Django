@@ -272,70 +272,69 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Contenido del formulario con Bootstrap grid system -->
-                <form method="post" onsubmit="validatePedidoForm('{{ pedido.idPedido }}')" id="pedidoForm{{ pedido.idPedido }}" class="forms-sample" data-pedido-id="{{ pedido.idPedido }}" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_usuario">Usuario</label>
-                                {{ formCreate.id_Usuario }}
-                            </div>
-                            <div class="form-group">
-                                <label for="fecha_pedido">Fecha de Pedido</label>
-                                {{ formCreate.fecha_pedido }}
-                            </div>
-                            <div class="form-group">
-                                <label for="descripcion_pedido">Descripción del Pedido</label>
-                                {{ formCreate.descripcion_pedido }}
-                            </div>
-                            <div class="form-group">
-                                <label for="subtotal">Subtotal</label>
-                                {{ formCreate.subtotal }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="iva">IVA</label>
-                                {{ formCreate.iva }}
-                            </div>
-                            <div class="form-group">
-                                <label for="total">Total</label>
-                                {{ formCreate.total }}
-                            </div>
-                            <div class="form-group">
-                                <label for="estado_pedido">Estado del Pedido</label>
-                                <select class="form-control" id="estado_pedido" name="estado_pedido">
-                                    <option value="Por hacer">Por hacer</option>
-                                    <option value="En proceso">En proceso</option>
-                                    <option value="Hecho">Hecho</option>
-                                    <option value="Entregado">Entregado</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="evidencia_pago">Evidencia de pago</label>
-                                <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
-                                <br>
-                                <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
-                            </div>
-                        </div>
-                    </div>
+                    {{ form.as_p }}
 
-                    <!-- Botones -->
-                    <div class="form-row">
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                        </div>
+                    <h5>Productos</h5>
+                    <div id="productos">
+                        {% for producto_form in producto_forms %}
+                            <div class="producto-form">
+                                {{ producto_form.as_p }}
+                            </div>
+                        {% endfor %}
                     </div>
+                    <button type="button" onclick="addProductoForm()">Agregar Producto</button>
+
+                    <h5>Servicios</h5>
+                    <div id="servicios">
+                        {% for servicio_form in servicio_forms %}
+                            <div class="servicio-form">
+                                {{ servicio_form.as_p }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" onclick="addServicioForm()">Agregar Servicio</button>
+
+                    <input type="hidden" name="productos_total" id="productos_total" value="{{ producto_forms|length }}">
+                    <input type="hidden" name="servicios_total" id="servicios_total" value="{{ servicio_forms|length }}">
+
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Fin del Modal Crear Pedido -->
+<script>
+    let productoIndex = {{ producto_forms|length }};
+    let servicioIndex = {{ servicio_forms|length }};
 
+    function addProductoForm() {
+        const productosDiv = document.getElementById('productos');
+        const newForm = productosDiv.children[0].cloneNode(true);
+
+        const regex = new RegExp(`__prefix__`, 'g');
+        newForm.innerHTML = newForm.innerHTML.replace(regex, productoIndex);
+
+        productosDiv.appendChild(newForm);
+        productoIndex++;
+        document.getElementById('productos_total').value = productoIndex;
+    }
+
+    function addServicioForm() {
+        const serviciosDiv = document.getElementById('servicios');
+        const newForm = serviciosDiv.children[0].cloneNode(true);
+
+        const regex = new RegExp(`__prefix__`, 'g');
+        newForm.innerHTML = newForm.innerHTML.replace(regex, servicioIndex);
+
+        serviciosDiv.appendChild(newForm);
+        servicioIndex++;
+        document.getElementById('servicios_total').value = servicioIndex;
+    }
+</script>
 <script>
     // Función para validar el formulario de creación de pedido
     function validatePedidoForm(pedidoId) {

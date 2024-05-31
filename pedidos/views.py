@@ -93,7 +93,7 @@ def listar_pedidos(request):
 def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
 
-    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id)
+    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id).exclude(estado_pedido='entregado')
 
     return render(request, 'listar_mis_pedidos.html', {'pedidos': pedidos})
 
@@ -102,12 +102,34 @@ def listar_mis_pedidos(request):
 def crear_pedido(request):
     if request.method == 'POST':
         form = PedidoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
+        producto_forms = [DetallePedidoProductoForm(request.POST, prefix=str(i)) for i in range(int(request.POST['productos_total']))]
+        servicio_forms = [DetallePedidoServicioForm(request.POST, prefix=str(i)) for i in range(int(request.POST['servicios_total']))]
+
+        if form.is_valid() and all([pf.is_valid() for pf in producto_forms]) and all([sf.is_valid() for sf in servicio_forms]):
+            pedido = form.save()
+            
+            for pf in producto_forms:
+                producto_detalle = pf.save(commit=False)
+                producto_detalle.idPedido = pedido
+                producto_detalle.save()
+            
+            for sf in servicio_forms:
+                servicio_detalle = sf.save(commit=False)
+                servicio_detalle.idPedido = pedido
+                servicio_detalle.save()
+            
             return redirect('pedidos:listar_pedidos')
     else:
         form = PedidoForm()
-    return render(request, 'crear_pedido.html', {'form': form})
+        producto_forms = [DetallePedidoProductoForm(prefix=str(i)) for i in range(1)]
+        servicio_forms = [DetallePedidoServicioForm(prefix=str(i)) for i in range(1)]
+    
+    context = {
+        'form': form,
+        'producto_forms': producto_forms,
+        'servicio_forms': servicio_forms,
+    }
+    return render(request, 'crear_pedido.html', context)
 
 @require_POST
 def editar_pedido(request):
