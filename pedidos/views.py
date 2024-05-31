@@ -26,6 +26,13 @@ def listar_pedidos(request):
         formCreate = CreatePedidoForm()
         pedidos = Pedido.objects.all()
         return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'formCreate': formCreate})
+    
+def listar_mis_pedidos(request):
+    usuario_id = request.session.get('usuario_id')
+
+    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id)
+
+    return render(request, 'listar_mis_pedidos.html', {'pedidos': pedidos})
 
 
 

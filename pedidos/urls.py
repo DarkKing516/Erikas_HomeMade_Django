@@ -15,6 +15,7 @@ urlpatterns = [
     path('editar_evidencia_pedido/', views.editar_evidencia_pedido, name='editar_evidencia_pedido'),
     path('eliminar_pedido/', views.eliminar_pedido, name='eliminar_pedido'),
     path('cambiar_estado/', views.cambiar_estado, name='cambiar_estado'),
+    path('listar_mis_pedidos/', views.listar_mis_pedidos, name='listar_mis_pedidos'),
 
     #--------------------------------productos-----------------------------------
     path('listar_productos/', views.listar_productos, name='listar_productos'),
