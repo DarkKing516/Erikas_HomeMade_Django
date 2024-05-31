@@ -149,6 +149,7 @@ def listar_roles(request):
             
             rol = form.save(commit=False)
             rol.save()
+            form.save_m2m()  # Esto es importante para guardar las relaciones Many-to-Many
             return JsonResponse({'success': True})
         else:
             # Si el formulario no es válido, se envían los errores de validación
@@ -504,6 +505,9 @@ def iniciar_sesion(request):
                 request.session['usuario'] = usuario.usuario
                 request.session['correo_usuario'] = usuario.correo
                 request.session['imagen_perfil'] = usuario.imagen.url if usuario.imagen else None
+
+                if 'cart' not in request.session:
+                    request.session['cart'] = []
 
                 # print(request.session)  # Imprimir el contenido de la sesión para depuración
                 # print(usuario.nombre)  # Imprime el nombre del usuario en la consola

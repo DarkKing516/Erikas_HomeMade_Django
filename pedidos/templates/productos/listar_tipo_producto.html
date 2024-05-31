@@ -28,8 +28,8 @@
                     <table id="tipoProductoTable" class="table table-hover row-border" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Nombre Producto</th>
-                                <th>Estado Producto</th>
+                                <th>Nombre Tipo Producto</th>
+                                <th>Estado Tipo Producto</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -232,11 +232,12 @@
                     // Mostrar SweetAlert de éxito
                     Swal.fire({
                         title: '¡Registro exitoso!',
-                        text: 'La reserva se ha registrado correctamente.',
+                        text: 'El tipo de Producto se ha registrado correctamente.',
                         icon: 'success',
-                        onClose: () => {
-                            // Recargar la página o realizar alguna otra acción
-                            location.reload();
+                        allowEnterKey: true, // Permitir la tecla Enter
+                        focusConfirm: true,  // Enfocar el botón de confirmación automáticamente
+                        didOpen: () => {
+                            Swal.getConfirmButton().focus(); // Enfocar el botón de confirmación
                         }
                     }).then(() => {
                         location.reload();

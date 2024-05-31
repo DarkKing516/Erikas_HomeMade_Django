@@ -134,6 +134,12 @@
                             <i class="ti-power-off text-primary"></i>
                             <span>Bienvenido, {{ request.session.nombre_usuario }}!</span>
                         </a>
+                        {% if request.session.cart %}
+                        <div id="logout-link" class="dropdown-item" data-toggle="modal" data-target="#CarritoModal">
+                            <i class="bi bi-car-front-fill"></i>
+                            <!-- <i class="bi bi-cart2"></i> -->
+                        </div>
+                        {% endif %}
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                             {% if request.session.imagen_perfil %}
                                 <img src="{{ request.session.imagen_perfil }}" alt="profile" />
@@ -548,6 +554,75 @@
         </div>
     </div>
 </body>
+
+<!-- Modal para el Carrito de compras -->
+<div class="modal fade" id="CarritoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Carrito de Compras</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto/Servicio</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody">
+                        {% for item in request.session.cart %}
+                        <tr>
+                            <td>{{ item.nombre }}</td>
+                            <td>{{ item.descripcion }}</td>
+                            <td>${{ item.precio }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeCartItem('{{ item.id }}')">Eliminar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Procesar Compra</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function removeCartItem(itemId) {
+        $.ajax({
+            url: '{% url "pedidos:remove_cart_item" %}',
+            type: 'POST',
+            data: {
+                'item_id': itemId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Actualizar el carrito después de eliminar el artículo
+                    // Puedes recargar la página o actualizar solo la sección del carrito
+                    // dependiendo de tu flujo de trabajo
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    }
+</script>
+
 <script>
     $(document).ready(function () {
         // Agregar evento clic para el botón de cierre de sesión

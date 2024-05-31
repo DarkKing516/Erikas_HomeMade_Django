@@ -10,7 +10,70 @@ import os
 
 
 
+def add_to_cart(request):
+    if request.method == 'POST' and request.session.get('usuario_id') is not None:
+        item_type = request.POST.get('type')
+        item_id = request.POST.get('id')
+        print(item_id, item_type)
+        data = json.loads(request.body)
+        item_type = data.get('type')
+        item_id = data.get('id')
+        print(item_id, item_type)
 
+        if 'cart' not in request.session:
+            request.session['cart'] = []
+
+        cart = request.session['cart']
+
+        if item_type == 'producto':
+            try:
+                producto = Producto.objects.get(idProducto=item_id)
+                cart.append({
+                    'type': 'producto',
+                    'id': producto.idProducto,
+                    'nombre': producto.nombre,
+                    'descripcion': producto.descripcion,
+                    'precio': float(producto.precio),
+                })
+                request.session['cart'] = cart
+                return JsonResponse({'success': True, 'message': f'{producto.nombre} agregado al carrito.'})
+            except Producto.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Producto no encontrado.'})
+
+        elif item_type == 'servicio':
+            try:
+                servicio = Servicio.objects.get(idServicio=item_id)
+                cart.append({
+                    'type': 'servicio',
+                    'id': servicio.idServicio,
+                    'nombre': servicio.nombre_servicio,
+                    'descripcion': producto.descripcion,
+                    'precio': float(servicio.precio_servicio),
+                })
+                request.session['cart'] = cart
+                return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})
+            except Servicio.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Servicio no encontrado.'})
+
+    return JsonResponse({'success': False, 'message': 'Sesión no iniciada ó Método no permitido.'})
+
+def remove_cart_item(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        print(item_id)
+        # data = json.loads(request.body)
+        # item_id = data.get('item_id')
+        # print(item_id)
+
+        try:
+            # Eliminar el artículo del carrito
+            del request.session['cart'][item_id]
+            request.session.modified = True
+            return JsonResponse({'success': True, 'message': 'Artículo eliminado del carrito.'})
+        except KeyError:
+            return JsonResponse({'success': False, 'message': 'No se pudo encontrar el artículo en el carrito.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def listar_pedidos(request):
     if request.method == 'POST':

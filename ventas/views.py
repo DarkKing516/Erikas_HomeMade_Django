@@ -24,14 +24,26 @@ def crear_venta(request):
     if request.method == 'POST':
         form = VentaForm(request.POST)
         if form.is_valid():
-            venta = form.save(commit=False)
 
-            # Obtén el total ingresado en el formulario
-            total = form.cleaned_data['total']
+            # Obtener el id del pedido desde el formulario
+            pedido_id = form.cleaned_data['idPedido'].idPedido
             
-            # Obtén el descuento ingresado en el formulario
+            # Verificar si ya existe una venta para el pedido dado
+            if Venta.objects.filter(idPedido_id=pedido_id).exists():
+                return JsonResponse({'success': False, 'error_type': 'already_exists', 'message': 'Ya existe una venta para este pedido.'}, status=400)
+            
+                        # Obtener el total ingresado en el formulario
+            total = form.cleaned_data['total']
+            # Obtener el descuento ingresado en el formulario
             descuento = form.cleaned_data['descuento']
             
+            # Verificar si el descuento es mayor que el total
+            if descuento > total:
+                # Mostrar mensaje de error específico
+                return JsonResponse({'success': False, 'error_type': 'invalid_discount', 'message': 'El descuento no puede ser mayor que el total.'}, status=400)
+            
+            venta = form.save(commit=False)
+
             # Calcular el nuevo total después de aplicar el descuento
             total_final = total - descuento
 
