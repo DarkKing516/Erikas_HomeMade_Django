@@ -53,10 +53,10 @@ def index(request):
 
 
 def catalogo_productos(request):
-    productos = Producto.objects.all()
-    servicios = Servicio.objects.all()
-    tipos_productos = TipoProducto.objects.all()
-    tipos_servicios = TipoServicio.objects.all()
+    productos = Producto.objects.filter(estado_producto='A', estado_catalogo='A', cantidad__gt=0)
+    servicios = Servicio.objects.filter(estado_servicio='A', estado_catalogo='A')
+    tipos_productos = TipoProducto.objects.filter(estado_producto='Activo')
+    tipos_servicios = TipoServicio.objects.filter(estado_tipoServicio='Activo')
     return render(request, 'catalogo.html', {
         'productos': productos,
         'servicios': servicios,

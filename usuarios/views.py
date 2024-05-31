@@ -506,6 +506,9 @@ def iniciar_sesion(request):
                 request.session['correo_usuario'] = usuario.correo
                 request.session['imagen_perfil'] = usuario.imagen.url if usuario.imagen else None
 
+                if 'cart' not in request.session:
+                    request.session['cart'] = []
+
                 # print(request.session)  # Imprimir el contenido de la sesión para depuración
                 # print(usuario.nombre)  # Imprime el nombre del usuario en la consola
                 # return redirect('home:index')  # Redirige al dashboard o a la página deseada después del inicio de sesión

@@ -96,7 +96,7 @@ class ProductoForm(forms.ModelForm):
 
 
 class CreateProductoForm(forms.ModelForm):
-    id_TipoProducto = forms.ModelChoiceField(queryset=TipoProducto.objects.all(), label='Tipo de Producto', widget=forms.Select(attrs={'class': 'form-control'}))
+    id_TipoProducto = forms.ModelChoiceField(queryset=TipoProducto.objects.filter(estado_producto='Activo'), label='Tipo de Producto', widget=forms.Select(attrs={'class': 'form-control'}))
     nombre = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}))
     descripcion = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción'}))
     imagen = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))

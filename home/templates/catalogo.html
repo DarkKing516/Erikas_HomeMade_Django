@@ -1,8 +1,10 @@
 {% extends 'layouts/navbar.html' %}
+{% load humanize %}
 {% load static %}
 {% block content %}
 
 <div class="custom-container mt-4">
+    <h1>{{ request.session.cart }}</h1>
     <h2 class="mb-4">Catálogo de Productos y Servicios</h2>
     
     <!-- Filtro para mostrar todos, productos o servicios -->
@@ -55,15 +57,20 @@
                     <p class="custom-card-title">{{ producto.nombre }}</p>
                     <p class="custom-card-des">{{ producto.descripcion }}</p>
                     <p class="custom-card-des">{{ producto.cantidad }}</p>
-                    <p class="custom-card-price">${{ producto.precio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
-                    <button class="CartBtn" onclick="addToCart('{{ producto.idProducto }}', 'producto')">
-                        <span class="IconContainer"> 
-                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512" fill="rgb(17, 17, 17)" class="cart icon">
-                                <path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"></path>
-                            </svg>
-                        </span>
-                        <span class="text">Añadir</span>
-                    </button>
+                    <p style="color: aliceblue;" class="custom-card-price">${{ producto.precio|floatformat:"0"|intcomma }}</p> <!-- Convertir el precio a entero -->
+                    <!-- Botón de añadir para productos -->
+                    <div class="botnGod" data-tooltip="${{ producto.precio|floatformat:"0"|intcomma }}">
+                        <div class="botnGod-wrapper" onclick="addToCart('{{ producto.idProducto }}', 'producto', '{{ producto.nombre }}')">
+                            <div class="textbotnGod">Añadir</div>
+                            <span class="iconbotnGod">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2"
+                                viewBox="0 0 16 16">
+                                <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z">
+                                </path>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -84,8 +91,10 @@
                     </div>
                     <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
                     <p class="custom-card-des">{{ servicio.descripcion }}</p>
-                    <p class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0" }}</p> <!-- Convertir el precio a entero -->
-                    <button class="CartBtn" onclick="addToCart('{{ servicio.idServicio }}', 'servicio')">
+
+                    <p style="color: aliceblue;" class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0"|intcomma }}</p> <!-- Convertir el precio a entero -->
+                    <!-- Botón de añadir para servicios -->
+                    <button class="CartBtn" onclick="addToCart('{{ servicio.idServicio }}', 'servicio', '{{ servicio.nombre_servicio }}')">
                         <span class="IconContainer"> 
                             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512" fill="rgb(17, 17, 17)" class="cart icon">
                                 <path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"></path>
@@ -101,6 +110,51 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+function addToCart(id, type, name) {
+    fetch("{% url 'pedidos:add_to_cart' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            id: id,
+            type: type
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Éxito',
+                text: `${name} ha sido agregado al carrito.`,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al intentar agregar al carrito.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+}
+</script>
 <!-- JavaScript para el filtrado y añadir al carrito -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -168,25 +222,50 @@ document.addEventListener('DOMContentLoaded', function() {
 // Definimos un array para almacenar los elementos del carrito
 let carrito = [];
 
-function addToCart(id, tipo) {
-    // Lógica para añadir al carrito
-    if (tipo === 'producto') {
-        console.log(`Añadir al carrito el producto con ID: ${id}`);
-        // Agregar el producto al array del carrito
-        carrito.push({ tipo: 'producto', id: id });
-    } else if (tipo === 'servicio') {
-        console.log(`Añadir al carrito el servicio con ID: ${id}`);
-        // Agregar el servicio al array del carrito
-        carrito.push({ tipo: 'servicio', id: id });
-    } else {
-        console.log(`Tipo desconocido: ${tipo}`);
+// function addToCart(id, tipo) {
+//     // Lógica para añadir al carrito
+//     if (tipo === 'producto') {
+//         console.log(`Añadir al carrito el producto con ID: ${id}`);
+//         // Agregar el producto al array del carrito
+//         carrito.push({ tipo: 'producto', id: id });
+//     } else if (tipo === 'servicio') {
+//         console.log(`Añadir al carrito el servicio con ID: ${id}`);
+//         // Agregar el servicio al array del carrito
+//         carrito.push({ tipo: 'servicio', id: id });
+//     } else {
+//         console.log(`Tipo desconocido: ${tipo}`);
+//     }
+
+//     // Imprimir el contenido del carrito
+//     console.log('Contenido del carrito:', carrito);
+// }
+
+
+</script>
+<script>
+    function removeCartItem(itemId) {
+        $.ajax({
+            url: '{% url "pedidos:remove_cart_item" %}',
+            type: 'POST',
+            data: {
+                'item_id': itemId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Actualizar el carrito después de eliminar el artículo
+                    // Puedes recargar la página o actualizar solo la sección del carrito
+                    // dependiendo de tu flujo de trabajo
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
     }
-
-    // Imprimir el contenido del carrito
-    console.log('Contenido del carrito:', carrito);
-}
-
-
 </script>
 
 <style>
@@ -333,4 +412,122 @@ function addToCart(id, tipo) {
   
 </style>
 
+<!-- Estilo del boton de comprar -->
+
+<style>
+    .botnGod {
+      --width: 100px;
+      --height: 35px;
+      --tooltip-height: 35px;
+      --tooltip-width: 90px;
+      --gap-between-tooltip-to-button: 18px;
+      --button-color: #222;
+      --tooltip-color: #fff;
+      width: var(--width);
+      height: var(--height);
+      background: var(--button-color);
+      position: relative;
+      text-align: center;
+      border-radius: 0.5em;
+      font-family: "Arial";
+      transition: background 0.7s;
+    }
+  
+    .botnGod::before {
+      position: absolute;
+      content: attr(data-tooltip);
+      width: var(--tooltip-width);
+      height: var(--tooltip-height);
+      background-color: #555;
+      font-size: 0.9rem;
+      color: #fff;
+      border-radius: 0.25em;
+      line-height: var(--tooltip-height);
+      bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) + 10px);
+      left: calc(50% - var(--tooltip-width) / 2);
+    }
+  
+    .botnGod::after {
+      position: absolute;
+      content: "";
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+      border-top-color: #555;
+      left: calc(50% - 10px);
+      bottom: calc(100% + var(--gap-between-tooltip-to-button) - 10px);
+    }
+  
+    .botnGod::after,
+    .botnGod::before {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.5s;
+    }
+  
+    .textbotnGod {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .botnGod-wrapper,
+    .textbotnGod,
+    .iconbotnGod {
+      overflow: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      color: #fff;
+    }
+  
+    .textbotnGod {
+      top: 0;
+    }
+  
+    .textbotnGod,
+    .iconbotnGod {
+      transition: top 0.5s;
+    }
+  
+    .iconbotnGod {
+      color: #fff;
+      top: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .iconbotnGod svg {
+      width: 24px;
+      height: 24px;
+    }
+  
+    .botnGod:hover {
+      background: #222;
+    }
+  
+    .botnGod:hover .textbotnGod {
+      top: -100%;
+    }
+  
+    .botnGod:hover .iconbotnGod {
+      top: 0;
+    }
+  
+    .botnGod:hover:before,
+    .botnGod:hover:after {
+      opacity: 1;
+      visibility: visible;
+    }
+  
+    .botnGod:hover:after {
+      bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) - 20px);
+    }
+  
+    .botnGod:hover:before {
+      bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
+    }
+</style>
 {% endblock %}

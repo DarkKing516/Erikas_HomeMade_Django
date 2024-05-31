@@ -7,6 +7,8 @@ from . import views
 app_name = 'pedidos'
 
 urlpatterns = [
+    path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
+    path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
     path('listar_pedidos/', views.listar_pedidos, name='listar_pedidos'),
     path('crear_pedido/', views.crear_pedido, name='crear_pedido'),
     # path('editar_pedido/<int:pk>/', views.editar_pedido, name='editar_pedido'),
