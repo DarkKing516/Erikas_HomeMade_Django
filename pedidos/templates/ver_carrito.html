@@ -1,0 +1,179 @@
+<title>Listar Carrito</title>
+{% extends 'layouts/navbar.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+<!-- endinject -->
+<!-- Plugin css for this page -->
+<link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
+<!-- End plugin css for this page -->
+<!-- inject:css -->
+<link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+
+<style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 100%;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .cart {
+        flex: 3;
+        min-width: 300px;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    .cart-item img {
+        width: 50px;
+        height: 50px;
+        background-color: #ddd;
+        margin-right: 20px;
+    }
+    .cart-item h4 {
+        margin: 0;
+        flex: 1;
+    }
+    .cart-item .price {
+        margin: 0 20px;
+    }
+    .cart-item .quantity {
+        margin-right: 20px;
+    }
+    .cart-item .remove {
+        cursor: pointer;
+        color: red;
+    }
+    .summary {
+        flex: 2;
+        min-width: 300px;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 1px solid #ddd;
+    }
+    .summary h3 {
+        margin-top: 0;
+    }
+    .summary .total {
+        font-size: 1.5em;
+        margin: 20px 0;
+    }
+    .summary textarea,
+    .summary input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    .summary button {
+        width: 100%;
+        padding: 15px;
+        background: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+        .cart,
+        .summary {
+            min-width: 100%;
+            padding: 10px;
+        }
+        .summary {
+            border-left: none;
+            border-top: 1px solid #ddd;
+            margin-top: 20px;
+        }
+    }
+</style>
+
+<!-- Contenido principal -->
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Mi Carrito</h4>
+                <div class="container">
+                    <div class="cart">
+                        <div class="cart-item">
+                            <img src="{% static 'placeholder.png' %}" alt="Product Image">
+                            <h4>Acme Laptop Stand</h4>
+                            <p class="price">$29.99</p>
+                            <p class="quantity">1</p>
+                            <span class="remove"><i class="bi bi-trash"></i></span>
+                        </div>
+                        <div class="cart-item">
+                            <img src="{% static 'placeholder.png' %}" alt="Product Image">
+                            <h4>Ergonomic Office Chair</h4>
+                            <p class="price">$199.99</p>
+                            <p class="quantity">1</p>
+                            <span class="remove"><i class="bi bi-trash"></i></span>
+                        </div>
+                        <div class="cart-item">
+                            <img src="{% static 'placeholder.png' %}" alt="Product Image">
+                            <h4>Wireless Keyboard and Mouse</h4>
+                            <p class="price">$59.99</p>
+                            <p class="quantity">1</p>
+                            <span class="remove"><i class="bi bi-trash"></i></span>
+                        </div>
+                        <div class="cart-item">
+                            <img src="{% static 'placeholder.png' %}" alt="Product Image">
+                            <h4>Premium Desk Lamp</h4>
+                            <p class="price">$49.99</p>
+                            <p class="quantity">1</p>
+                            <span class="remove"><i class="bi bi-trash"></i></span>
+                        </div>
+                        <div class="cart-item">
+                            <img src="{% static 'placeholder.png' %}" alt="Product Image">
+                            <h4>Professional Webcam</h4>
+                            <p class="price">$99.99</p>
+                            <p class="quantity">1</p>
+                            <span class="remove"><i class="bi bi-trash"></i></span>
+                        </div>
+                    </div>
+                    <div class="summary">
+                        <h3>Order Summary</h3>
+                        <p class="subtotal">Subtotal: $439.95</p>
+                        <p class="total">Total: $439.95</p>
+                        <div class="order-details">
+                            <textarea placeholder="Add order description (optional)"></textarea>
+                            <input type="file">
+                            <button>Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin del contenido principal -->
+
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% endif %}
+{% endblock %}

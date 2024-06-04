@@ -649,3 +649,11 @@ def cambiar_estado_servicio_catalogo(request):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'warning': False})
+    
+    #------------------------------ detalle producto-----------------------
+
+def listar_detalle_producto(request):
+    # if request.method == 'POST':
+    # else:
+
+        return render(request, 'ver_carrito.html')

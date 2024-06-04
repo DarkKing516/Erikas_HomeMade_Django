@@ -476,6 +476,12 @@
                                 <span class="menu-title"> Pedidos </span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pedidos:ver_carrito' %}">
+                                <i class="mdi mdi-clipboard-outline menu-icon"></i>
+                                <span class="menu-title"> Carrito Prueba </span>
+                            </a>
+                        </li>
                         {% endif %}
                         {% if request.session.id_rol != 1 and "Listar Mis Pedidos" in request.session.permisos %}
                         <li class="nav-item">
