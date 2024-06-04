@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
 <style>
+  html {
+    scroll-behavior: smooth;
+  }
+
   .container {
     max-width: 800px;
     margin: 0 auto;
@@ -159,20 +163,198 @@
 </style>
 
 
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
 
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 <!-- <link rel="stylesheet" href="{% static 'css/fonts.css' %}"> -->
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<!-- CSS de la v0.dev IA god -->
+<!-- <link rel="stylesheet" href="{% static 'css/tailwind.css' %}"> -->
+<style>
+  .hero-background {
+    position: relative; /* Importante para que el pseudo-elemento funcione correctamente */
+    height: 100vh; /* Altura completa de la ventana */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('{% static "images/fondoindex.jpeg" %}');
+    background-size: cover; /* Para cubrir toda el área */
+    background-position: center; /* Centrar la imagen */
+    background-repeat: no-repeat; /* Evitar que la imagen se repita */
+    z-index: 0;
+}
 
-<div class="hero hero-background">
-  <center>
-  <h1>Bienvenidos a Erika's HomeMade</h1>
+.hero-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Añadir un overlay oscuro */
+    z-index: -1; /* Asegurarse de que esté detrás del contenido */
+    backdrop-filter: blur(5px); /* Aplicar desenfoque */
+}
+
+.hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+    color: white;
+    text-align: center;
+    z-index: 1;
+    margin-bottom: 2rem; /* Añadir margen inferior */
+}
+
+.hero h1 {
+    font-size: 3rem; /* Tamaño del título */
+    font-family: 'Arial', sans-serif; /* Fuente del título */
+    color: #FFD700; /* Color amarillo para destacar el título */
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.5rem; /* Tamaño de la descripción */
+    font-family: 'Arial', sans-serif; /* Fuente de la descripción */
+    color: white; /* Color blanco */
+    max-width: 800px; /* Limitar el ancho del texto para mejor legibilidad */
+    margin: 0 auto;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Añadir sombra al texto para mejor contraste */
+}
+
+</style>
+
+<!--
+// v0 by Vercel.
+// https://v0.dev/t/7Gsr2v1W3Lp
+-->
+
+<center>
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">Erika's HomeMade</h1>
+          <p class="hero-description">
+            Taller de costura y arreglos de moda. Creamos prendas a medida y ofrecemos servicios de reparación y personalización de ropa.
+          </p>
+        </div>
+        <div class="hero-buttons">
+          <a class="btn primary-btn" href="#uwuNOsotros" rel="ugc">Conoce más</a>
+          <!-- <a class="btn secondary-btn" href="#" rel="ugc">Contac to</a> -->
+        </div>
+      </div>
+      <img class="hero-image" src="https://img.freepik.com/vector-premium/taller-costura-disenadores-fondo-maquina-coser_273625-128.jpg" width="550" height="310" alt="Hero" />
+    </div>
+  </section>
 </center>
-  <p>En Erika's HomeMade, nos especializamos en confección a medida, ofreciendo diseños exclusivos y personalizados para cada cliente. Nuestra pasión es crear piezas únicas que realcen tu estilo y personalidad.</p>
-</div>
 
-<div class="hero-servicios">
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.hero-section {
+  width: 100%;
+  padding: 3rem 0;
+}
+
+.hero-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.hero-text {
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+}
+
+.hero-description {
+  max-width: 600px;
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hero-buttons .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  padding: 0 2rem;
+  font-size: 0.875rem;
+  font-weight: medium;
+  border-radius: 0.375rem;
+  transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
+}
+
+.primary-btn {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+.primary-btn:hover {
+  background-color: #1f2937;
+}
+
+.secondary-btn {
+  border: 1px solid #e5e7eb;
+  background-color: #fff;
+  color: #111827;
+}
+
+.secondary-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.hero-image {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  object-position: center;
+}
+
+</style>
+
+<!-- <div class="hero hero-background">
+  <center>
+    <h1>Bienvenidos a Erika's HomeMade</h1>
+  </center>
+  <p>En Erika's HomeMade, nos especializamos en confección a medida, ofreciendo diseños exclusivos y personalizados para cada cliente. Nuestra pasión es crear piezas únicas que realcen tu estilo y personalidad.</p>
+</div> -->
+
+<div id="uwuNOsotros" class="hero-servicios">
   <div class="hero-left">
     <h3>Acerca de Nosotros</h3>
     <p>En Erika's HomeMade, combinamos tradición y modernidad para crear prendas a medida que son tanto elegantes como cómodas. Desde nuestro inicio, hemos trabajado con dedicación para ofrecer una experiencia de confección personalizada y de alta calidad.</p>
@@ -223,36 +405,51 @@
     <div class="owl-carousel owl-style-11 dots-style-2" data-items="1" data-sm-items="1" data-lg-items="2" data-xl-items="4" data-margin="30" data-dots="true" data-mouse-drag="true" data-rtl="true">
       <article class="box-icon-megan wow fadeInUp">
         <div class="box-icon-megan-header">
-          <div class="box-icon-megan-icon linearicons-bag"></div>
+          <center>
+            <div class="box-icon-megan-icon">
+              <i class="bi bi-scissors"></i>
+            </div>
+          </center>
         </div>
-        <h5 class="box-icon-megan-title"><a href="#">Free Delivery</a></h5>
-        <p class="box-icon-megan-text">If you order more than 3 pizzas, we will gladly deliver them to you for free.</p>
+        <h5 class="box-icon-megan-title"><a href="#">Arreglos de Ropa</a></h5>
+        <p class="box-icon-megan-text">Ofrecemos arreglos profesionales para todo tipo de prendas.</p>
       </article>
       <article class="box-icon-megan wow fadeInUp" data-wow-delay=".05s">
         <div class="box-icon-megan-header">
-          <div class="box-icon-megan-icon linearicons-map2"></div>
+          <center>
+            <div class="box-icon-megan-icon">
+              <i class="bi bi-rulers"></i>
+            </div>
+          </center>
         </div>
-        <h5 class="box-icon-megan-title"><a href="#">Convenient Location</a></h5>
-        <p class="box-icon-megan-text">Our pizzeria is situated in the downtown and is very easy to reach even on weekends.</p>
+        <h5 class="box-icon-megan-title"><a href="#">Ropa a la Medida</a></h5>
+        <p class="box-icon-megan-text">Diseñamos y confeccionamos ropa a la medida según tus necesidades.</p>
       </article>
       <article class="box-icon-megan wow fadeInUp" data-wow-delay=".1s">
         <div class="box-icon-megan-header">
-          <div class="box-icon-megan-icon linearicons-radar"></div>
+          <center>
+            <div class="box-icon-megan-icon">
+              <i class="bi bi-palette"></i>
+            </div>
+          </center>
         </div>
-        <h5 class="box-icon-megan-title"><a href="#">Free Wi-Fi</a></h5>
-        <p class="box-icon-megan-text">We have free Wi-Fi available to all clients and visitors of our pizzeria.</p>
+        <h5 class="box-icon-megan-title"><a href="#">Manualidades</a></h5>
+        <p class="box-icon-megan-text">Creaciones artesanales únicas para decorar y regalar.</p>
       </article>
       <article class="box-icon-megan wow fadeInUp" data-wow-delay=".15s">
         <div class="box-icon-megan-header">
-          <div class="box-icon-megan-icon linearicons-thumbs-up"></div>
+          <center>
+            <div class="box-icon-megan-icon">
+              <i class="bi bi-calendar-check"></i>
+            </div>
+          </center>
         </div>
-        <h5 class="box-icon-megan-title"><a href="#">Best Service</a></h5>
-        <p class="box-icon-megan-text">The client is our #1 priority as we deliver top-notch customer service.</p>
+        <h5 class="box-icon-megan-title"><a href="#">Reservas</a></h5>
+        <p class="box-icon-megan-text">Puedes hacer una cita para consultas y recoger tus pedidos.</p>
       </article>
     </div>
   </div>
 </section>
-
 
 <section class="section section-sm section-first bg-default">
   <div class="container">
