@@ -102,8 +102,8 @@ def listar_mis_pedidos(request):
 def crear_pedido(request):
     if request.method == 'POST':
         form = PedidoForm(request.POST, request.FILES)
-        producto_forms = [DetallePedidoProductoForm(request.POST, prefix=str(i)) for i in range(int(request.POST['productos_total']))]
-        servicio_forms = [DetallePedidoServicioForm(request.POST, prefix=str(i)) for i in range(int(request.POST['servicios_total']))]
+        producto_forms = [DetallePedidoProductoForm(request.POST, prefix=str(i)) for i in range(int(request.POST.get('productos_total', 1)))]
+        servicio_forms = [DetallePedidoServicioForm(request.POST, prefix=str(i)) for i in range(int(request.POST.get('servicios_total', 1)))]
 
         if form.is_valid() and all([pf.is_valid() for pf in producto_forms]) and all([sf.is_valid() for sf in servicio_forms]):
             pedido = form.save()
@@ -121,8 +121,8 @@ def crear_pedido(request):
             return redirect('pedidos:listar_pedidos')
     else:
         form = PedidoForm()
-        producto_forms = [DetallePedidoProductoForm(prefix=str(i)) for i in range(1)]
-        servicio_forms = [DetallePedidoServicioForm(prefix=str(i)) for i in range(1)]
+        producto_forms = [DetallePedidoProductoForm(prefix='0')]
+        servicio_forms = [DetallePedidoServicioForm(prefix='0')]
     
     context = {
         'form': form,
