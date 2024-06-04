@@ -354,6 +354,82 @@ body {
   <p>En Erika's HomeMade, nos especializamos en confección a medida, ofreciendo diseños exclusivos y personalizados para cada cliente. Nuestra pasión es crear piezas únicas que realcen tu estilo y personalidad.</p>
 </div> -->
 
+<!--
+// v0 by Vercel.
+// https://v0.dev/t/xDrF7U2dpDT
+-->
+
+<!-- <section id="uwuNOsotros" class="w-full py-12 md:py-24 lg:py-32">
+  <div class="container grid gap-10 px-4 md:grid-cols-2 md:gap-16 md:px-6">
+    <div>
+      <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Acerca de Nosotros</h2>
+      <p class="mt-4 text-gray-500 md:text-xl dark:text-gray-400">
+        Somos una empresa dedicada a la confección de prendas de vestir de alta calidad. Nos enorgullecemos de
+        ofrecer un servicio personalizado y atención al detalle en cada uno de nuestros productos. Nuestro equipo de
+        diseñadores y sastres expertos trabajan arduamente para crear piezas únicas que se ajusten perfectamente a
+        las necesidades de nuestros clientes.
+      </p>
+    </div>
+    <div>
+      <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Servicios</h2>
+      <ul class="mt-4 space-y-2 text-gray-500 md:text-xl dark:text-gray-400">
+        <li class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-5 w-5 fill-primary"
+          >
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+          Confección a medida
+        </li>
+        <li class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-5 w-5 fill-primary"
+          >
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+          Arreglos y ajustes
+        </li>
+        <li class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-5 w-5 fill-primary"
+          >
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+          Diseño de moda
+        </li>
+      </ul>
+    </div>
+  </div>
+</section> -->
+
+
 <div id="uwuNOsotros" class="hero-servicios">
   <div class="hero-left">
     <h3>Acerca de Nosotros</h3>
@@ -368,8 +444,6 @@ body {
     </ul>
   </div>
 </div>
-
-
 
 
 
@@ -457,7 +531,7 @@ body {
     <h3 class="heading-3">RESERVAS</h3>
   </center>
     <form class="rd-form rd-mailform form-style-1" data-form-output="form-output-global" data-form-type="contact"
-      action="{% url 'reservas:crear_reserva' %}" method="post" enctype="multipart/form-data">
+      action="" onsubmit="validateForm()" method="post" id="myForm" enctype="multipart/form-data" >
       {% csrf_token %}
       <div class="row row-20 gutters-20">
         <div class="col-md-6 col-lg-4 oh-desktop">
@@ -559,4 +633,79 @@ body {
     object-position: center;
 }
 </style>
+
+<script>
+   function validateForm() {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
+
+        // Obtener el formulario de la modal
+        const form = document.getElementById('myForm');
+
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'reservas:crear_reserva' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Registro exitoso!',
+                        text: 'La reserva se ha registrado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página o realizar alguna otra acción
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.message) { // Check if a message is provided in the response
+                    // Mostrar SweetAlert de error con el mensaje recibido
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    // Mostrar SweetAlert de error con los errores de validación
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // If no message is provided, show a generic error message
+                    // Mostrar SweetAlert de error genérico
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+</script>
 {% endblock %}

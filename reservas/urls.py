@@ -13,5 +13,6 @@ urlpatterns = [
     path('eliminar/', viewsReservas.eliminar_reserva, name='eliminar_reserva'),
     path('listar_reservas_cliente/', viewsReservas.listar_reservas_cliente, name='listar_reserva_cliente'),
     path('cambiar_estado_reserva/', viewsReservas.cambiar_estado_reserva, name='cambiar_estado_reserva'),
+    path('cambiar_fecha_reserva/', viewsReservas.cambiar_fecha_reserva, name='cambiar_fecha_reserva'),
 
 ]

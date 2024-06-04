@@ -9,11 +9,29 @@
 <link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}" />
 <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}" />
 <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
 <script src="{% static 'js/reservas.js' %}"></script>
+<style>
+    .fecha-cita-button {
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    padding: 8px 12px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
 
+.fecha-cita-button:hover {
+    background-color: #0056b3;
+}
+
+</style>
 <!-- Contenido principal -->
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
@@ -34,7 +52,9 @@
                             {% for reserva in reservas %}
                             <tr>
                                 <td>{{ reserva.usuario.nombre }}</td>
-                                <td>{{ reserva.fecha_cita }}</td>
+                                <td>
+                                    <label class="badge badge-info hover-cursor editarfechacita" data-reserva-id="{{ reserva.id }}">{{ reserva.fecha_cita }}</label>
+                                </td>
                                 <td>{{ reserva.descripcion }}</td>
                                 <td>
                                     <label 
@@ -136,6 +156,87 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#reservaTable').on('click', 'td .editarfechacita', function () {
+            var reserva_id = $(this).data('reserva-id');
+            var fecha_cita = $(this).text().trim();
+
+            // Crear el campo de fecha y hora con Flatpickr
+            var flatpickrInput = $('<input>').attr({
+                type: 'text',
+                id: 'swal-input1',
+                class: 'swal2-input',
+            });
+
+            // Mostrar la alerta de SweetAlert para editar la fecha y hora
+            Swal.fire({
+                title: 'Editar Fecha y Hora de Cita',
+                html: flatpickrInput[0],
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                preConfirm: () => {
+                    return flatpickrInput.val();
+                },
+                didOpen: () => {
+                    // Inicializar Flatpickr en el campo de entrada
+                    flatpickr(flatpickrInput[0], {
+                        enableTime: true,
+                        dateFormat: 'Y-m-d H:i', // Formato de fecha y hora
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Obtener la nueva fecha y hora ingresada por el usuario
+                    var nueva_fecha = flatpickrInput.val();
+
+                    // Realizar la petición para actualizar la fecha y hora de la reserva
+                    fetch("{% url 'reservas:cambiar_fecha_reserva' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            'fecha_cita': nueva_fecha,
+                            'reserva_id': reserva_id
+                        }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Hubo un problema al cambiar la fecha de la reserva.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Mostrar una alerta de éxito
+                            Swal.fire('¡Fecha y Hora cambiadas!', 'La fecha y hora de la reserva se han cambiado correctamente.', 'success').then(() => {
+                                // Recargar la página o realizar alguna otra acción
+                                location.reload();
+                            });
+                        } else {
+                            // Mostrar una alerta de error si no se pudo cambiar la fecha y hora
+                            Swal.fire('Error', 'Hubo un problema al cambiar la fecha y hora de la reserva. Por favor, inténtelo de nuevo más tarde.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        // Mostrar una alerta de error si hubo un problema con la petición
+                        Swal.fire('Error', 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.', 'error');
+                        console.error('Error:', error);
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
 
 {% if not request.session.usuario_id %}
 <script>
