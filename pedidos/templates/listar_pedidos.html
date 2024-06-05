@@ -321,6 +321,25 @@
                         </div>
                     </div>
 
+                    <!-- Selects para productos y servicios -->
+                    <div class="form-group">
+                        <label for="productos">Productos</label>
+                        <select id="productos" name="productos" class="form-control" multiple>
+                            {% for producto in productos %}
+                                <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servicios">Servicios</label>
+                        <select id="servicios" name="servicios" class="form-control" multiple>
+                            {% for servicio in servicios %}
+                                <option value="{{ servicio.id }}">{{ servicio.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                     <!-- Botones -->
                     <div class="form-row">
                         <div class="col-md-12">
@@ -334,21 +353,16 @@
     </div>
 </div>
 
+
 <!-- Fin del Modal Crear Pedido -->
 
 <script>
-    // Función para validar el formulario de creación de pedido
     function validatePedidoForm(pedidoId) {
-        // Evitar que el formulario se envíe automáticamente
         event.preventDefault();
     
-        // Obtener el formulario correspondiente al pedido
         const form = document.getElementById(`pedidoForm${pedidoId}`);
-    
-        // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
     
-        // Realizar la solicitud POST utilizando fetch
         fetch("{% url 'pedidos:listar_pedidos' %}", {
             method: 'POST',
             body: formData,
@@ -356,56 +370,53 @@
                 'X-CSRFToken': '{{ csrf_token }}'
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                // Verificar si la solicitud fue exitosa
-                if (data.success) {
-                    // Mostrar SweetAlert de éxito
-                    Swal.fire({
-                        title: '¡Registro exitoso!',
-                        text: 'El pedido se ha registrado correctamente.',
-                        icon: 'success',
-                        onClose: () => {
-                            // Recargar la página
-                            location.reload();
-                        }
-                    }).then(() => {
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: '¡Registro exitoso!',
+                    text: 'El pedido se ha registrado correctamente.',
+                    icon: 'success',
+                    onClose: () => {
                         location.reload();
-                    });
-                } else if (data.message) { // Check if a message is provided in the response
-                    Swal.fire({
-                        title: 'Error',
-                        text: data.message,
-                        icon: 'error',
-                    });
-                } else if (data.errors) { // Verificar si hay errores de validación
-                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
-                    for (const key in data.errors) {
-                        errorMessage += `${data.errors[key]}<br>`;
                     }
-                    Swal.fire({
-                        title: 'Error',
-                        html: errorMessage,
-                        icon: 'error',
-                    });
-                } else { // If no message is provided, show a generic error message
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
-                        icon: 'error'
-                    });
-                }
-            })
-            .catch(errors => {
-                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                }).then(() => {
+                    location.reload();
+                });
+            } else if (data.message) {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    text: data.message,
+                    icon: 'error',
+                });
+            } else if (data.errors) {
+                let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                for (const key in data.errors) {
+                    errorMessage += `${data.errors[key]}<br>`;
+                }
+                Swal.fire({
+                    title: 'Error',
+                    html: errorMessage,
+                    icon: 'error',
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
                     icon: 'error'
                 });
-                console.error('Error:', errors);
+            }
+        })
+        .catch(errors => {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
             });
+            console.error('Error:', errors);
+        });
     }
+    
     
     // Agregar evento clic para el botón edit-pedido
     $('.edit-pedido').on('click', function () {

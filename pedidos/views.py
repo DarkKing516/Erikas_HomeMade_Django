@@ -102,34 +102,48 @@ def listar_mis_pedidos(request):
 def crear_pedido(request):
     if request.method == 'POST':
         form = PedidoForm(request.POST, request.FILES)
-        producto_forms = [DetallePedidoProductoForm(request.POST, prefix=str(i)) for i in range(int(request.POST.get('productos_total', 1)))]
-        servicio_forms = [DetallePedidoServicioForm(request.POST, prefix=str(i)) for i in range(int(request.POST.get('servicios_total', 1)))]
-
-        if form.is_valid() and all([pf.is_valid() for pf in producto_forms]) and all([sf.is_valid() for sf in servicio_forms]):
+        if form.is_valid():
             pedido = form.save()
-            
-            for pf in producto_forms:
-                producto_detalle = pf.save(commit=False)
-                producto_detalle.idPedido = pedido
-                producto_detalle.save()
-            
-            for sf in servicio_forms:
-                servicio_detalle = sf.save(commit=False)
-                servicio_detalle.idPedido = pedido
-                servicio_detalle.save()
-            
+
+            productos_ids = request.POST.getlist('productos')
+            servicios_ids = request.POST.getlist('servicios')
+
+            for producto_id in productos_ids:
+                producto = Producto.objects.get(id=producto_id)
+                DetallePedidoProducto.objects.create(
+                    idProducto=producto,
+                    idPedido=pedido,
+                    cant_productos=1,  # Asigna valores adecuados
+                    nombre_productos=producto.nombre,  # Ajusta según tu modelo
+                    descripcion=producto.descripcion,  # Ajusta según tu modelo
+                    precio_inicial_producto=producto.precio,  # Ajusta según tu modelo
+                    subtotal_productos=producto.precio  # Ajusta según tu modelo
+                )
+
+            for servicio_id in servicios_ids:
+                servicio = Servicio.objects.get(id=servicio_id)
+                DetallePedidoServicio.objects.create(
+                    idServicio=servicio,
+                    idPedido=pedido,
+                    cantidad_servicios=1,  # Asigna valores adecuados
+                    descripcion=servicio.descripcion,  # Ajusta según tu modelo
+                    precio_inicial_servicio=servicio.precio,  # Ajusta según tu modelo
+                    subtotal_servicios=servicio.precio  # Ajusta según tu modelo
+                )
+
             return redirect('pedidos:listar_pedidos')
     else:
         form = PedidoForm()
-        producto_forms = [DetallePedidoProductoForm(prefix='0')]
-        servicio_forms = [DetallePedidoServicioForm(prefix='0')]
+        productos = Producto.objects.all()
+        servicios = Servicio.objects.all()
     
     context = {
         'form': form,
-        'producto_forms': producto_forms,
-        'servicio_forms': servicio_forms,
+        'productos': productos,
+        'servicios': servicios,
     }
     return render(request, 'crear_pedido.html', context)
+
 
 @require_POST
 def editar_pedido(request):
