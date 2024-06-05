@@ -55,6 +55,13 @@ urlpatterns = [
     path('cambiar_estado_servicio/', views.cambiar_estado_servicio, name='cambiar_estado_servicio'),
     path('cambiar_estado_servicio_catalogo/', views.cambiar_estado_servicio_catalogo, name='cambiar_estado_servicio_catalogo'),
 
+    #---------------------------------Detalle productos------------------------------
+
+    path('listar_detalle_producto/', views.listar_servicios, name='listar_servicios'),
+    path('ver_carrito/', views.listar_detalle_producto, name='ver_carrito'),
+
+
+
 
     
 

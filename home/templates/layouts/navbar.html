@@ -134,12 +134,17 @@
                             <i class="ti-power-off text-primary"></i>
                             <span>Bienvenido, {{ request.session.nombre_usuario }}!</span>
                         </a>
-                        {% if request.session.cart %}
-                        <div id="logout-link" class="dropdown-item" data-toggle="modal" data-target="#CarritoModal">
-                            <i class="bi bi-car-front-fill"></i>
-                            <!-- <i class="bi bi-cart2"></i> -->
-                        </div>
+                    </li>
+                    {% if request.session.cart %}
+                            <li class="nav-item nav-profile dropdown">
+                                <div id="logout-link" class="dropdown-item" data-toggle="modal" data-target="#CarritoModal">
+                                    <i class="bi bi-car-front-fill"></i>
+                                    <!-- <i class="bi bi-cart2"></i> -->
+                                </div>
+                            </li>
                         {% endif %}
+                    <li class="nav-item nav-profile dropdown">
+                    
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                             {% if request.session.imagen_perfil %}
                                 <img src="{{ request.session.imagen_perfil }}" alt="profile" />
@@ -162,7 +167,6 @@
                             </a>
                         </div>
                     </li>
-
                     {% endif %}
 
                     <!-- <li class="nav-item nav-settings d-none d-lg-flex">
@@ -476,6 +480,12 @@
                                 <span class="menu-title"> Pedidos </span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pedidos:ver_carrito' %}">
+                                <i class="mdi mdi-clipboard-outline menu-icon"></i>
+                                <span class="menu-title"> Carrito Prueba </span>
+                            </a>
+                        </li>
                         {% endif %}
                         {% if request.session.id_rol != 1 and "Listar Mis Pedidos" in request.session.permisos %}
                         <li class="nav-item">
@@ -561,12 +571,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Carrito de Compras</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">Producto/Servicio</th>
@@ -590,12 +598,13 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary">Procesar Compra</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
     function removeCartItem(itemId) {

@@ -42,8 +42,15 @@ def crear_reserva(request):
     if request.method == 'POST':
         form = ReservaForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('reservas:listar_reserva') 
+            
+            reserva = form.save(commit=False)
+            # Aquí puedes realizar cualquier procesamiento adicional antes de guardar el objeto
+            reserva.save()
+            return JsonResponse({'success': True})
+        else:
+            # Si el formulario no es válido, se envían los errores de validación
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'message': 'Por favor ingrese ua fecha valida (que sea dos dias a partir de hoy)', 'errors': errors})
     else:
         form = ReservaForm()
     return render(request, 'crear_reserva.html', {'form': form})
@@ -137,4 +144,22 @@ def cambiar_estado_reserva(request):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False})
+    
+@csrf_exempt
+def cambiar_fecha_reserva(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        reserva_id = data.get('reserva_id')
+        nueva_fecha = data.get('fecha_cita')
+        
+        try:
+            reserva = Reserva.objects.get(pk=reserva_id)
+            reserva.fecha_cita = nueva_fecha  # Actualiza la fecha de la cita
+            reserva.save()
+            
+            return JsonResponse({'success': True})
+        except Reserva.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Reserva no encontrada'})
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 

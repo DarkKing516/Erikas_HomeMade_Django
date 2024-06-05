@@ -1,111 +1,135 @@
-<div class="row row-10 gutters-10 isotope" data-isotope-layout="masonry" data-isotope-group="gallery" data-lightgallery="group" style="position: relative; height: 1319.25px;">
-      
-      
-    <div class="col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop" style="position: absolute; left: 0px; top: 0px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInLeft">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/vista-lateral-hembra-mochila-al-atardecer_23-2148579614.png" alt="prueba2" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">prueba2</a></h6>
-                    <div class="thumbnail-mary-location">prueba</div>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .cart {
+            flex: 3;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            background-color: #ddd;
+            margin-right: 20px;
+        }
+        .cart-item h4 {
+            margin: 0;
+            flex: 1;
+        }
+        .cart-item .price {
+            margin: 0 20px;
+        }
+        .cart-item .quantity {
+            margin-right: 20px;
+        }
+        .cart-item .remove {
+            cursor: pointer;
+            color: red;
+        }
+        .summary {
+            flex: 1;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 1px solid #ddd;
+        }
+        .summary h3 {
+            margin-top: 0;
+        }
+        .summary .total {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        .summary textarea,
+        .summary input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .summary button {
+            width: 100%;
+            padding: 15px;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cart">
+            <div class="cart-item">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Acme Laptop Stand</h4>
+                <p class="price">$29.99</p>
+                <p class="quantity">1</p>
+                <span class="remove">&times;</span>
             </div>
-        </article>
-    </div>
-    
-    <div class="col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop" style="position: absolute; left: 282px; top: 0px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary thumbnail-mary-big wow slideInRight">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/e.jpg" alt="prueba" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">prueba</a></h6>
-                    <div class="thumbnail-mary-location">prueba</div>
-                </div>
+            <div class="cart-item">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Ergonomic Office Chair</h4>
+                <p class="price">$199.99</p>
+                <p class="quantity">1</p>
+                <span class="remove">&times;</span>
             </div>
-        </article>
-    </div>
-    
-    <div class="col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop" style="position: absolute; left: 0px; top: 434px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInDown">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/nacht-black-clover_3840x2160_xtrafondos.com.jpg" alt="prueba6" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">prueba6</a></h6>
-                    <div class="thumbnail-mary-location">prueba</div>
-                </div>
+            <div class="cart-item">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Wireless Keyboard and Mouse</h4>
+                <p class="price">$59.99</p>
+                <p class="quantity">1</p>
+                <span class="remove">&times;</span>
             </div>
-        </article>
-    </div>
-    
-    <div class="col-xs-6 col-sm-8 col-xl-4 isotope-item oh-desktop" style="position: absolute; left: 0px; top: 710px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary wow slideInUp">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/jamal.jpg" alt="prueba3" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">prueba3</a></h6>
-                    <div class="thumbnail-mary-location">prueba</div>
-                </div>
+            <div class="cart-item">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Premium Desk Lamp</h4>
+                <p class="price">$49.99</p>
+                <p class="quantity">1</p>
+                <span class="remove">&times;</span>
             </div>
-        </article>
-    </div>
-    
-    <div class="col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop" style="position: absolute; left: 564px; top: 710px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInUp">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/fondo_god_BQDJ3a4.png" alt="dwas" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">dwas</a></h6>
-                    <div class="thumbnail-mary-location">wadasd</div>
-                </div>
+            <div class="cart-item">
+                <img src="placeholder.png" alt="Product Image">
+                <h4>Professional Webcam</h4>
+                <p class="price">$99.99</p>
+                <p class="quantity">1</p>
+                <span class="remove">&times;</span>
             </div>
-        </article>
-    </div>
-    
-    <div class="col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop" style="position: absolute; left: 564px; top: 891px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInRight">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/vestidorojo.jpg" alt="prueba1" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">prueba1</a></h6>
-                    <div class="thumbnail-mary-location">prueba</div>
-                </div>
+        </div>
+        <div class="summary">
+            <h3>Order Summary</h3>
+            <p class="subtotal">Subtotal: $439.95</p>
+            <p class="total">Total: $439.95</p>
+            <div class="order-details">
+                <textarea placeholder="Add order description (optional)"></textarea>
+                <input type="file">
+                <button>Place Order</button>
             </div>
-        </article>
+        </div>
     </div>
-    
-    <div class="col-xs-6 col-sm-4 col-xl-2 isotope-item oh-desktop" style="position: absolute; left: 0px; top: 1094px;">
-        <!-- Thumbnail Mary-->
-        <article class="thumbnail thumbnail-mary thumbnail-mary-2 wow slideInLeft">
-            <a class="thumbnail-mary-figure" href="/catalogo/" data-lightgallery="item">
-                <img src="/media/producto_imgs/quebendicionve.jpg" alt="prueba4" class="aguevo" width="200" height="200">
-            </a>
-            <div class="thumbnail-mary-caption">
-                <div>
-                    <h6 class="thumbnail-mary-title"><a href="/catalogo/">prueba4</a></h6>
-                    <div class="thumbnail-mary-location">prueba</div>
-                </div>
-            </div>
-        </article>
-    </div>
-    
-    
-    
-  </div>
+</body>
+</html>
