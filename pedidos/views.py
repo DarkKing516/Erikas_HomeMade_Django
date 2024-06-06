@@ -10,12 +10,15 @@ import os
 
 
 
-@require_POST
 def add_to_cart(request):
     if request.method == 'POST' and request.session.get('usuario_id') is not None:
+        item_type = request.POST.get('type')
+        item_id = request.POST.get('id')
+        print(item_id, item_type)
         data = json.loads(request.body)
         item_type = data.get('type')
         item_id = data.get('id')
+        print(item_id, item_type)
 
         if not item_type or not item_id:
             return JsonResponse({'success': False, 'message': 'Tipo o ID de artículo no proporcionado.'})
@@ -37,7 +40,6 @@ def add_to_cart(request):
                     'imagen': producto.imagen.url if producto.imagen else '/media/user_images/imagendefectoNoBorrar.gif'
                 })
                 request.session['cart'] = cart
-                request.session.modified = True
                 return JsonResponse({'success': True, 'message': f'{producto.nombre} agregado al carrito.'})
             except Producto.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'Producto no encontrado.'})
@@ -54,7 +56,6 @@ def add_to_cart(request):
                     'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
                 })
                 request.session['cart'] = cart
-                request.session.modified = True
                 return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})
             except Servicio.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'Servicio no encontrado.'})
