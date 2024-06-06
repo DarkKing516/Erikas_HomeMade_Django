@@ -577,6 +577,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th scope="col">Img</th>
                             <th scope="col">Producto/Servicio</th>
                             <th scope="col">Descripción</th>
                             <th scope="col">Precio</th>
@@ -586,6 +587,7 @@
                     <tbody id="cartBody">
                         {% for item in request.session.cart %}
                         <tr>
+                            <td><img src="{{ item.imagen }}" alt="{{ item.imagen }}"></td>
                             <td>{{ item.nombre }}</td>
                             <td>{{ item.descripcion }}</td>
                             <td>${{ item.precio }}</td>
