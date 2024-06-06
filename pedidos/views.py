@@ -34,7 +34,7 @@ def add_to_cart(request):
                     'nombre': producto.nombre,
                     'descripcion': producto.descripcion,
                     'precio': float(producto.precio),
-                    'imagen': producto.imagen.url if producto.imagen else ''
+                    'imagen': producto.imagen.url if producto.imagen else '/media/user_images/imagendefectoNoBorrar.gif'
                 })
                 request.session['cart'] = cart
                 request.session.modified = True
@@ -51,7 +51,7 @@ def add_to_cart(request):
                     'nombre': servicio.nombre_servicio,
                     'descripcion': servicio.descripcion,
                     'precio': float(servicio.precio_servicio),
-                    'imagen': servicio.imagen.url if servicio.imagen else ''
+                    'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
                 })
                 request.session['cart'] = cart
                 request.session.modified = True
