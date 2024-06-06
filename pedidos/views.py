@@ -53,7 +53,7 @@ def add_to_cart(request):
                     'nombre': servicio.nombre_servicio,
                     'descripcion': servicio.descripcion,
                     'precio': float(servicio.precio_servicio),
-                    'imagen': servicio.imagen.url if servicio.imagen else ''
+                    'imagen': servicio.img.url if servicio.img else ''
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})
