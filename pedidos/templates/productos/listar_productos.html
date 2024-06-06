@@ -507,7 +507,6 @@
             });
     }
     
-    // Función para manejar el cambio de estado del catálogo
 // Función para manejar el cambio de estado del catálogo
 function handleChangeStatus2(event) {
     var producto_id = $(this).data('producto-id'); // Corrige esto
@@ -527,44 +526,66 @@ function handleChangeStatus2(event) {
         }
     });
 }
+// Función para manejar el cambio de estado del catálogo
+function handleChangeStatus2(event) {
+    var producto_id = $(this).data('producto-id');
+    var estado_actual = $(this).text().trim();
+    var nuevo_estado = estado_actual === 'Activo' ? 'Inactivo' : 'Activo';
 
-function cambiarEstadoCatalogo(producto_id) {
-    fetch("{% url 'pedidos:cambiar_estado_catalogo' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({
-                'producto_id': producto_id,
-            }),
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Hubo un problema al cambiar el estado.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            Swal.fire({
-                title: '¡Estado cambiado!',
-                text: `El estado del catálogo se ha cambiado correctamente.`,
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500,
-            }).then(() => {
-                location.reload()
-            });
-
-        })
-        .catch(error => {
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al cambiar el estado del catálogo.',
-                icon: 'error'
-            });
-        });
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Estás a punto de cambiar el estado del catálogo a "${nuevo_estado}".`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cambiar estado',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            cambiarEstadoCatalogo(producto_id, nuevo_estado);
+        }
+    });
 }
+
+function cambiarEstadoCatalogo(producto_id, nuevo_estado) {
+    fetch("{% url 'pedidos:cambiar_estado_catalogo' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            'producto_id': producto_id,
+            'estado_catalogo': nuevo_estado,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Hubo un problema al cambiar el estado.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        Swal.fire({
+            title: '¡Estado cambiado!',
+            text: `El estado del catálogo se ha cambiado a "${nuevo_estado}" correctamente.`,
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500,
+        }).then(() => {
+            location.reload();
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un problema al cambiar el estado del catálogo.',
+            icon: 'error'
+        });
+    });
+}
+
 
     $(document).ready(function () {
         // Destruir la instancia actual, si existe

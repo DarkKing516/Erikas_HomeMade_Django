@@ -370,13 +370,19 @@ def cambiar_estado_catalogo(request):
         producto_id = data.get('producto_id')
         nuevo_estado_catalogo = data.get('estado_catalogo')
 
+        if nuevo_estado_catalogo not in ['Activo', 'Inactivo']:
+            raise ValueError('Estado no válido')
+
         producto = Producto.objects.get(pk=producto_id)
-        producto.estado_catalogo = nuevo_estado_catalogo
+        producto.estado_catalogo = 'A' if nuevo_estado_catalogo == 'Activo' else 'I'
         producto.save()
 
         return JsonResponse({'success': True})
+    except Producto.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Producto no encontrado'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
 
