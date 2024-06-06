@@ -57,13 +57,16 @@ def add_to_cart(request):
         elif item_type == 'servicio':
             try:
                 servicio = Servicio.objects.get(idServicio=item_id)
+                image_url = get_image_url(producto, 'imagen', default_image_url)
+
                 cart.append({
                     'type': 'servicio',
                     'id': servicio.idServicio,
                     'nombre': servicio.nombre_servicio,
                     'descripcion': servicio.descripcion,
                     'precio': float(servicio.precio_servicio),
-                    'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
+                    # 'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
+                    'imagen': image_url
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})
