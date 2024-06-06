@@ -9,7 +9,13 @@ import os
 
 
 
-
+def get_image_url(instance, field_name, default_url):
+    field = getattr(instance, field_name)
+    if field:
+        file_path = field.path
+        if os.path.exists(file_path):
+            return field.url
+    return default_url
 def add_to_cart(request):
     if request.method == 'POST' and request.session.get('usuario_id') is not None:
         item_type = request.POST.get('type')
@@ -19,6 +25,8 @@ def add_to_cart(request):
         item_type = data.get('type')
         item_id = data.get('id')
         print(item_id, item_type)
+
+        default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
 
         if not item_type or not item_id:
             return JsonResponse({'success': False, 'message': 'Tipo o ID de artículo no proporcionado.'})
@@ -31,13 +39,15 @@ def add_to_cart(request):
         if item_type == 'producto':
             try:
                 producto = Producto.objects.get(idProducto=item_id)
+                image_url = get_image_url(producto, 'imagen', default_image_url)
                 cart.append({
                     'type': 'producto',
                     'id': producto.idProducto,
                     'nombre': producto.nombre,
                     'descripcion': producto.descripcion,
                     'precio': float(producto.precio),
-                    'imagen': producto.imagen.url if producto.imagen else '/media/user_images/imagendefectoNoBorrar.gif'
+                    # 'imagen': producto.imagen.url if producto.imagen else '/media/user_images/imagendefectoNoBorrar.gif'
+                    'imagen': image_url
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{producto.nombre} agregado al carrito.'})
@@ -47,13 +57,16 @@ def add_to_cart(request):
         elif item_type == 'servicio':
             try:
                 servicio = Servicio.objects.get(idServicio=item_id)
+                image_url = get_image_url(producto, 'imagen', default_image_url)
+
                 cart.append({
                     'type': 'servicio',
                     'id': servicio.idServicio,
                     'nombre': servicio.nombre_servicio,
                     'descripcion': servicio.descripcion,
                     'precio': float(servicio.precio_servicio),
-                    'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
+                    # 'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
+                    'imagen': image_url
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})

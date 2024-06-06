@@ -58,7 +58,6 @@
                                 <td>{{ producto.descripcion }}</td>
                                 <td>$ {{ producto.precio|floatformat:"0" }}</td>                                
 
-                                {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
                                 <td>
                                     {% if producto.estado_producto == 'A' %}
                                     <label class="badge btn-inverse-success hover-cursor change-status"
@@ -197,7 +196,10 @@
                                             <div class="form-row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
+                                                        {% if producto.imagen %}
                                                         <p><strong>Imagen actual:</strong> <img src="{{ producto.imagen.url }}" alt="imagen" style="max-width: 100%; height: auto;"></p>
+                                                        {% else %}
+                                                        <p><strong>Imagen actual:</strong> <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="imagen" style="max-width: 100%; height: auto;"></p>                                                        {% endif %}
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
