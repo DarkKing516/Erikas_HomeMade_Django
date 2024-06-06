@@ -586,7 +586,7 @@
                     </thead>
                     <tbody id="cartBody">
                         {% for item in request.session.cart %}
-                        <tr>
+                        <tr id="cartItem-{{ item.id }}">
                             <td><img src="{{ item.imagen }}" alt="{{ item.imagen }}"></td>
                             <td>{{ item.nombre }}</td>
                             <td>{{ item.descripcion }}</td>
@@ -608,30 +608,54 @@
 </div>
 
 
+
+
 <script>
     function removeCartItem(itemId) {
-        $.ajax({
-            url: '{% url "pedidos:remove_cart_item" %}',
-            type: 'POST',
-            data: {
-                'item_id': itemId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    // Actualizar el carrito después de eliminar el artículo
-                    // Puedes recargar la página o actualizar solo la sección del carrito
-                    // dependiendo de tu flujo de trabajo
-                    location.reload();
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
+    $.ajax({
+        url: '{% url "pedidos:remove_cart_item" %}',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        data: JSON.stringify({
+            'item_id': itemId
+        }),
+        success: function(response) {
+            if (response.success) {
+                // Actualizar el carrito eliminando la fila correspondiente sin recargar la página
+                $(`#cartItem-${itemId}`).remove();
+                // Opcional: mostrar un mensaje de éxito
+                Swal.fire({
+                    title: '¡Artículo eliminado!',
+                    text: 'El artículo ha sido eliminado del carrito.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: response.message,
+                    icon: 'error',
+                    showConfirmButton: true,
+                });
             }
-        });
-    }
+        },
+        error: function(xhr, errmsg, err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al eliminar el artículo.',
+                icon: 'error',
+                showConfirmButton: true,
+            });
+        }
+    });
+}
+
+
 </script>
 
 <script>
