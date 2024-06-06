@@ -20,6 +20,9 @@ def add_to_cart(request):
         item_id = data.get('id')
         print(item_id, item_type)
 
+        if not item_type or not item_id:
+            return JsonResponse({'success': False, 'message': 'Tipo o ID de artículo no proporcionado.'})
+
         if 'cart' not in request.session:
             request.session['cart'] = []
 
@@ -34,6 +37,7 @@ def add_to_cart(request):
                     'nombre': producto.nombre,
                     'descripcion': producto.descripcion,
                     'precio': float(producto.precio),
+                    'imagen': producto.imagen.url if producto.imagen else ''
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{producto.nombre} agregado al carrito.'})
@@ -47,15 +51,19 @@ def add_to_cart(request):
                     'type': 'servicio',
                     'id': servicio.idServicio,
                     'nombre': servicio.nombre_servicio,
-                    'descripcion': producto.descripcion,
+                    'descripcion': servicio.descripcion,
                     'precio': float(servicio.precio_servicio),
+                    'imagen': servicio.imagen.url if servicio.imagen else ''
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})
             except Servicio.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'Servicio no encontrado.'})
 
-    return JsonResponse({'success': False, 'message': 'Sesión no iniciada ó Método no permitido.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Tipo de artículo no válido.'})
+
+    return JsonResponse({'success': False, 'message': 'Sesión no iniciada o método no permitido.'})
 
 def remove_cart_item(request):
     if request.method == 'POST':
@@ -364,13 +372,19 @@ def cambiar_estado_catalogo(request):
         producto_id = data.get('producto_id')
         nuevo_estado_catalogo = data.get('estado_catalogo')
 
+        if nuevo_estado_catalogo not in ['Activo', 'Inactivo']:
+            raise ValueError('Estado no válido')
+
         producto = Producto.objects.get(pk=producto_id)
-        producto.estado_catalogo = nuevo_estado_catalogo
+        producto.estado_catalogo = 'A' if nuevo_estado_catalogo == 'Activo' else 'I'
         producto.save()
 
         return JsonResponse({'success': True})
+    except Producto.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Producto no encontrado'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
 
