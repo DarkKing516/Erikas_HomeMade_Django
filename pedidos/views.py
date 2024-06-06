@@ -75,23 +75,30 @@ def add_to_cart(request):
 
     return JsonResponse({'success': False, 'message': 'Sesión no iniciada o método no permitido.'})
 
-def remove_cart_item(request):
-    if request.method == 'POST':
-        item_id = request.POST.get('item_id')
-        print(item_id)
-        # data = json.loads(request.body)
-        # item_id = data.get('item_id')
-        # print(item_id)
 
-        try:
-            # Eliminar el artículo del carrito
-            del request.session['cart'][item_id]
-            request.session.modified = True
-            return JsonResponse({'success': True, 'message': 'Artículo eliminado del carrito.'})
-        except KeyError:
-            return JsonResponse({'success': False, 'message': 'No se pudo encontrar el artículo en el carrito.'})
-    else:
-        return JsonResponse({'success': False, 'message': 'Método no permitido.'})
+@require_POST
+def remove_cart_item(request):
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('item_id')
+        
+        if not item_id:
+            return JsonResponse({'success': False, 'message': 'ID del artículo no proporcionado.'})
+
+        cart = request.session.get('cart', [])
+        
+        # Filtra el carrito para eliminar el artículo
+        new_cart = [item for item in cart if str(item['id']) != str(item_id)]
+        
+        if len(new_cart) == len(cart):
+            return JsonResponse({'success': False, 'message': 'Artículo no encontrado en el carrito.'})
+
+        request.session['cart'] = new_cart
+        request.session.modified = True
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
 
 def listar_pedidos(request):
     if request.method == 'POST':
