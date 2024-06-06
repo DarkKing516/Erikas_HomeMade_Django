@@ -52,7 +52,11 @@
             <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
                 <div class="custom-card">
                     <div class="custom-card-image-container">
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                      {% if producto.imagen %}
+                          <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                      {% else %}
+                          <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="Imagen predeterminada" class="custom-image-icon"/>
+                      {% endif %}
                     </div>
                     <p class="custom-card-title">{{ producto.nombre }}</p>
                     <p class="custom-card-des">{{ producto.descripcion }}</p>
