@@ -456,7 +456,11 @@ body {
           <!-- Thumbnail Mary-->
           <article class="{{ clase.hijo }}">
               <a class="thumbnail-mary-figure" href="{% url 'home:catalogo' %}" data-lightgallery="item">
+                {% if producto.imagen %}
                   <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="{{ tamano }}"/>
+                {% else %}
+                  <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="{{ producto.nombre }}" class="{{ tamano }}"/>
+                {% endif %}
               </a>
               <div class="thumbnail-mary-caption">
                   <div>

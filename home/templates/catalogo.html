@@ -52,7 +52,12 @@
             <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
                 <div class="custom-card">
                     <div class="custom-card-image-container">
-                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                      <img src="{{ producto.image_url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                      <!-- {% if producto.imagen and producto.imagen.url %}
+                          <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
+                      {% else %}
+                          <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="Imagen predeterminada" class="custom-image-icon"/>
+                      {% endif %} -->
                     </div>
                     <p class="custom-card-title">{{ producto.nombre }}</p>
                     <p class="custom-card-des">{{ producto.descripcion }}</p>
@@ -87,7 +92,13 @@
             <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
                 <div class="custom-card">
                     <div class="custom-card-image-container">
-                        <img src="{{ servicio.img.url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+                      <img src="{{ servicio.image_url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+                      
+                      <!-- {% if servicio.img and servicio.img.url %}
+                          <img src="{{ servicio.img.url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+                      {% else %}
+                          <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="Imagen predeterminada" class="custom-image-icon"/>
+                      {% endif %} -->
                     </div>
                     <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
                     <p class="custom-card-des">{{ servicio.descripcion }}</p>

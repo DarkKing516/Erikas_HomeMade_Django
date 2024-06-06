@@ -224,6 +224,7 @@ class ServicioFormEditarImg(forms.ModelForm):
 # --------------------------- Detalles ---------------------------
         
 class DetallePedidoProductoForm(forms.ModelForm):
+    idProducto = forms.ModelMultipleChoiceField(queryset=Producto.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'select2 form-control js-states form-control select2-hidden-accessible', 'id': 'idProducto'}), required=False)
     class Meta:
         model = DetallePedidoProducto
         fields = ['idProducto', 'cant_productos', 'nombre_productos', 'descripcion', 'precio_inicial_producto', 'subtotal_productos']
