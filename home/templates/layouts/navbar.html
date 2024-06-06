@@ -601,11 +601,18 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Procesar Compra</button>
+                <button type="button" class="btn btn-primary" onclick="procesarCompra()">Procesar Compra</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function procesarCompra() {
+    window.location.href = "{% url 'pedidos:ver_carrito' %}";
+}
+</script>
+
 
 
 
