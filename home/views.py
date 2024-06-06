@@ -40,7 +40,7 @@ def index(request):
     ]
     
     # tamanos_imagenes = tamanos_imagenes[:len(productos_aleatorios)]
-    productos = list(Producto.objects.all())
+    productos = list(Producto.objects.filter(estado_producto='A', estado_catalogo='A', cantidad__gt=0))
     productos_aleatorios = productos
     if len(productos) >= 1:
         productos_aleatorios = random.sample(productos, min(7, len(productos)))
