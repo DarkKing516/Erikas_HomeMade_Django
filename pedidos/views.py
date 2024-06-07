@@ -103,23 +103,6 @@ def remove_cart_item(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
-def listar_pedidos(request):
-    if request.method == 'POST':
-        form = CreatePedidoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True})
-        else:
-            # Si el formulario no es válido, se envían los errores de validación
-            errors = dict(form.errors.items())
-            return JsonResponse({'success': False, 'errors': errors})
-    else:
-        formCreate = CreatePedidoForm()
-        pedidos = Pedido.objects.all()
-        servicios = Servicio.objects.all()
-        productos = Producto.objects.all()
-        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
-    
 def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
 
@@ -128,6 +111,21 @@ def listar_mis_pedidos(request):
     return render(request, 'listar_mis_pedidos.html', {'pedidos': pedidos})
 
 
+def listar_pedidos(request):
+    if request.method == 'POST':
+        form = CreatePedidoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        formCreate = CreatePedidoForm()
+        pedidos = Pedido.objects.all()
+        servicios = Servicio.objects.all()
+        productos = Producto.objects.all()
+        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
 
 def crear_pedido(request):
     if request.method == 'POST':
@@ -135,33 +133,33 @@ def crear_pedido(request):
         if form.is_valid():
             pedido = form.save()
 
+            # Obtener los productos y servicios seleccionados
             productos_ids = request.POST.getlist('productos')
             servicios_ids = request.POST.getlist('servicios')
 
+            # Crear detalles de pedido para los productos seleccionados
             for producto_id in productos_ids:
-                producto = Producto.objects.get(id=producto_id)
+                producto = Producto.objects.get(idProducto=producto_id)
                 DetallePedidoProducto.objects.create(
                     idProducto=producto,
                     idPedido=pedido,
                     cant_productos=1,
-                    nombre_productos=producto.nombre,
-                    descripcion=producto.descripcion,
                     precio_inicial_producto=producto.precio,
                     subtotal_productos=producto.precio
                 )
 
+            # Crear detalles de pedido para los servicios seleccionados
             for servicio_id in servicios_ids:
-                servicio = Servicio.objects.get(id=servicio_id)
+                servicio = Servicio.objects.get(idServicio=servicio_id)
                 DetallePedidoServicio.objects.create(
                     idServicio=servicio,
                     idPedido=pedido,
                     cantidad_servicios=1,
-                    descripcion=servicio.descripcion,
-                    precio_inicial_servicio=servicio.precio,
-                    subtotal_servicios=servicio.precio
+                    precio_inicial_servicio=servicio.precio_servicio,
+                    subtotal_servicios=servicio.precio_servicio
                 )
 
-            return redirect('pedidos:listar_pedidos')
+            return redirect('listar_pedidos')
     else:
         form = CreatePedidoForm()
         productos = Producto.objects.all()
