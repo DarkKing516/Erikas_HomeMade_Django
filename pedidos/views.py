@@ -100,7 +100,7 @@ def add_to_cart(request):
         elif item_type == 'servicio':
             try:
                 servicio = Servicio.objects.get(idServicio=item_id)
-                image_url = get_image_url(producto, 'imagen', default_image_url)
+                image_url = get_image_url(servicio, 'img', default_image_url)
 
                 cart.append({
                     'type': 'servicio',
@@ -222,7 +222,18 @@ def listar_pedidos(request):
         pedidos = Pedido.objects.all()
         servicios = Servicio.objects.all()
         productos = Producto.objects.all()
-        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
+         # Obtener detalles de pedido de productos y servicios para cada pedido
+        detalles_productos = DetallePedidoProducto.objects.all()
+        detalles_servicios = DetallePedidoServicio.objects.all()
+
+        return render(request, 'listar_pedidos.html', {
+            'pedidos': pedidos,
+            'servicios': servicios,
+            'productos': productos,
+            'formCreate': formCreate,
+            'detalles_productos': detalles_productos,
+            'detalles_servicios': detalles_servicios,
+        })
 
 def crear_pedido(request):
     if request.method == 'POST':

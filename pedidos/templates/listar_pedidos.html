@@ -119,11 +119,30 @@
                                             <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
                                             <p><strong>IVA:</strong> {{ pedido.iva }}</p>
                                             <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+
+                                            <!-- Detalles de los productos -->
+                                            <h5>Productos</h5>
+                                            <ul>
+                                                {% for detalle in detalles_productos %}
+                                                    {% if detalle.idPedido == pedido %}
+                                                        <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos }}</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+
+                                            <!-- Detalles de los servicios -->
+                                            <h5>Servicios</h5>
+                                            <ul>
+                                                {% for detalle in detalles_servicios %}
+                                                    {% if detalle.idPedido == pedido %}
+                                                        <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios }}</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                     
                             <!-- Modal para editar Pedido -->
                             <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
