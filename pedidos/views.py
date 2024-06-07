@@ -116,7 +116,9 @@ def listar_pedidos(request):
     else:
         formCreate = CreatePedidoForm()
         pedidos = Pedido.objects.all()
-        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'formCreate': formCreate})
+        servicios = Servicio.objects.all()
+        productos = Producto.objects.all()
+        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
     
 def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
@@ -129,7 +131,7 @@ def listar_mis_pedidos(request):
 
 def crear_pedido(request):
     if request.method == 'POST':
-        form = PedidoForm(request.POST, request.FILES)
+        form = CreatePedidoForm(request.POST, request.FILES)
         if form.is_valid():
             pedido = form.save()
 
@@ -141,11 +143,11 @@ def crear_pedido(request):
                 DetallePedidoProducto.objects.create(
                     idProducto=producto,
                     idPedido=pedido,
-                    cant_productos=1,  # Asigna valores adecuados
-                    nombre_productos=producto.nombre,  # Ajusta según tu modelo
-                    descripcion=producto.descripcion,  # Ajusta según tu modelo
-                    precio_inicial_producto=producto.precio,  # Ajusta según tu modelo
-                    subtotal_productos=producto.precio  # Ajusta según tu modelo
+                    cant_productos=1,
+                    nombre_productos=producto.nombre,
+                    descripcion=producto.descripcion,
+                    precio_inicial_producto=producto.precio,
+                    subtotal_productos=producto.precio
                 )
 
             for servicio_id in servicios_ids:
@@ -153,15 +155,15 @@ def crear_pedido(request):
                 DetallePedidoServicio.objects.create(
                     idServicio=servicio,
                     idPedido=pedido,
-                    cantidad_servicios=1,  # Asigna valores adecuados
-                    descripcion=servicio.descripcion,  # Ajusta según tu modelo
-                    precio_inicial_servicio=servicio.precio,  # Ajusta según tu modelo
-                    subtotal_servicios=servicio.precio  # Ajusta según tu modelo
+                    cantidad_servicios=1,
+                    descripcion=servicio.descripcion,
+                    precio_inicial_servicio=servicio.precio,
+                    subtotal_servicios=servicio.precio
                 )
 
             return redirect('pedidos:listar_pedidos')
     else:
-        form = PedidoForm()
+        form = CreatePedidoForm()
         productos = Producto.objects.all()
         servicios = Servicio.objects.all()
     
