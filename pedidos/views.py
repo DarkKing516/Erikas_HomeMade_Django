@@ -133,16 +133,21 @@ def remove_cart_item(request):
 
         cart = request.session.get('cart', [])
         
-        # Filtra el carrito para eliminar el artículo
-        new_cart = [item for item in cart if str(item['id']) != str(item_id)]
+        # Encuentra el índice del primer elemento con el ID proporcionado
+        index_to_remove = None
+        for i, item in enumerate(cart):
+            if str(item['id']) == str(item_id):
+                index_to_remove = i
+                break
         
-        if len(new_cart) == len(cart):
+        if index_to_remove is not None:
+            # Elimina el elemento del carrito usando el índice encontrado
+            del cart[index_to_remove]
+            request.session['cart'] = cart
+            request.session.modified = True
+            return JsonResponse({'success': True})
+        else:
             return JsonResponse({'success': False, 'message': 'Artículo no encontrado en el carrito.'})
-
-        request.session['cart'] = new_cart
-        request.session.modified = True
-        
-        return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
