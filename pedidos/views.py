@@ -6,7 +6,50 @@ import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import os
+from django.urls import reverse
+from django.shortcuts import redirect
 
+
+
+def crear_pedido_carrito(request):
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        descripcion = request.POST.get('descripcion')
+        subtotal = request.POST.get('subtotal')
+        iva = request.POST.get('iva')
+        total = request.POST.get('total')
+        fecha_pedido = request.POST.get('fecha')
+        evidencia_pago = request.FILES.get('imagen')
+
+        # Obtener el usuario de la sesión
+        usuario_id = request.session.get('usuario_id')
+
+        if usuario_id:
+            # Crear y guardar el pedido
+            pedido = Pedido(
+                id_Usuario_id=usuario_id,
+                fecha_pedido=fecha_pedido,
+                descripcion_pedido=descripcion,
+                subtotal=subtotal,
+                iva=iva,
+                total=total,
+                evidencia_pago=evidencia_pago
+            )
+            pedido.save()
+
+            # Redirigir a la vista listar_pedidos sin pasar ningún argumento
+            return redirect('pedidos:listar_pedidos')
+        else:
+            # Redirigir al login si no hay usuario en la sesión
+            return redirect('usuarios:requestLogin')
+
+    # Renderizar un template si no es POST
+    return render(request, 'carrito.html')
+
+def creardetalleServicioPRoducti():
+
+    #crea detales
+    return True
 
 
 def get_image_url(instance, field_name, default_url):
@@ -103,23 +146,6 @@ def remove_cart_item(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
-def listar_pedidos(request):
-    if request.method == 'POST':
-        form = CreatePedidoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True})
-        else:
-            # Si el formulario no es válido, se envían los errores de validación
-            errors = dict(form.errors.items())
-            return JsonResponse({'success': False, 'errors': errors})
-    else:
-        formCreate = CreatePedidoForm()
-        pedidos = Pedido.objects.all()
-        servicios = Servicio.objects.all()
-        productos = Producto.objects.all()
-        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
-    
 def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
 
@@ -128,6 +154,21 @@ def listar_mis_pedidos(request):
     return render(request, 'listar_mis_pedidos.html', {'pedidos': pedidos})
 
 
+def listar_pedidos(request):
+    if request.method == 'POST':
+        form = CreatePedidoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            errors = dict(form.errors.items())
+            return JsonResponse({'success': False, 'errors': errors})
+    else:
+        formCreate = CreatePedidoForm()
+        pedidos = Pedido.objects.all()
+        servicios = Servicio.objects.all()
+        productos = Producto.objects.all()
+        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
 
 def crear_pedido(request):
     if request.method == 'POST':
@@ -135,33 +176,33 @@ def crear_pedido(request):
         if form.is_valid():
             pedido = form.save()
 
+            # Obtener los productos y servicios seleccionados
             productos_ids = request.POST.getlist('productos')
             servicios_ids = request.POST.getlist('servicios')
 
+            # Crear detalles de pedido para los productos seleccionados
             for producto_id in productos_ids:
-                producto = Producto.objects.get(id=producto_id)
+                producto = Producto.objects.get(idProducto=producto_id)
                 DetallePedidoProducto.objects.create(
                     idProducto=producto,
                     idPedido=pedido,
                     cant_productos=1,
-                    nombre_productos=producto.nombre,
-                    descripcion=producto.descripcion,
                     precio_inicial_producto=producto.precio,
                     subtotal_productos=producto.precio
                 )
 
+            # Crear detalles de pedido para los servicios seleccionados
             for servicio_id in servicios_ids:
-                servicio = Servicio.objects.get(id=servicio_id)
+                servicio = Servicio.objects.get(idServicio=servicio_id)
                 DetallePedidoServicio.objects.create(
                     idServicio=servicio,
                     idPedido=pedido,
                     cantidad_servicios=1,
-                    descripcion=servicio.descripcion,
-                    precio_inicial_servicio=servicio.precio,
-                    subtotal_servicios=servicio.precio
+                    precio_inicial_servicio=servicio.precio_servicio,
+                    subtotal_servicios=servicio.precio_servicio
                 )
 
-            return redirect('pedidos:listar_pedidos')
+        return redirect(reverse('pedidos:listar_pedidos'))
     else:
         form = CreatePedidoForm()
         productos = Producto.objects.all()
@@ -703,7 +744,4 @@ def cambiar_estado_servicio_catalogo(request):
     #------------------------------ detalle producto-----------------------
 
 def listar_detalle_producto(request):
-    # if request.method == 'POST':
-    # else:
-
         return render(request, 'ver_carrito.html')
