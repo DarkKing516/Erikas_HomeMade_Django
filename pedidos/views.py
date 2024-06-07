@@ -6,8 +6,50 @@ import json
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import os
+from django.urls import reverse
+from django.shortcuts import redirect
 
 
+
+def crear_pedido_carrito(request):
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        descripcion = request.POST.get('descripcion')
+        subtotal = request.POST.get('subtotal')
+        iva = request.POST.get('iva')
+        total = request.POST.get('total')
+        fecha_pedido = request.POST.get('fecha')
+        evidencia_pago = request.FILES.get('imagen')
+
+        # Obtener el usuario de la sesión
+        usuario_id = request.session.get('usuario_id')
+
+        if usuario_id:
+            # Crear y guardar el pedido
+            pedido = Pedido(
+                id_Usuario_id=usuario_id,
+                fecha_pedido=fecha_pedido,
+                descripcion_pedido=descripcion,
+                subtotal=subtotal,
+                iva=iva,
+                total=total,
+                evidencia_pago=evidencia_pago
+            )
+            pedido.save()
+
+            # Redirigir a la vista listar_pedidos sin pasar ningún argumento
+            return redirect('pedidos:listar_pedidos')
+        else:
+            # Redirigir al login si no hay usuario en la sesión
+            return redirect('usuarios:requestLogin')
+
+    # Renderizar un template si no es POST
+    return render(request, 'carrito.html')
+
+def creardetalleServicioPRoducti():
+
+    #crea detales
+    return True
 
 
 def add_to_cart(request):
@@ -139,7 +181,7 @@ def crear_pedido(request):
                     subtotal_servicios=servicio.precio  # Ajusta según tu modelo
                 )
 
-            return redirect('pedidos:listar_pedidos')
+        return redirect(reverse('pedidos:listar_pedidos'))
     else:
         form = PedidoForm()
         productos = Producto.objects.all()
@@ -675,7 +717,4 @@ def cambiar_estado_servicio_catalogo(request):
     #------------------------------ detalle producto-----------------------
 
 def listar_detalle_producto(request):
-    # if request.method == 'POST':
-    # else:
-
         return render(request, 'ver_carrito.html')
