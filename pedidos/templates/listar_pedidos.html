@@ -272,8 +272,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Contenido del formulario con Bootstrap grid system -->
-                <form method="post" onsubmit="validatePedidoForm('{{ pedido.idPedido }}')" id="pedidoForm{{ pedido.idPedido }}" class="forms-sample" data-pedido-id="{{ pedido.idPedido }}" enctype="multipart/form-data">
+                <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-6">
@@ -352,13 +351,10 @@
         </div>
     </div>
 </div>
-
-
 <!-- Fin del Modal Crear Pedido -->
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -372,10 +368,11 @@
 </script>
 
 
+
 <script>
     function validatePedidoForm(pedidoId) {
         event.preventDefault();
-    
+        
         const form = document.getElementById(`pedidoForm${pedidoId}`);
         const formData = new FormData(form);
     
@@ -432,6 +429,7 @@
             console.error('Error:', errors);
         });
     }
+    
     
     
     // Agregar evento clic para el botón edit-pedido

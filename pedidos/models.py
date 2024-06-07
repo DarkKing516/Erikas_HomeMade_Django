@@ -58,7 +58,8 @@ class Producto(models.Model):
 
     class Meta:
         db_table = 'productos'  # Personalizando el nombre de la tabla
-        
+     
+
 class Pedido(models.Model):
     idPedido = models.AutoField(primary_key=True)
     id_Usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -71,11 +72,15 @@ class Pedido(models.Model):
     evidencia_pago = models.ImageField(upload_to='pedidos/')
     estado_pedido = models.CharField(max_length=80, default="Por hacer")
 
+    productos = models.ManyToManyField(Producto, through='DetallePedidoProducto')
+    servicios = models.ManyToManyField(Servicio, through='DetallePedidoServicio')
+
     def __str__(self):
         return f"Pedido {self.idPedido}"
     
     class Meta:
         db_table = 'pedidos'  # Personalizando el nombre de la tabla
+
 
 class DetallePedidoProducto(models.Model):
     idDetalle_Pedido_Productos = models.AutoField(primary_key=True)
@@ -106,4 +111,4 @@ class DetallePedidoServicio(models.Model):
         return f"Detalle Pedido Servicio {self.idDetalle_Pedido_Servicio}"
 
     class Meta:
-        db_table = 'detalle_pedido_servicios'  # Personalizando el nombre de la tabla
+        db_table = 'detalle_pedido_servicios' 
