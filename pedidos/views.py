@@ -37,6 +37,36 @@ def crear_pedido_carrito(request):
             )
             pedido.save()
 
+            # Obtener los productos y servicios del carrito de la sesión
+            cart = request.session.get('cart', [])
+            for item in cart:
+                if item['type'] == 'producto':
+                    producto_id = item['id']
+                    producto = Producto.objects.get(idProducto=producto_id)
+                    DetallePedidoProducto.objects.create(
+                        idPedido=pedido,
+                        idProducto=producto,
+                        cant_productos=1,
+                        nombre_productos=producto.nombre,
+                        descripcion=producto.descripcion,
+                        precio_inicial_producto=producto.precio,
+                        subtotal_productos=producto.precio
+                    )
+                elif item['type'] == 'servicio':
+                    servicio_id = item['id']
+                    servicio = Servicio.objects.get(idServicio=servicio_id)
+                    DetallePedidoServicio.objects.create(
+                        idPedido=pedido,
+                        idServicio=servicio,
+                        cantidad_servicios=1,
+                        descripcion=servicio.descripcion,
+                        precio_inicial_servicio=servicio.precio_servicio,
+                        subtotal_servicios=servicio.precio_servicio
+                    )
+
+            # Limpiar el carrito de la sesión después de crear el pedido
+            del request.session['cart']
+
             # Redirigir a la vista listar_pedidos sin pasar ningún argumento
             return redirect('pedidos:listar_pedidos')
         else:
