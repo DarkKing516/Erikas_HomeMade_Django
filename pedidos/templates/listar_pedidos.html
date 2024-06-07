@@ -272,7 +272,6 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Contenido del formulario con Bootstrap grid system -->
                 <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
@@ -369,10 +368,11 @@
 </script>
 
 
+
 <script>
     function validatePedidoForm(pedidoId) {
         event.preventDefault();
-    
+        
         const form = document.getElementById(`pedidoForm${pedidoId}`);
         const formData = new FormData(form);
     
@@ -429,6 +429,7 @@
             console.error('Error:', errors);
         });
     }
+    
     
     
     // Agregar evento clic para el botón edit-pedido
