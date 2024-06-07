@@ -60,6 +60,10 @@ urlpatterns = [
     path('listar_detalle_producto/', views.listar_servicios, name='listar_servicios'),
     path('ver_carrito/', views.listar_detalle_producto, name='ver_carrito'),
 
+    #-------------------------------ORDEN PEDIDO--------------
+    path('crear-pedido-carrito/', views.crear_pedido_carrito, name='crear_pedido_carrito'),
+
+    
 
 
 

@@ -99,6 +99,14 @@
     border-left: 1px solid #ddd;
     border-radius: 10px;
   }
+  .summary input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
   .summary h3 {
     margin-top: 0;
   }
@@ -107,7 +115,8 @@
     margin: 20px 0;
   }
   .summary textarea,
-  .summary input[type="file"] {
+  .summary input[type="file"]
+  .summary input[type="date"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -150,7 +159,7 @@
             <div class="cart-item">
               <img src="{{ item.imagen }}" alt="Product Image" />
               <h4>{{ item.nombre }}</h4>
-              <p class="price" data-price="{{ item.precio }}">$29.99</p>
+              <p class="price" data-price="{{ item.precio }}">{{ item.precio }}</p>
               {% comment %} <p class="quantity">1</p> {% endcomment %}
               <span class="remove"><i class="bi bi-trash"></i></span>
             </div>
@@ -165,13 +174,21 @@
       <div class="card-body">
         <div class="summary">
           <h3>Order Summary</h3>
-          <p class="subtotal">Subtotal: $439.95</p>
-          <p class="total">Total: $439.95</p>
-          <div class="order-details">
-            <textarea placeholder="Add order description (optional)"></textarea>
-            <input type="file" />
-            <button>Place Order</button>
-          </div>
+          <p class="subtotal" id="subtotal">Subtotal: $0.00</p>
+          <p class="iva" id="iva">Con IVA: $0.00</p>
+          <p class="total" id="total">Total: $0.00</p>
+          <form id="order-form" method="POST" enctype="multipart/form-data" action="{% url 'pedidos:crear_pedido_carrito' %}">
+            {% csrf_token %}
+            <div class="order-details">
+                <textarea name="descripcion" placeholder="Add order description (optional)" class="form-control mb-3"></textarea>
+                <input type="file" name="imagen" class="form-control mb-3" />
+                <input type="date" name="fecha" id="order-date" class="form-control mb-3" />
+                <input type="hidden" name="subtotal" id="hidden-subtotal" />
+                <input type="hidden" name="iva" id="hidden-iva" />
+                <input type="hidden" name="total" id="hidden-total" />
+                <button type="submit" class="btn btn-dark w-100">Place Order</button>
+            </div>
+        </form>
         </div>
       </div>
     </div>
@@ -179,38 +196,32 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Obtener todos los botones de eliminar
-    const removeButtons = document.querySelectorAll(".remove");
-    const subtotalElement = document.querySelector(".subtotal");
-    const totalElement = document.querySelector(".total");
+  document.addEventListener('DOMContentLoaded', function() {
+    // Obtener todos los precios de los items en el carrito
+    const prices = document.querySelectorAll('.cart-item .price');
+    let subtotal = 0;
 
-    // Función para actualizar el subtotal y el total
-    function updateTotal() {
-      let subtotal = 0;
-      document.querySelectorAll(".cart-item").forEach((item) => {
-        const price = parseFloat(item.querySelector(".price").dataset.price);
-        const quantity = parseInt(item.querySelector(".quantity").innerText);
-        subtotal += price * quantity;
-      });
-      subtotalElement.innerText = `Subtotal: $${subtotal.toFixed(2)}`;
-      totalElement.innerText = `Total: $${subtotal.toFixed(2)}`;
-    }
-
-    // Función para eliminar un artículo
-    function removeItem(event) {
-      const cartItem = event.target.closest(".cart-item");
-      cartItem.remove();
-      updateTotal();
-    }
-
-    // Agregar event listeners a todos los botones de eliminar
-    removeButtons.forEach((button) => {
-      button.addEventListener("click", removeItem);
+    // Sumar los precios de todos los items
+    prices.forEach(priceElement => {
+      const price = parseFloat(priceElement.dataset.price);
+      subtotal += price;
     });
 
-    // Inicializar el total
-    updateTotal();
+    // Calcular el IVA (19%)
+    const iva = subtotal * 0.19;
+
+    // Calcular el total con IVA
+    const total = subtotal + iva;
+
+    // Actualizar los campos en el resumen del pedido
+    document.getElementById('subtotal').textContent = `Subtotal: $${subtotal.toFixed(2)}`;
+    document.getElementById('iva').textContent = `Con IVA: $${iva.toFixed(2)}`;
+    document.getElementById('total').textContent = `Total: $${total.toFixed(2)}`;
+
+    // Actualizar los campos ocultos en el formulario
+    document.getElementById('hidden-subtotal').value = subtotal.toFixed(2);
+    document.getElementById('hidden-iva').value = iva.toFixed(2);
+    document.getElementById('hidden-total').value = total.toFixed(2);
   });
 </script>
 
