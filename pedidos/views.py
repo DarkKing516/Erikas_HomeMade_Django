@@ -52,6 +52,13 @@ def creardetalleServicioPRoducti():
     return True
 
 
+def get_image_url(instance, field_name, default_url):
+    field = getattr(instance, field_name)
+    if field:
+        file_path = field.path
+        if os.path.exists(file_path):
+            return field.url
+    return default_url
 def add_to_cart(request):
     if request.method == 'POST' and request.session.get('usuario_id') is not None:
         item_type = request.POST.get('type')
@@ -61,6 +68,8 @@ def add_to_cart(request):
         item_type = data.get('type')
         item_id = data.get('id')
         print(item_id, item_type)
+
+        default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
 
         if not item_type or not item_id:
             return JsonResponse({'success': False, 'message': 'Tipo o ID de artículo no proporcionado.'})
@@ -73,13 +82,15 @@ def add_to_cart(request):
         if item_type == 'producto':
             try:
                 producto = Producto.objects.get(idProducto=item_id)
+                image_url = get_image_url(producto, 'imagen', default_image_url)
                 cart.append({
                     'type': 'producto',
                     'id': producto.idProducto,
                     'nombre': producto.nombre,
                     'descripcion': producto.descripcion,
                     'precio': float(producto.precio),
-                    'imagen': producto.imagen.url if producto.imagen else ''
+                    # 'imagen': producto.imagen.url if producto.imagen else '/media/user_images/imagendefectoNoBorrar.gif'
+                    'imagen': image_url
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{producto.nombre} agregado al carrito.'})
@@ -89,13 +100,16 @@ def add_to_cart(request):
         elif item_type == 'servicio':
             try:
                 servicio = Servicio.objects.get(idServicio=item_id)
+                image_url = get_image_url(producto, 'imagen', default_image_url)
+
                 cart.append({
                     'type': 'servicio',
                     'id': servicio.idServicio,
                     'nombre': servicio.nombre_servicio,
                     'descripcion': servicio.descripcion,
                     'precio': float(servicio.precio_servicio),
-                    'imagen': servicio.imagen.url if servicio.imagen else ''
+                    # 'imagen': servicio.img.url if servicio.img else '/media/user_images/imagendefectoNoBorrar.gif'
+                    'imagen': image_url
                 })
                 request.session['cart'] = cart
                 return JsonResponse({'success': True, 'message': f'{servicio.nombre_servicio} agregado al carrito.'})
@@ -107,23 +121,30 @@ def add_to_cart(request):
 
     return JsonResponse({'success': False, 'message': 'Sesión no iniciada o método no permitido.'})
 
-def remove_cart_item(request):
-    if request.method == 'POST':
-        item_id = request.POST.get('item_id')
-        print(item_id)
-        # data = json.loads(request.body)
-        # item_id = data.get('item_id')
-        # print(item_id)
 
-        try:
-            # Eliminar el artículo del carrito
-            del request.session['cart'][item_id]
-            request.session.modified = True
-            return JsonResponse({'success': True, 'message': 'Artículo eliminado del carrito.'})
-        except KeyError:
-            return JsonResponse({'success': False, 'message': 'No se pudo encontrar el artículo en el carrito.'})
-    else:
-        return JsonResponse({'success': False, 'message': 'Método no permitido.'})
+@require_POST
+def remove_cart_item(request):
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('item_id')
+        
+        if not item_id:
+            return JsonResponse({'success': False, 'message': 'ID del artículo no proporcionado.'})
+
+        cart = request.session.get('cart', [])
+        
+        # Filtra el carrito para eliminar el artículo
+        new_cart = [item for item in cart if str(item['id']) != str(item_id)]
+        
+        if len(new_cart) == len(cart):
+            return JsonResponse({'success': False, 'message': 'Artículo no encontrado en el carrito.'})
+
+        request.session['cart'] = new_cart
+        request.session.modified = True
+        
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
 
 def listar_pedidos(request):
     if request.method == 'POST':
@@ -138,7 +159,9 @@ def listar_pedidos(request):
     else:
         formCreate = CreatePedidoForm()
         pedidos = Pedido.objects.all()
-        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'formCreate': formCreate})
+        servicios = Servicio.objects.all()
+        productos = Producto.objects.all()
+        return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
     
 def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
@@ -151,7 +174,7 @@ def listar_mis_pedidos(request):
 
 def crear_pedido(request):
     if request.method == 'POST':
-        form = PedidoForm(request.POST, request.FILES)
+        form = CreatePedidoForm(request.POST, request.FILES)
         if form.is_valid():
             pedido = form.save()
 
@@ -163,11 +186,11 @@ def crear_pedido(request):
                 DetallePedidoProducto.objects.create(
                     idProducto=producto,
                     idPedido=pedido,
-                    cant_productos=1,  # Asigna valores adecuados
-                    nombre_productos=producto.nombre,  # Ajusta según tu modelo
-                    descripcion=producto.descripcion,  # Ajusta según tu modelo
-                    precio_inicial_producto=producto.precio,  # Ajusta según tu modelo
-                    subtotal_productos=producto.precio  # Ajusta según tu modelo
+                    cant_productos=1,
+                    nombre_productos=producto.nombre,
+                    descripcion=producto.descripcion,
+                    precio_inicial_producto=producto.precio,
+                    subtotal_productos=producto.precio
                 )
 
             for servicio_id in servicios_ids:
@@ -175,15 +198,15 @@ def crear_pedido(request):
                 DetallePedidoServicio.objects.create(
                     idServicio=servicio,
                     idPedido=pedido,
-                    cantidad_servicios=1,  # Asigna valores adecuados
-                    descripcion=servicio.descripcion,  # Ajusta según tu modelo
-                    precio_inicial_servicio=servicio.precio,  # Ajusta según tu modelo
-                    subtotal_servicios=servicio.precio  # Ajusta según tu modelo
+                    cantidad_servicios=1,
+                    descripcion=servicio.descripcion,
+                    precio_inicial_servicio=servicio.precio,
+                    subtotal_servicios=servicio.precio
                 )
 
         return redirect(reverse('pedidos:listar_pedidos'))
     else:
-        form = PedidoForm()
+        form = CreatePedidoForm()
         productos = Producto.objects.all()
         servicios = Servicio.objects.all()
     
@@ -412,13 +435,19 @@ def cambiar_estado_catalogo(request):
         producto_id = data.get('producto_id')
         nuevo_estado_catalogo = data.get('estado_catalogo')
 
+        if nuevo_estado_catalogo not in ['Activo', 'Inactivo']:
+            raise ValueError('Estado no válido')
+
         producto = Producto.objects.get(pk=producto_id)
-        producto.estado_catalogo = nuevo_estado_catalogo
+        producto.estado_catalogo = 'A' if nuevo_estado_catalogo == 'Activo' else 'I'
         producto.save()
 
         return JsonResponse({'success': True})
+    except Producto.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Producto no encontrado'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
 #--------------------------------DESDE AQUI COMIENZA EL CRUD DE TIPO DE PRODCUTO--------------------------------------------
 
 

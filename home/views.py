@@ -4,10 +4,20 @@ from .models import *
 from reservas.forms import *
 from pedidos.models import Producto, TipoProducto, Servicio, TipoServicio
 import random
+import os
+from django.conf import settings
 
 # Create your views here.
 # def index(request):
 #     return HttpResponse("Pagina principal")
+
+def get_image_url(instance, field_name, default_url):
+    field = getattr(instance, field_name)
+    if field:
+        file_path = field.path
+        if os.path.exists(file_path):
+            return field.url
+    return default_url
 
 def index(request):
     form = ReservaFormIndex()
@@ -53,10 +63,20 @@ def index(request):
 
 
 def catalogo_productos(request):
+    default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
+
     productos = Producto.objects.filter(estado_producto='A', estado_catalogo='A', cantidad__gt=0)
     servicios = Servicio.objects.filter(estado_servicio='A', estado_catalogo='A')
     tipos_productos = TipoProducto.objects.filter(estado_producto='Activo')
     tipos_servicios = TipoServicio.objects.filter(estado_tipoServicio='Activo')
+
+    # Add image URLs to products and services
+    for producto in productos:
+        producto.image_url = get_image_url(producto, 'imagen', default_image_url)
+
+    for servicio in servicios:
+        servicio.image_url = get_image_url(servicio, 'img', default_image_url)
+
     return render(request, 'catalogo.html', {
         'productos': productos,
         'servicios': servicios,
