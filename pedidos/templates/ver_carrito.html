@@ -159,9 +159,9 @@
             <div class="cart-item">
               <img src="{{ item.imagen }}" alt="Product Image" />
               <h4>{{ item.nombre }}</h4>
-              <p class="price" data-price="{{ item.precio }}">{{ item.precio }}</p>
+              <p class="price" data-price="{{ item.precio|floatformat:"0" }}">{{ item.precio|floatformat:"0" }}</p>
               {% comment %} <p class="quantity">1</p> {% endcomment %}
-              <span class="remove"><i class="bi bi-trash"></i></span>
+              <span class="remove"><i class="bi bi-trash" onclick="removeCartItem2('{{ item.id }}')"></i></span>
             </div>
             {% endfor %}
           </div>
@@ -173,20 +173,20 @@
     <div class="card">
       <div class="card-body">
         <div class="summary">
-          <h3>Order Summary</h3>
+          <h3>Completar pedido</h3>
           <p class="subtotal" id="subtotal">Subtotal: $0.00</p>
           <p class="iva" id="iva">Con IVA: $0.00</p>
           <p class="total" id="total">Total: $0.00</p>
           <form id="order-form" method="POST" enctype="multipart/form-data" action="{% url 'pedidos:crear_pedido_carrito' %}">
             {% csrf_token %}
             <div class="order-details">
-                <textarea name="descripcion" placeholder="Add order description (optional)" class="form-control mb-3"></textarea>
+                <textarea name="descripcion" placeholder="Agrega una descripción para su pedido" class="form-control mb-3"></textarea>
                 <input type="file" name="imagen" class="form-control mb-3" />
                 <input type="date" name="fecha" id="order-date" class="form-control mb-3" />
                 <input type="hidden" name="subtotal" id="hidden-subtotal" />
                 <input type="hidden" name="iva" id="hidden-iva" />
                 <input type="hidden" name="total" id="hidden-total" />
-                <button type="submit" class="btn btn-dark w-100">Place Order</button>
+                <button type="submit" class="btn btn-dark w-100">Realizar pedido</button>
             </div>
         </form>
         </div>
@@ -203,27 +203,95 @@
 
     // Sumar los precios de todos los items
     prices.forEach(priceElement => {
-      const price = parseFloat(priceElement.dataset.price);
+      const price = parseInt(priceElement.dataset.price); // Utilizamos parseInt en lugar de parseFloat
       subtotal += price;
     });
 
     // Calcular el IVA (19%)
-    const iva = subtotal * 0.19;
-
+    const iva = parseInt(subtotal * 0.19); // Utilizamos parseInt y redondeamos después del cálculo
     // Calcular el total con IVA
     const total = subtotal + iva;
 
     // Actualizar los campos en el resumen del pedido
-    document.getElementById('subtotal').textContent = `Subtotal: $${subtotal.toFixed(2)}`;
-    document.getElementById('iva').textContent = `Con IVA: $${iva.toFixed(2)}`;
-    document.getElementById('total').textContent = `Total: $${total.toFixed(2)}`;
+    document.getElementById('subtotal').textContent = `Subtotal: $${subtotal}`;
+    document.getElementById('iva').textContent = `Con IVA: $${iva}`;
+    document.getElementById('total').textContent = `Total: $${total}`;
 
     // Actualizar los campos ocultos en el formulario
-    document.getElementById('hidden-subtotal').value = subtotal.toFixed(2);
-    document.getElementById('hidden-iva').value = iva.toFixed(2);
-    document.getElementById('hidden-total').value = total.toFixed(2);
+    document.getElementById('hidden-subtotal').value = subtotal;
+    document.getElementById('hidden-iva').value = iva;
+    document.getElementById('hidden-total').value = total;
   });
+  
+  function removeCartItem2(itemId) {
+    // Mostrar una alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Deseas eliminar este artículo del carrito?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si se confirma la eliminación
+            $.ajax({
+                url: '{% url "pedidos:remove_cart_item" %}',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: JSON.stringify({
+                    'item_id': itemId
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        // Actualizar el carrito eliminando la fila correspondiente sin recargar la página
+                        $(`#cartItem-${itemId}`).remove();
+                        // Mostrar una alerta de éxito
+                        Swal.fire({
+                            title: '¡Artículo eliminado!',
+                            text: 'El artículo ha sido eliminado del carrito.',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            // Redireccionar a la misma página después de cerrar la alerta
+                            window.location.href = "{% url 'pedidos:ver_carrito' %}";
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message,
+                            icon: 'error',
+                            showConfirmButton: true
+                        });
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al eliminar el artículo.',
+                        icon: 'error',
+                        showConfirmButton: true
+                    });
+                }
+            });
+        }
+    });
+}
+
+
+
+
+
 </script>
+
 
 <!-- Fin del contenido principal -->
 

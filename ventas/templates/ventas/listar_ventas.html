@@ -36,9 +36,9 @@
                                 <tr>
                                     <td>{{ venta.fecha }}</td>
                                     <td>{{ venta.metodo_pago }}</td>
-                                    <td>{{ venta.idPedido.total|floatformat:0 }}</td>
-                                    <td>{{ venta.descuento|floatformat:0 }}</td>
-                                    <td>{{ venta.total|floatformat:0 }}</td>
+                                    <td>$ {{ venta.idPedido.total|floatformat:0 }}</td>
+                                    <td>$ {{ venta.descuento|floatformat:0 }}</td>
+                                    <td>$ {{ venta.total|floatformat:0 }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

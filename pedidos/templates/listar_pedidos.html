@@ -54,7 +54,7 @@
                                 <td>{{ pedido.id_Usuario }}</td>
                                 <td>{{ pedido.fechaCreacion_pedido }}</td>
                                 <td>{{ pedido.fecha_pedido }}</td>
-                                <td>{{ pedido.total }}</td>
+                                <td>$ {{ pedido.total|floatformat:"0"  }}</td>
                                 {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
                                 <td>
                                     <!-- Aquí puedes acceder al estado del pedido -->
