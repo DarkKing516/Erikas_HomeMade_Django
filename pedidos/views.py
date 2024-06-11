@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 from django.urls import reverse
 from django.shortcuts import redirect
-
+from collections import defaultdict
 
 
 def crear_pedido_carrito(request):
@@ -39,29 +39,35 @@ def crear_pedido_carrito(request):
 
             # Obtener los productos y servicios del carrito de la sesión
             cart = request.session.get('cart', [])
+            grouped_cart = defaultdict(lambda: {'cantidad': 0, 'precio': 0, 'nombre': '', 'descripcion': '', 'tipo': ''})
             for item in cart:
-                if item['type'] == 'producto':
-                    producto_id = item['id']
-                    producto = Producto.objects.get(idProducto=producto_id)
+                grouped_cart[item['id']]['cantidad'] += 1
+                grouped_cart[item['id']]['precio'] = item['precio']
+                grouped_cart[item['id']]['nombre'] = item['nombre']
+                grouped_cart[item['id']]['descripcion'] = item['descripcion']
+                grouped_cart[item['id']]['tipo'] = item['type']
+
+            for item_id, item_data in grouped_cart.items():
+                if item_data['tipo'] == 'producto':
+                    producto = Producto.objects.get(idProducto=item_id)
                     DetallePedidoProducto.objects.create(
                         idPedido=pedido,
                         idProducto=producto,
-                        cant_productos=1,
-                        nombre_productos=producto.nombre,
-                        descripcion=producto.descripcion,
-                        precio_inicial_producto=producto.precio,
-                        subtotal_productos=producto.precio
+                        cant_productos=item_data['cantidad'],
+                        nombre_productos=item_data['nombre'],
+                        descripcion=item_data['descripcion'],
+                        precio_inicial_producto=item_data['precio'],
+                        subtotal_productos=item_data['precio'] * item_data['cantidad']
                     )
-                elif item['type'] == 'servicio':
-                    servicio_id = item['id']
-                    servicio = Servicio.objects.get(idServicio=servicio_id)
+                elif item_data['tipo'] == 'servicio':
+                    servicio = Servicio.objects.get(idServicio=item_id)
                     DetallePedidoServicio.objects.create(
                         idPedido=pedido,
                         idServicio=servicio,
-                        cantidad_servicios=1,
-                        descripcion=servicio.descripcion,
-                        precio_inicial_servicio=servicio.precio_servicio,
-                        subtotal_servicios=servicio.precio_servicio
+                        cantidad_servicios=item_data['cantidad'],
+                        descripcion=item_data['descripcion'],
+                        precio_inicial_servicio=item_data['precio'],
+                        subtotal_servicios=item_data['precio'] * item_data['cantidad']
                     )
 
             # Limpiar el carrito de la sesión después de crear el pedido
@@ -75,7 +81,6 @@ def crear_pedido_carrito(request):
 
     # Renderizar un template si no es POST
     return render(request, 'carrito.html')
-
 def creardetalleServicioPRoducti():
 
     #crea detales
