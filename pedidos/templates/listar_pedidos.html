@@ -348,9 +348,9 @@
                             {% endfor %}
                         </select>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="servicios">Servicios </label>
+                        <label for="servicios">Servicios</label>
                         <select id="servicios" name="servicios" class="select2 form-control" multiple="multiple">
                             {% for servicio in servicios %}
                                 <option value="{{ servicio.idServicio }}">{{ servicio.nombre_servicio }}</option>
@@ -377,11 +377,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Inicializar Select2 para productos y servicios
         $('.select2').select2({
             placeholder: 'Selecciona opciones',
             theme: 'classic',
             width: '100%',
-            closeOnSelect: false
+            closeOnSelect: false,
+            multiple: true // Permitir selección múltiple
         });
     });
 </script>
