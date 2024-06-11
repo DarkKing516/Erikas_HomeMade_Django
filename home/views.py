@@ -63,6 +63,10 @@ def index(request):
 
 
 def catalogo_productos(request):
+    # current_url = request.build_absolute_uri()
+    # print(current_url)
+    current_path = request.path
+    print(current_path)
     default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
 
     productos = Producto.objects.filter(estado_producto='A', estado_catalogo='A', cantidad__gt=0)
