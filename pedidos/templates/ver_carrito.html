@@ -144,6 +144,8 @@
       border-top: 1px solid #ddd;
       margin-top: 20px;
     }
+    
+    
   }
 </style>
 
@@ -177,12 +179,20 @@
           <p class="subtotal" id="subtotal">Subtotal: $0.00</p>
           <p class="iva" id="iva">Con IVA: $0.00</p>
           <p class="total" id="total">Total: $0.00</p>
+          <p class="total" id="abono">Abono a pagar: $0.00</p>
           <form id="order-form" method="POST" enctype="multipart/form-data" action="{% url 'pedidos:crear_pedido_carrito' %}">
             {% csrf_token %}
             <div class="order-details">
-                <textarea name="descripcion" placeholder="Agrega una descripción para su pedido" class="form-control mb-3"></textarea>
-                <input type="file" name="imagen" class="form-control mb-3" />
-                <input type="date" name="fecha" id="order-date" class="form-control mb-3" />
+                <textarea name="descripcion" placeholder="Agrega una descripción para su pedido" class="form-control mb-3" required/></textarea>
+                <p class="iva" id="iva">Comprobante de pago del abono: </p>
+                
+                <input type="file" name="imagen" id="imagen-input" class="form-control mb-3" required/>
+                <div id="image-preview-container">
+                  <img id="image-preview" src="#" alt="" style="max-width: 200px; max-height: 200px;">
+                </div>
+                <br>
+                <p class="iva" id="iva">Posible fecha de entrega: </p>
+                <input type="date" name="fecha" id="order-date" class="form-control mb-3"  required/>
                 <input type="hidden" name="subtotal" id="hidden-subtotal" />
                 <input type="hidden" name="iva" id="hidden-iva" />
                 <input type="hidden" name="total" id="hidden-total" />
@@ -212,15 +222,22 @@
     // Calcular el total con IVA
     const total = subtotal + iva;
 
+    // Calcular el abono
+    const abono = Math.round(total * 0.5); // Utilizamos parseInt y redondeamos después del cálculo
+    // Calcular el total con el abono
+    const total2 = total - abono;
+
     // Actualizar los campos en el resumen del pedido
     document.getElementById('subtotal').textContent = `Subtotal: $${subtotal}`;
     document.getElementById('iva').textContent = `Con IVA: $${iva}`;
     document.getElementById('total').textContent = `Total: $${total}`;
+    document.getElementById('abono').textContent = `Abono: $${total2}`;
 
     // Actualizar los campos ocultos en el formulario
     document.getElementById('hidden-subtotal').value = subtotal;
     document.getElementById('hidden-iva').value = iva;
     document.getElementById('hidden-total').value = total;
+    document.getElementById('hidden-abono').value = total2;
   });
   
   function removeCartItem2(itemId) {
@@ -285,6 +302,47 @@
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Manejar la vista previa de la imagen
+  const imageInput = document.getElementById('imagen-input');
+  const imagePreview = document.getElementById('image-preview');
+
+  imageInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imagePreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.src = '#';
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const orderForm = document.getElementById('order-form');
+  const orderDate = document.getElementById('order-date');
+
+  orderForm.addEventListener('submit', function(event) {
+    const selectedDate = new Date(orderDate.value);
+    const today = new Date();
+    // Establece la hora del día actual a medianoche para comparación precisa
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      event.preventDefault(); // Evitar que el formulario se envíe
+      Swal.fire({
+        title: 'Fecha no válida',
+        text: 'La fecha de entrega no puede ser anterior a la fecha actual.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+  });
+});
 
 
 

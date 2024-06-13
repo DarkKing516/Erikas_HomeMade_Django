@@ -65,7 +65,7 @@
                                 <select id="idUsuario" class="id_permisosEditar" name="usuario">
                                     <option value="">Seleccione un usuario</option>
                                     {% for usuario in usuarios %}
-                                    <option value="{{ usuario.id }}">{{ usuario.documento }}</option>
+                                    <option value="{{ usuario.id }}">{{ usuario.nombre }} - {{ usuario.documento }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -114,11 +114,7 @@
         </div>
     </div>
 </div>
-<select class="js-example-basic-single id_permisosEditar" name="state">
-    <option value="AL">Alabama</option>
-        ...
-    <option value="WY">Wyoming</option>
-</select>
+
 <script>
     $(document).ready(function () {
         $('.select2').select2({
