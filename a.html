@@ -1,62 +1,107 @@
-<div class="row">
-  <div class="col-lg-9 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Mi Carrito</h4>
-        <div class="container">
-          <div class="cart">
-            <div class="cart-item">
-              <img src="{% static 'placeholder.png' %}" alt="Product Image" />
-              <h4>Acme Laptop Stand</h4>
-              <p class="price">$29.99</p>
-              <p class="quantity">1</p>
-              <span class="remove"><i class="bi bi-trash"></i></span>
-            </div>
-            <div class="cart-item">
-              <img src="{% static 'placeholder.png' %}" alt="Product Image" />
-              <h4>Ergonomic Office Chair</h4>
-              <p class="price">$199.99</p>
-              <p class="quantity">1</p>
-              <span class="remove"><i class="bi bi-trash"></i></span>
-            </div>
-            <div class="cart-item">
-              <img src="{% static 'placeholder.png' %}" alt="Product Image" />
-              <h4>Wireless Keyboard and Mouse</h4>
-              <p class="price">$59.99</p>
-              <p class="quantity">1</p>
-              <span class="remove"><i class="bi bi-trash"></i></span>
-            </div>
-            <div class="cart-item">
-              <img src="{% static 'placeholder.png' %}" alt="Product Image" />
-              <h4>Premium Desk Lamp</h4>
-              <p class="price">$49.99</p>
-              <p class="quantity">1</p>
-              <span class="remove"><i class="bi bi-trash"></i></span>
-            </div>
-            <div class="cart-item">
-              <img src="{% static 'placeholder.png' %}" alt="Product Image" />
-              <h4>Professional Webcam</h4>
-              <p class="price">$99.99</p>
-              <p class="quantity">1</p>
-              <span class="remove"><i class="bi bi-trash"></i></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 grid-margin stretch-card">
-    <div class="summary">
-      <h3>Order Summary</h3>
-      <p class="subtotal">Subtotal: $439.95</p>
-      <p class="total">Total: $439.95</p>
-      <div class="order-details">
-        <textarea placeholder="Add order description (optional)"></textarea>
-        <input type="file" />
-        <button>Place Order</button>
-      </div>
-    </div>
-  </div>
-</div>
+<script>
+  let itemsArray = [];
 
-<!-- asdasd -->
+  $(document).ready(function() {
+      $('.select2').select2({
+          placeholder: 'Selecciona opciones',
+          theme: 'classic',
+          width: '50%',
+          closeOnSelect: false,
+      });
+
+      // Handle adding products
+      $('#productos + .btn').click(function() {
+          const selectedProduct = $('#productos').val();
+          const selectedProductText = $('#productos option:selected').text();
+          if (selectedProduct) {
+              Swal.fire({
+                  title: 'Cantidad de Producto',
+                  input: 'number',
+                  inputAttributes: {
+                      min: 1,
+                      step: 1
+                  },
+                  showCancelButton: true,
+                  confirmButtonText: 'Agregar',
+                  cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      const quantity = result.value;
+                      itemsArray.push({
+                          id: selectedProduct,
+                          name: selectedProductText,
+                          quantity: quantity,
+                          type: 'product'
+                      });
+                      Swal.fire('Agregado!', 'El producto ha sido agregado.', 'success');
+                  }
+              });
+          } else {
+              Swal.fire('Error', 'Seleccione un producto', 'error');
+          }
+      });
+
+      // Handle adding services
+      $('#servicios + .btn').click(function() {
+          const selectedService = $('#servicios').val();
+          const selectedServiceText = $('#servicios option:selected').text();
+          if (selectedService) {
+              Swal.fire({
+                  title: 'Cantidad de Servicio',
+                  input: 'number',
+                  inputAttributes: {
+                      min: 1,
+                      step: 1
+                  },
+                  showCancelButton: true,
+                  confirmButtonText: 'Agregar',
+                  cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      const quantity = result.value;
+                      itemsArray.push({
+                          id: selectedService,
+                          name: selectedServiceText,
+                          quantity: quantity,
+                          type: 'service'
+                      });
+                      Swal.fire('Agregado!', 'El servicio ha sido agregado.', 'success');
+                  }
+              });
+          } else {
+              Swal.fire('Error', 'Seleccione un servicio', 'error');
+          }
+      });
+
+      // Handle form submission
+      $('#pedidoForm').submit(function(event) {
+          event.preventDefault();
+
+          const form = $(this);
+          const formData = new FormData(form[0]);
+          formData.append('items', JSON.stringify(itemsArray));
+
+          fetch(form.attr('action'), {
+              method: form.attr('method'),
+              body: formData,
+              headers: {
+                  'X-CSRFToken': '{{ csrf_token }}'
+              }
+          }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  Swal.fire({
+                      title: '¡Registro exitoso!',
+                      text: 'El pedido se ha registrado correctamente.',
+                      icon: 'success',
+                      onClose: () => {
+                          location.reload();
+                      }
+                  });
+              } else {
+                  Swal.fire('Error', 'Hubo un problema al registrar el pedido.', 'error');
+              }
+          });
+      });
+  });
+</script>

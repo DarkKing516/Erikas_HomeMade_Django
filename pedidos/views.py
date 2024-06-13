@@ -217,42 +217,41 @@ def listar_pedidos(request):
             pedido = form.save()
 
             # Obtener los productos y servicios seleccionados
-            productos_ids = request.POST.getlist('productos')
-            servicios_ids = request.POST.getlist('servicios')
+            selected_items = json.loads(request.POST.get('selectedItems', '[]'))
 
             # Inicializar las variables para los subtotales
             total_precio_productos = 0
             total_precio_servicios = 0
 
-            # Crear detalles de pedido para los productos seleccionados
-            for producto_id in productos_ids:
-                producto = Producto.objects.get(idProducto=producto_id)
-                print(producto)
-                total_precio_productos += producto.precio
-                descripcion_producto = f"{producto.nombre} (1)"
-                DetallePedidoProducto.objects.create(
-                    idProducto=producto,
-                    idPedido=pedido,
-                    cant_productos=1,
-                    nombre_productos=producto.nombre,
-                    descripcion=descripcion_producto,
-                    precio_inicial_producto=producto.precio / 2,
-                    subtotal_productos=producto.precio
-                )
-
-            # Crear detalles de pedido para los servicios seleccionados
-            for servicio_id in servicios_ids:
-                servicio = Servicio.objects.get(idServicio=servicio_id)
-                total_precio_servicios += servicio.precio_servicio
-                descripcion_servicio = f"{servicio.nombre_servicio} (1)"
-                DetallePedidoServicio.objects.create(
-                    idServicio=servicio,
-                    idPedido=pedido,
-                    cantidad_servicios=1,
-                    descripcion=descripcion_servicio,
-                    precio_inicial_servicio=servicio.precio_servicio / 2,
-                    subtotal_servicios=servicio.precio_servicio
-                )
+            # Procesar los items seleccionados
+            for item in selected_items:
+                if item['type'] == 'producto':
+                    producto = Producto.objects.get(idProducto=item['id'])
+                    quantity = int(item['quantity'])
+                    total_precio_productos += producto.precio * quantity
+                    descripcion_producto = f"{producto.nombre} ({quantity})"
+                    DetallePedidoProducto.objects.create(
+                        idProducto=producto,
+                        idPedido=pedido,
+                        cant_productos=quantity,
+                        nombre_productos=producto.nombre,
+                        descripcion=descripcion_producto,
+                        precio_inicial_producto=producto.precio / 2,
+                        subtotal_productos=producto.precio * quantity
+                    )
+                elif item['type'] == 'servicio':
+                    servicio = Servicio.objects.get(idServicio=item['id'])
+                    quantity = int(item['quantity'])
+                    total_precio_servicios += servicio.precio_servicio * quantity
+                    descripcion_servicio = f"{servicio.nombre_servicio} ({quantity})"
+                    DetallePedidoServicio.objects.create(
+                        idServicio=servicio,
+                        idPedido=pedido,
+                        cantidad_servicios=quantity,
+                        descripcion=descripcion_servicio,
+                        precio_inicial_servicio=servicio.precio_servicio / 2,
+                        subtotal_servicios=servicio.precio_servicio * quantity
+                    )
             return JsonResponse({'success': True})
         else:
             errors = dict(form.errors.items())
@@ -262,7 +261,7 @@ def listar_pedidos(request):
         pedidos = Pedido.objects.all()
         servicios = Servicio.objects.all()
         productos = Producto.objects.all()
-         # Obtener detalles de pedido de productos y servicios para cada pedido
+        # Obtener detalles de pedido de productos y servicios para cada pedido
         detalles_productos = DetallePedidoProducto.objects.all()
         detalles_servicios = DetallePedidoServicio.objects.all()
 
@@ -274,6 +273,7 @@ def listar_pedidos(request):
             'detalles_productos': detalles_productos,
             'detalles_servicios': detalles_servicios,
         })
+
 
 def crear_pedido(request):
     if request.method == 'POST':
