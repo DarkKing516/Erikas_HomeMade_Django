@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from django.core.files.storage import default_storage
 import os
 from django.db import transaction
@@ -43,6 +45,14 @@ def hello(request):
     else:
         return HttpResponse("Hello World")
 
+def get_image_url(usuario, field_name, default_url):
+    try:
+        field = getattr(usuario, field_name)
+        if field and hasattr(field, 'url'):
+            return field.url
+    except ObjectDoesNotExist:
+        pass
+    return default_url
 
 def listar_permisos(request):
     if request.method == 'POST':
@@ -262,6 +272,8 @@ def eliminar_rol(request, id_rol):
 
 # =================================================================
 def listar_usuarios(request):
+    # default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
+    default_image_url = '/media/user_images/iconosesion.jpg'
     if request.method == 'POST':
         form = CreateUsuario(request.POST)
         if form.is_valid():
@@ -283,6 +295,8 @@ def listar_usuarios(request):
         usuarios = Usuario.objects.all()
         # roles = Rol.objects.all()  # Obtener todos los roles
         roles = Rol.objects.filter(estado_rol='A') # Obtener todos los roles Activos
+        for usuario in usuarios:
+            usuario.image_url = get_image_url(usuario, 'imagen', default_image_url)
         return render(request, 'usuarios/listar_usuario.html', {'usuarios': usuarios, 'roles': roles, 'formCreate': formCreate, 'formEdit': formEdit})
 
 def cambiar_rol(request):
