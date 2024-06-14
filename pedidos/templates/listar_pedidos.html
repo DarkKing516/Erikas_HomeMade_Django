@@ -399,35 +399,45 @@
                                     let quantity = parseInt(result.value);
                                     let itemId = selectedOption.value + '_' + type;
                     
+                                    // Obtener el precio del producto o servicio seleccionado
+                                    let precio = parseFloat(selectedOption.getAttribute('data-precio'));
+                    
+                                    // Calcular el total por ítem
+                                    let totalItem = quantity * precio;
+                    
                                     // Verificar si el elemento ya existe en el array selectedItems
                                     let existingItem = selectedItems.find(item => item.id === selectedOption.value && item.type === type);
                     
                                     if (existingItem) {
                                         // Actualizar la cantidad del elemento existente
                                         existingItem.quantity += quantity;
-                                        // Actualizar la cantidad mostrada en la lista
+                                        existingItem.total += totalItem;
+                    
+                                        // Actualizar la cantidad y el total mostrado en la lista
                                         let listItem = document.getElementById(itemId);
-                                        listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity} 
-                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                        listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Total: ${existingItem.total.toFixed(2)} 
+                                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
                                     } else {
                                         // Agregar nuevo elemento al array selectedItems
                                         selectedItems.push({
                                             id: selectedOption.value,
                                             name: selectedOption.text,
                                             type: type,
-                                            quantity: quantity
+                                            quantity: quantity,
+                                            precio: precio,
+                                            total: totalItem
                                         });
                     
                                         // Agregar elemento a la lista
                                         let listItem = document.createElement('li');
                                         listItem.id = itemId;
-                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity} 
-                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Total: ${totalItem.toFixed(2)} 
+                                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
                                         listElement.appendChild(listItem);
                                     }
                     
-                                    document.getElementById('selectedItems').value = JSON.stringify(selectedItems);
-                                    console.log(selectedItems); // Para depuración
+                                    // Calcular y actualizar el subtotal y total en el formulario principal
+                                    actualizarSubtotalYTotal();
                                 }
                             });
                         }
@@ -439,8 +449,31 @@
                     
                             // Eliminar elemento del array selectedItems
                             selectedItems = selectedItems.filter(item => !(item.id + '_' + item.type === itemId));
-                            document.getElementById('selectedItems').value = JSON.stringify(selectedItems);
-                            console.log(selectedItems); // Para depuración
+                    
+                            // Calcular y actualizar el subtotal y total en el formulario principal
+                            actualizarSubtotalYTotal();
+                        }
+                    
+                        function actualizarSubtotalYTotal() {
+                            let subtotal = 0;
+                            selectedItems.forEach(item => {
+                                subtotal += item.total;
+                            });
+                    
+                            // Actualizar subtotal
+                            document.getElementById('subtotal').value = subtotal.toFixed(2);
+                    
+                            // Calcular IVA (asumiendo que es 19%)
+                            let iva = subtotal * 0.19;
+                    
+                            // Actualizar campo de IVA
+                            document.getElementById('iva').value = iva.toFixed(2);
+                    
+                            // Calcular total
+                            let total = subtotal + iva;
+                    
+                            // Actualizar campo de total
+                            document.getElementById('total').value = total.toFixed(2);
                         }
                     
                         // Función para enviar el formulario
@@ -451,6 +484,7 @@
                             form.submit();
                         }
                     </script>
+                    
                     
                     <style>
                         /* Ocultar flechas del campo de entrada numérico */
