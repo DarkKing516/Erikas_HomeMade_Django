@@ -1,6 +1,6 @@
 <title>Listar Pedidos</title>
 {% extends 'layouts/navbar.html' %}
-
+{% load humanize %}
 {% load static %}
 
 {% block content %}
@@ -56,7 +56,7 @@
                                 <td>{{ producto.id_TipoProducto }}</td>
                                 <td>{{ producto.nombre }}</td>
                                 <td>{{ producto.descripcion }}</td>
-                                <td>$ {{ producto.precio|floatformat:"0" }}</td>                                
+                                <td>$ {{ producto.precio|floatformat:"0"|intcomma }}</td>                                
 
                                 <td>
                                     {% if producto.estado_producto == 'A' %}

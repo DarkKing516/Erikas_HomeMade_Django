@@ -1,7 +1,7 @@
 <title>Listar Servicios</title>
 
 {% extends 'layouts/navbar.html' %}
-
+{% load humanize %}
 {% load static %}
 
 {% block content %}
@@ -50,7 +50,7 @@
                             <tr class="pedido-row" data-servicio-id="{{ servicio.idServicio }}">
                                 <td>{{ servicio.nombre_servicio }}</td>
                                 <td>{{ servicio.id_TipoServicio }}</td>
-                                <td>${{ servicio.precio_servicio|floatformat:"0" }}</td>
+                                <td>${{ servicio.precio_servicio|floatformat:"0"|intcomma }}</td>
                                 <td>
                                     {% if servicio.estado_servicio == 'A' %}
                                     <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Servicio' in request.session.permisos %}change-status{% endif %}"

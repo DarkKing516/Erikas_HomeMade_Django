@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% extends 'layouts/navbar.html' %}
+    {% load humanize %}
 </head>
 
 <body>
@@ -67,11 +68,11 @@
                     <br>
                     <p>Método de Pago: {{ venta.metodo_pago }}</p>
                     <br>
-                    <p>Subtotal: ${{ venta.idPedido.total|floatformat:0 }}</p>
+                    <p>Subtotal: ${{ venta.idPedido.total|floatformat:"0"|intcomma}}</p>
                     <br>
-                    <p class="discount">Descuento: -${{ venta.descuento|floatformat:0 }}</p>
+                    <p class="discount">Descuento: -${{ venta.descuento|floatformat:"0"|intcomma}}</p>
                     <br>
-                    <p class="final-total">Total: ${{ venta.total|floatformat:0 }}</p>
+                    <p class="final-total">Total: ${{ venta.total|floatformat:"0"|intcomma}}</p>
                 </div>
             </div>
             {% endfor %}
