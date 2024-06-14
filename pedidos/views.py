@@ -74,7 +74,7 @@ def crear_pedido_carrito(request):
             del request.session['cart']
 
             # Redirigir a la vista listar_pedidos sin pasar ningún argumento
-            return redirect('pedidos:listar_pedidos')
+            return redirect('pedidos:listar_mis_pedidos')
         else:
             # Redirigir al login si no hay usuario en la sesión
             return redirect('usuarios:requestLogin')
