@@ -24,50 +24,55 @@ def crear_venta(request):
     if request.method == 'POST':
         form = VentaForm(request.POST)
         if form.is_valid():
+            try:
+                # Obtener el id del pedido desde el formulario
+                pedido_id = form.cleaned_data['idPedido'].idPedido  # Usamos idPedido
 
-            # Obtener el id del pedido desde el formulario
-            pedido_id = form.cleaned_data['idPedido'].idPedido
-            
-            # Verificar si ya existe una venta para el pedido dado
-            if Venta.objects.filter(idPedido_id=pedido_id).exists():
-                return JsonResponse({'success': False, 'error_type': 'already_exists', 'message': 'Ya existe una venta para este pedido.'}, status=400)
-            
-                        # Obtener el total ingresado en el formulario
-            total = form.cleaned_data['total']
-            # Obtener el descuento ingresado en el formulario
-            descuento = form.cleaned_data['descuento']
-            
-            # Verificar si el descuento es mayor que el total
-            if descuento > total:
-                # Mostrar mensaje de error específico
-                return JsonResponse({'success': False, 'error_type': 'invalid_discount', 'message': 'El descuento no puede ser mayor que el total.'}, status=400)
-            
-            venta = form.save(commit=False)
+                # Verificar si ya existe una venta para el pedido dado
+                if Venta.objects.filter(idPedido_id=pedido_id).exists():
+                    return JsonResponse({'success': False, 'error_type': 'already_exists', 'message': 'Ya existe una venta para este pedido.'}, status=400)
 
-            # Calcular el nuevo total después de aplicar el descuento
-            total_final = total - descuento
+                # Obtener el total actualizado del formulario
+                total_final = form.cleaned_data['total']
 
-            # Obtén el ID del Pedido seleccionado desde el formulario
-            pedido_id = form.cleaned_data['idPedido'].idPedido
-            
-            # Busca el objeto Pedido correspondiente
-            pedido = get_object_or_404(Pedido, idPedido=pedido_id)
-            
-            # Asigna los valores necesarios a la venta
-            venta.idPedido = pedido
-            venta.subtotal = pedido.subtotal
-            venta.iva = pedido.iva
-            venta.metodo_pago = form.cleaned_data['metodo_pago']
-            venta.descuento = form.cleaned_data['descuento']
-            venta.total = total_final
-            venta.total_pedido = pedido.total
-            venta.save()
+                # Obtener los valores de descuento/aumento ingresados en el formulario
+                descuento_aumento_type = form.cleaned_data['descuento_aumento_type']
+                descuento_aumento_value = form.cleaned_data['descuento_aumento_value']
 
-            # Retorna los datos de la venta creada en formato JSON
-            return JsonResponse({'success': True, 'message': 'Venta creada correctamente.'})
+                if total_final < 0:
+                    return JsonResponse({'success': False, 'error_type': 'invalid_discount', 'message': 'El descuento no puede resultar en un total negativo.'}, status=400)
+
+                # Crear una instancia de Venta sin guardarla aún
+                venta = form.save(commit=False)
+
+                # Buscar y asignar el objeto Pedido correspondiente
+                pedido = get_object_or_404(Pedido, idPedido=pedido_id)  # Usamos idPedido
+                venta.idPedido = pedido
+
+                # Asignar otros valores necesarios
+                venta.subtotal = pedido.subtotal
+                venta.iva = pedido.iva
+                venta.metodo_pago = form.cleaned_data['metodo_pago']
+                venta.descuento = descuento_aumento_value
+                venta.total = total_final
+
+                # Guardar la venta
+                venta.save()
+
+                # Retorna los datos de la venta creada en formato JSON
+                return JsonResponse({'success': True, 'message': 'Venta creada correctamente.'})
+            
+            except Pedido.DoesNotExist:
+                return JsonResponse({'success': False, 'error_type': 'pedido_not_found', 'message': 'El pedido seleccionado no existe.'}, status=404)
+            
+            except Exception as e:
+                # Manejo de excepciones generales
+                return JsonResponse({'success': False, 'error_type': 'exception', 'message': str(e)}, status=500)
+        
         else:
             # Retorna los errores de validación en formato JSON
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    
     else:
         return JsonResponse({'success': False, 'message': 'La solicitud no es de tipo POST.'}, status=405)
 
