@@ -1,12 +1,6 @@
-{% extends 'layouts/navbar.html' %}
-<title>Listar Ventas</title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!DOCTYPE html>
+<html lang="es">
 
-
-<<<<<<< HEAD
-=======
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +52,6 @@
     {% extends 'layouts/navbar.html' %}
     {% load humanize %}
 </head>
->>>>>>> 1b142f14b7bbb12c63f6a5e1cdf09371690ce006
 
 <body>
     <div class="bubbles"></div>
@@ -85,29 +78,18 @@
             {% endfor %}
         </div>
     </div>
-<<<<<<< HEAD
-    <script>
-    </script>
-=======
->>>>>>> 1b142f14b7bbb12c63f6a5e1cdf09371690ce006
 
     {% if not request.session.usuario_id %}
     <script>
         window.location.href = "{% url 'usuarios:requestLogin' %}";
-<<<<<<< HEAD
-
-=======
->>>>>>> 1b142f14b7bbb12c63f6a5e1cdf09371690ce006
     </script>
     {% elif "Listar Mis Ventas" not in request.session.permisos %}
     <script>
         window.location.href = "{% url 'usuarios:requestLogin' %}";
-<<<<<<< HEAD
-
-=======
->>>>>>> 1b142f14b7bbb12c63f6a5e1cdf09371690ce006
     </script>
     {% endif %}
 
     {% endblock %}
 </body>
+
+</html>
