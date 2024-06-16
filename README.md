@@ -68,6 +68,7 @@ Si deseas borrar esa variable para que se resetee el estado de la barra de naveg
 ```
 
 Este archivo se encuentra en la siguiente ruta:
+
 `C:\Users\UwU\Documents\python_darkking\Erikas_HomeMade_Django\home\static\js\template.js`
 
 **Recordar Siempre dejar esa línea comentada.**
