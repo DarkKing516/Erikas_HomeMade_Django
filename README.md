@@ -35,10 +35,6 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
    Con el entorno virtual activado, navega hasta la raíz de tu proyecto (donde se encuentra el archivo `requirements.txt`, si lo tienes) y luego instala las dependencias utilizando `pip`:
    
    ```
-   pip install django
-   ```
-   
-   ```
    pip install -r requirements.txt
    ```
 
