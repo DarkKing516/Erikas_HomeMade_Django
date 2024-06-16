@@ -94,6 +94,15 @@ def get_image_url(instance, field_name, default_url):
         if os.path.exists(file_path):
             return field.url
     return default_url
+
+def count_product_in_cart(cart, product_id):
+    count = 0
+    for item in cart:
+        if item['type'] == 'producto' and item['id'] == product_id:
+            count += 1
+    return count
+
+
 def add_to_cart(request):
     if request.method == 'POST' and request.session.get('usuario_id') is not None:
         item_type = request.POST.get('type')
@@ -118,6 +127,13 @@ def add_to_cart(request):
             try:
                 producto = Producto.objects.get(idProducto=item_id)
                 image_url = get_image_url(producto, 'imagen', default_image_url)
+
+                # Contar la cantidad de este producto en el carrito actual
+                current_quantity_in_cart = count_product_in_cart(cart, producto.idProducto)
+
+                if current_quantity_in_cart >= producto.cantidad:
+                    return JsonResponse({'success': False, 'message': f'No hay suficiente stock de {producto.nombre}.'})
+                
                 cart.append({
                     'type': 'producto',
                     'id': producto.idProducto,
