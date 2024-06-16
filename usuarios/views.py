@@ -562,7 +562,7 @@ def editar_account(request):
     else:
         form = EditarUsuario(instance=usuario)
         formc = EditarContraseñaUsuario(instance=usuario)
-        roles = Rol.objects.all()
+        roles = Rol.objects.filter(estado_rol='A')
         return render(request, 'edit_account.html', {'usuario': usuario, 'roles': roles, 'formc': formc})
 
 def editar_contraseña(request):

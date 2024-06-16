@@ -55,3 +55,19 @@ Para configurar correctamente el entorno virtual y reinstalar las dependencias d
    ```
 
 ---
+## Estado de la Barra de Navegación
+
+Generamos una variable local para la barra de navegación, así al ingresar la primera vez siempre veremos la barra de navegación abierta. Si la cerramos y vamos a otras pestañas, se quedará como la hayamos dejado, ya sea abierta o cerrada.
+
+### Borrar la Variable de Estado
+
+Si deseas borrar esa variable para que se resetee el estado de la barra de navegación, debes descomentar la siguiente línea de código y recargar la página:
+
+```javascript
+// localStorage.removeItem('sidebarState');
+```
+
+Este archivo se encuentra en la siguiente ruta:
+`C:\Users\UwU\Documents\python_darkking\Erikas_HomeMade_Django\home\static\js\template.js`
+
+**Recordar Siempre dejar esa línea comentada.**

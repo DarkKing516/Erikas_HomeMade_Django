@@ -11,8 +11,15 @@
     // Ocultar la barra de navegación al cargar la página
     // body.addClass('sidebar-hidden');
 
+    // Leer el estado de la barra de navegación de localStorage
+    if (localStorage.getItem('sidebarState') === 'closed') {
+      body.addClass('sidebar-icon-only');
+    }
+    // BORRAR LOCAL STORAGE
+    // localStorage.removeItem('sidebarState');
+
     // Mostrar la vista previa con íconos
-    body.addClass('sidebar-icon-only');
+    // body.addClass('sidebar-icon-only');
     // body.addClass('sidebar-absolute');
 
     //Add active class to nav-link based on url dynamically
@@ -81,11 +88,24 @@
       }
     }
 
+    // $('[data-toggle="minimize"]').on("click", function () {
+    //   if ((body.hasClass('sidebar-toggle-display')) || (body.hasClass('sidebar-absolute'))) {
+    //     body.toggleClass('sidebar-hidden');
+    //   } else {
+    //     body.toggleClass('sidebar-icon-only');
+    //   }
+    // });
     $('[data-toggle="minimize"]').on("click", function () {
       if ((body.hasClass('sidebar-toggle-display')) || (body.hasClass('sidebar-absolute'))) {
         body.toggleClass('sidebar-hidden');
       } else {
         body.toggleClass('sidebar-icon-only');
+        // Guardar el estado de la barra de navegación en localStorage
+        if (body.hasClass('sidebar-icon-only')) {
+          localStorage.setItem('sidebarState', 'closed');
+        } else {
+          localStorage.setItem('sidebarState', 'open');
+        }
       }
     });
 
