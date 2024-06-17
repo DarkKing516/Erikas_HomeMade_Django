@@ -134,7 +134,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="modal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ pedido.idPedido }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel{{ pedido.idPedido }}">Detalles del Pedido</h5>
@@ -168,7 +168,8 @@
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Producto</th>
+                                            <th><center>Img</center></th>
+                                            <th>Nombre</th>
                                             <th>Cantidad</th>
                                             <th>Subtotal</th>
                                         </tr>
@@ -176,6 +177,7 @@
                                     <tbody>
                                         {% for detalle in pedido.detallepedidoproducto_set.all %}
                                         <tr>
+                                            <td><center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center></td>
                                             <td>{{ detalle.nombre_productos }}</td>
                                             <td>{{ detalle.cant_productos }}</td>
                                             <td>${{ detalle.subtotal_productos|floatformat:"0" }}</td>
@@ -189,7 +191,8 @@
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Servicio</th>
+                                            <th><center>Img</center></th>
+                                            <th>Nombre</th>
                                             <th>Cantidad</th>
                                             <th>Subtotal</th>
                                         </tr>
@@ -197,6 +200,7 @@
                                     <tbody>
                                         {% for detalle in pedido.detallepedidoservicio_set.all %}
                                         <tr>
+                                            <td><center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center></td>
                                             <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                             <td>{{ detalle.cantidad_servicios }}</td>
                                             <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
@@ -211,7 +215,8 @@
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Producto</th>
+                                            <th><center>Img</center></th>
+                                            <th>Nombre</th>
                                             <th>Cantidad</th>
                                             <th>Subtotal</th>
                                         </tr>
@@ -219,6 +224,7 @@
                                     <tbody>
                                         {% for detalle in pedido.detallepedidoproducto_set.all %}
                                         <tr>
+                                            <td><center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center></td>
                                             <td>{{ detalle.nombre_productos }}</td>
                                             <td>{{ detalle.cant_productos }}</td>
                                             <td>${{ detalle.subtotal_productos|floatformat:"0" }}</td>
@@ -233,7 +239,8 @@
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Servicio</th>
+                                            <th><center>Img</center></th>
+                                            <th>Nombre</th>
                                             <th>Cantidad</th>
                                             <th>Subtotal</th>
                                         </tr>
@@ -241,6 +248,7 @@
                                     <tbody>
                                         {% for detalle in pedido.detallepedidoservicio_set.all %}
                                         <tr>
+                                            <td><center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center></td>
                                             <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                             <td>{{ detalle.cantidad_servicios }}</td>
                                             <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
