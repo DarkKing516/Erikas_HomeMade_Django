@@ -134,7 +134,7 @@
                     <li class="nav-item nav-profile dropdown">
                         <a id="logout-link" class="dropdown-item close-session">
                             <i class="ti-power-off text-primary"></i>
-                            <span>Bienvenido, {{ request.session.nombre_usuario }}!</span>
+                            <span>Bienvenido, {{ request.session.usuario }}!</span>
                         </a>
                     </li>
                     {% if request.session.cart %}
@@ -594,7 +594,6 @@
                         <tr>
                             <th scope="col">Img</th>
                             <th scope="col">Producto/Servicio</th>
-                            <th scope="col">Descripción</th>
                             <th scope="col">Precio</th>
                             <th scope="col">Acciones</th>
                         </tr>
@@ -604,7 +603,6 @@
                         <tr id="cartItem-{{ item.id }}">
                             <td><img src="{{ item.imagen }}" alt="{{ item.imagen }}"></td>
                             <td>{{ item.nombre }}</td>
-                            <td>{{ item.descripcion }}</td>
                             <td>${{ item.precio }}</td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="removeCartItem('{{ item.id }}')">Eliminar</button>
