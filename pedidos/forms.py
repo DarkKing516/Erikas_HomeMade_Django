@@ -110,7 +110,9 @@ class CreateProductoForm(forms.ModelForm):
         fields = ['id_TipoProducto', 'nombre', 'descripcion', 'imagen', 'precio', 'estado_producto', 'estado_catalogo', 'cantidad']
 
         
-class ProductoFormEditar(forms.ModelForm):    
+class ProductoFormEditar(forms.ModelForm):  
+    descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
+  
     class Meta:
         model = Producto
         fields = ['nombre', 'descripcion', 'precio', 'estado_producto', 'estado_catalogo', 'cantidad']        
