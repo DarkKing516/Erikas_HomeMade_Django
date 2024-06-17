@@ -249,32 +249,32 @@ $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
     });
 
     $(document).ready(function () {
-    $('#idPedido').change(function () {
-        var idPedido = $(this).val();
-        fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al obtener la respuesta.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            var totalPedido = data.total_pedido;
-            // Redondear el número al entero más cercano
-            totalPedido = Math.round(totalPedido);
-            // Mostrar el total del pedido en el input
-            document.getElementById("id_total_pedido").value = totalPedido.toString();
-        })
-        .catch(error => {
-            console.error('Error:', error);
+        $('#idPedido').change(function () {
+            var idPedido = $(this).val();
+            fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener la respuesta.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var totalPedido = data.total_pedido;
+                // Redondear el número al entero más cercano
+                totalPedido = Math.round(totalPedido);
+                // Mostrar el total del pedido en el input
+                document.getElementById("id_total_pedido").value = totalPedido.toString();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
     });
-});
 
     function buscarPedido() {
         var idPedido = document.getElementById("idPedido").value;
@@ -303,34 +303,34 @@ $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-    const selectElement = document.getElementById('descuento_aumento_select');
-    const inputElement = document.getElementById('descuento_aumento_input');
-    const totalPedidoElement = document.getElementById('id_total_pedido');
-    const totalElement = document.getElementById('id_total');
+        const selectElement = document.getElementById('descuento_aumento_select');
+        const inputElement = document.getElementById('descuento_aumento_input');
+        const totalPedidoElement = document.getElementById('id_total_pedido');
+        const totalElement = document.getElementById('id_total');
 
-    function updateTotal() {
-        const totalPedido = parseFloat(totalPedidoElement.value) || 0;
-        const value = parseFloat(inputElement.value) || 0;
-        const operation = selectElement.value;
+        function updateTotal() {
+            const totalPedido = parseFloat(totalPedidoElement.value) || 0;
+            const value = parseFloat(inputElement.value) || 0;
+            const operation = selectElement.value;
 
-        let newTotal;
-        if (operation === 'descuento') {
-            newTotal = totalPedido - value;
-        } else if (operation === 'aumento') {
-            newTotal = totalPedido + value;
+            let newTotal;
+            if (operation === 'descuento') {
+                newTotal = totalPedido - value;
+            } else if (operation === 'aumento') {
+                newTotal = totalPedido + value;
+            }
+
+            // Redondear o truncar el nuevo total a número entero
+            totalElement.value = Math.floor(newTotal); // Redondear hacia abajo
+            // totalElement.value = parseInt(newTotal); // Truncar el valor decimal
+
+            // Si quieres mostrar decimales en la interfaz pero no en el valor del campo, podrías usar:
+            // totalElement.value = newTotal.toFixed(2); // Redondear a dos decimales y convertir a string
         }
 
-        // Redondear o truncar el nuevo total a número entero
-        totalElement.value = Math.floor(newTotal); // Redondear hacia abajo
-        // totalElement.value = parseInt(newTotal); // Truncar el valor decimal
-
-        // Si quieres mostrar decimales en la interfaz pero no en el valor del campo, podrías usar:
-        // totalElement.value = newTotal.toFixed(2); // Redondear a dos decimales y convertir a string
-    }
-
-    inputElement.addEventListener('input', updateTotal);
-    selectElement.addEventListener('change', updateTotal);
-});
+        inputElement.addEventListener('input', updateTotal);
+        selectElement.addEventListener('change', updateTotal);
+    });
 
     $(document).ready(function () {
         $('#idUsuario').change(function () {
@@ -351,6 +351,7 @@ $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
                     .then(data => {
                         var selectPedido = $('#idPedido');
                         selectPedido.empty(); // Limpiar las opciones actuales
+                        selectPedido.append('<option value="">Seleccione un pedido</option>');
                         data.pedidos.forEach(pedido => {
                             var option = new Option(pedido.descripcion, pedido.idPedido);
                             selectPedido.append(option); // Agregar nuevas opciones
@@ -403,6 +404,7 @@ $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
         campos4.style.display = "block";
     };
 </script>
+
 
 {% if not request.session.usuario_id %}
 <script>
