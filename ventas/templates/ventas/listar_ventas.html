@@ -1,6 +1,6 @@
 <title>Listar Ventas</title>
 {% extends 'layouts/navbar.html' %}
-{% load humanize %}
+
 {% load static %}
 
 {% block content %}
@@ -30,9 +30,9 @@
                             <tr>
                                 <td>{{ venta.fecha }}</td>
                                 <td>{{ venta.metodo_pago }}</td>
-                                <td>$ {{ venta.idPedido.total|floatformat:"0"|intcomma }}</td>
-                                <td>$ {{ venta.descuento|floatformat:"0"|intcomma }}</td>
-                                <td>$ {{ venta.total|floatformat:"0"|intcomma }}</td>
+                                <td>$ {{ venta.idPedido.total|floatformat:0 }}</td>
+                                <td>$ {{ venta.descuento|floatformat:0 }}</td>
+                                <td>$ {{ venta.total|floatformat:0 }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -44,8 +44,7 @@
 </div>
 
 <!-- Modal Crear Venta -->
-<div class="modal fade" id="modalCrearVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="modalCrearVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -55,7 +54,6 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Contenido del formulario con Bootstrap grid system -->
                 <form method="post" action="{% url 'ventas:crear_venta' %}">
                     {% csrf_token %}
                     <div class="form-row">
@@ -75,14 +73,11 @@
                                     <option value="">Seleccione un pedido</option>
                                 </select>
                             </div>
+                            <br>
+                            <br>
                             <div class="form-group">
                                 <label for="id_total_pedido">Total del Pedido</label>
-                                <input type="text" id="id_total_pedido" class="form-control" name="total_pedido"
-                                    readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_total">Total</label>
-                                {{ form.total }}
+                                <input type="number" id="id_total_pedido" class="form-control" name="total_pedido" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -91,16 +86,20 @@
                                 {{ form.metodo_pago }}
                             </div>
                             <div class="form-group">
-                                <label for="id_descuento">Descuento</label>
-                                {{ form.descuento }}
+                                <label for="id_descuento_aumento">Descuento/Aumento</label>
+                                <div class="input-group">
+                                    {{ form.descuento_aumento_type }}
+                                    {{ form.descuento_aumento_value }}
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="id_descuento">Precio Pedido</label><br>
-                                <button type="button" class="btn btn-primary" onclick="buscarPedido()"><i
-                                        class="bi bi-search"></i></button>
+                                <label for="id_total">Total</label>
+                                <input type="number" id="id_total" class="form-control" name="total" readonly>
                             </div>
+                            
                         </div>
                     </div>
+
 
                     <!-- Botones -->
                     <div class="form-row">
@@ -137,8 +136,8 @@
             // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
         });
     });
-    </script>
-    
+</script>
+
 
 <!-- Scripts de Bootstrap y DataTables -->
 
@@ -147,51 +146,67 @@
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
-    // Agrega un evento de escucha al botón "Guardar" del formulario
-    $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
-        event.preventDefault();
-        var formData = new FormData($('#modalCrearVenta form')[0]);
+// Agrega un evento de escucha al botón "Guardar" del formulario
+$('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
+    event.preventDefault();
+    var formData = new FormData($('#modalCrearVenta form')[0]);
 
-        fetch("{% url 'ventas:crear_venta' %}", {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Venta creada con éxito
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: data.message
-                    }).then(() => {
-                        // Recargar la página
-                        location.reload();
-                    });
-                } else {
-                    // Mostrar errores de validación o mensaje específico
-                    if (data.error_type === 'already_exists') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message
-                        });
-                    } else if (data.error_type === 'invalid_discount') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            html: data.errors  // Mostrar los errores en HTML
-                        });
-                    }
-                }
-            })
+    fetch("{% url 'ventas:crear_venta' %}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Venta creada con éxito
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: data.message
+            }).then(() => {
+                // Recargar la página
+                location.reload();
+            });
+        } else {
+            // Mostrar errores de validación o mensaje específico
+            if (data.error_type === 'already_exists') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            } else if (data.error_type === 'invalid_discount') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            } else if (data.error_type === 'pedido_not_found') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            } else {
+                // Mostrar los errores de validación o excepción general
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    html: data.errors || data.message || 'Se produjo un error al procesar la solicitud.'
+                });
+            }
+        }
+    })
+    .catch(error => {
+        // Captura de errores del lado del cliente (ej. errores de red)
+        console.error('Error en la solicitud:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Se produjo un error al enviar la solicitud. Por favor, inténtalo nuevamente.'
+        });
     });
+});
 </script>
 <script>
     $(document).ready(function () {
@@ -233,6 +248,34 @@
         $("#ventasTable_filter input").addClass("form-control form-control-sm");
     });
 
+    $(document).ready(function () {
+    $('#idPedido').change(function () {
+        var idPedido = $(this).val();
+        fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener la respuesta.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var totalPedido = data.total_pedido;
+            // Redondear el número al entero más cercano
+            totalPedido = Math.round(totalPedido);
+            // Mostrar el total del pedido en el input
+            document.getElementById("id_total_pedido").value = totalPedido.toString();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
     function buscarPedido() {
         var idPedido = document.getElementById("idPedido").value;
         fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
@@ -258,6 +301,36 @@
                 console.error('Error:', error);
             });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const selectElement = document.getElementById('descuento_aumento_select');
+    const inputElement = document.getElementById('descuento_aumento_input');
+    const totalPedidoElement = document.getElementById('id_total_pedido');
+    const totalElement = document.getElementById('id_total');
+
+    function updateTotal() {
+        const totalPedido = parseFloat(totalPedidoElement.value) || 0;
+        const value = parseFloat(inputElement.value) || 0;
+        const operation = selectElement.value;
+
+        let newTotal;
+        if (operation === 'descuento') {
+            newTotal = totalPedido - value;
+        } else if (operation === 'aumento') {
+            newTotal = totalPedido + value;
+        }
+
+        // Redondear o truncar el nuevo total a número entero
+        totalElement.value = Math.floor(newTotal); // Redondear hacia abajo
+        // totalElement.value = parseInt(newTotal); // Truncar el valor decimal
+
+        // Si quieres mostrar decimales en la interfaz pero no en el valor del campo, podrías usar:
+        // totalElement.value = newTotal.toFixed(2); // Redondear a dos decimales y convertir a string
+    }
+
+    inputElement.addEventListener('input', updateTotal);
+    selectElement.addEventListener('change', updateTotal);
+});
 
     $(document).ready(function () {
         $('#idUsuario').change(function () {
