@@ -60,7 +60,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="idUsuario">Usuarios</label>
-                                <select id="idUsuario" class="id_permisosEditar" name="usuario">
+                                <select id="idUsuario" class="id_permisosEditar2" name="usuario">
                                     <option value="">Seleccione un usuario</option>
                                     {% for usuario in usuarios %}
                                     <option value="{{ usuario.id }}">{{ usuario.nombre }} - {{ usuario.documento }}</option>
@@ -117,14 +117,20 @@
 <script>
     $(document).ready(function () {
         $('.select2').select2({
-            placeholder: 'Selecciona los permisos',
+            placeholder: 'Selecciona el usuario',
             // theme: "classic",
             width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
             height: '100%', // Opcional: establece
             // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
         });
         $('.id_permisosEditar').select2({
-            placeholder: 'Selecciona los permisos',
+            placeholder: 'Selecciona el pedido',
+            theme: "classic",
+            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+            // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+        });
+        $('.id_permisosEditar2').select2({
+            placeholder: 'Selecciona el usuario',
             theme: "classic",
             width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
             // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
