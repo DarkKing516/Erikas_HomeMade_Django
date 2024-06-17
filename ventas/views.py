@@ -77,7 +77,8 @@ def crear_venta(request):
         return JsonResponse({'success': False, 'message': 'La solicitud no es de tipo POST.'}, status=405)
 
 def obtener_pedidos_usuario(request, usuario_id):
-    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id)
+    pedidos_vendidos = Venta.objects.values_list('idPedido_id', flat=True)
+    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id).exclude(idPedido__in=pedidos_vendidos)
     pedidos_list = [{'idPedido': pedido.idPedido, 'descripcion': pedido.descripcion_pedido} for pedido in pedidos]
     return JsonResponse({'pedidos': pedidos_list})
 

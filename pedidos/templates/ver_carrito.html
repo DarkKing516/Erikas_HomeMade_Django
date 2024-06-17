@@ -205,6 +205,17 @@
   </div>
 </div>
 
+{% if error_message %}
+<script>
+  Swal.fire({
+    title: 'Error',
+    text: '{{ error_message }}',
+    icon: 'error',
+    confirmButtonText: 'OK'
+  });
+</script>
+{% endif %}
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Obtener todos los precios de los items en el carrito

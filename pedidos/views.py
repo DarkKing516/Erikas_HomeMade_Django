@@ -51,15 +51,23 @@ def crear_pedido_carrito(request):
             for item_id, item_data in grouped_cart.items():
                 if item_data['tipo'] == 'producto':
                     producto = Producto.objects.get(idProducto=item_id)
-                    DetallePedidoProducto.objects.create(
-                        idPedido=pedido,
-                        idProducto=producto,
-                        cant_productos=item_data['cantidad'],
-                        nombre_productos=item_data['nombre'],
-                        descripcion=item_data['descripcion'],
-                        precio_inicial_producto=item_data['precio'],
-                        subtotal_productos=item_data['precio'] * item_data['cantidad']
-                    )
+                    if producto.cantidad < item_data['cantidad']:
+                        # Si no hay suficiente stock, mostrar un mensaje de error
+                        return render(request, 'ver_carrito.html', {'error_message': f'No hay suficiente stock para el producto {producto.nombre}'})
+
+                    else:
+                        DetallePedidoProducto.objects.create(
+                            idPedido=pedido,
+                            idProducto=producto,
+                            cant_productos=item_data['cantidad'],
+                            nombre_productos=item_data['nombre'],
+                            descripcion=item_data['descripcion'],
+                            precio_inicial_producto=item_data['precio'],
+                            subtotal_productos=item_data['precio'] * item_data['cantidad']
+                        )
+                        # Restar la cantidad del producto del stock
+                        producto.cantidad -= item_data['cantidad']
+                        producto.save()
                 elif item_data['tipo'] == 'servicio':
                     servicio = Servicio.objects.get(idServicio=item_id)
                     DetallePedidoServicio.objects.create(
