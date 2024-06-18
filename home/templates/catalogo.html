@@ -43,90 +43,160 @@
         </select>
     </div>
 
-    <!-- Contenedor para productos -->
     <div id="productSection">
-        <h1 id="TituloProducto">Productos</h1>
-        <div class="row" id="productCards">
-            {% for producto in productos %}
-            {% if producto.estado_catalogo == "A" and producto.id_TipoProducto.estado_producto == "Activo" and producto.estado_producto == "A" %}
-            <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
-                <div class="custom-card">
-                    <div class="custom-card-image-container">
+      <h1 id="TituloProducto">Productos</h1>
+      <div class="row" id="productCards">
+          {% for producto in productos %}
+          {% if producto.estado_catalogo == "A" and producto.id_TipoProducto.estado_producto == "Activo" and producto.estado_producto == "A" %}
+          <div class="col-md-3 mb-4 custom-product-card" data-tipo-producto="{{ producto.id_TipoProducto.idTipo_Producto }}">
+              <div class="custom-card">
+                  <div class="custom-card-image-container">
                       <img src="{{ producto.image_url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
-                      <!-- {% if producto.imagen and producto.imagen.url %}
-                          <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="custom-image-icon"/>
-                      {% else %}
-                          <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="Imagen predeterminada" class="custom-image-icon"/>
-                      {% endif %} -->
-                    </div>
-                    <p class="custom-card-title">{{ producto.nombre }}</p>
-                    <p class="custom-card-des">{{ producto.descripcion }}</p>
-                    <p class="custom-card-des">{{ producto.cantidad }}</p>
-                    <p style="color: #504cac;" class="custom-card-price">${{ producto.precio|floatformat:"0"|intcomma }}</p> <!-- Convertir el precio a entero -->
-                    <!-- Botón de añadir para productos -->
-                    <div class="botnGod" data-tooltip="${{ producto.precio|floatformat:"0"|intcomma }}">
-                        <div class="botnGod-wrapper" onclick="addToCart('{{ producto.idProducto }}', 'producto', '{{ producto.nombre }}')">
-                            <div class="textbotnGod">Añadir</div>
-                            <span class="iconbotnGod">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2"
-                                viewBox="0 0 16 16">
-                                <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z">
-                                </path>
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Contenedor para servicios -->
-    <div id="serviceSection">
-        <h1 id="TituloServicios">Servicios</h1>
-        <div class="row" id="serviceCards">
-            {% for servicio in servicios %}
-            {% if servicio.estado_catalogo == "A" and servicio.id_TipoServicio.estado_tipoServicio == "Activo" and servicio.estado_servicio == "A"%}
-            <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
-                <div class="custom-card">
-                    <div class="custom-card-image-container">
-                      <img src="{{ servicio.image_url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
-                      
-                      <!-- {% if servicio.img and servicio.img.url %}
-                          <img src="{{ servicio.img.url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
-                      {% else %}
-                          <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="Imagen predeterminada" class="custom-image-icon"/>
-                      {% endif %} -->
-                    </div>
-                    <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
-                    <p class="custom-card-des">{{ servicio.descripcion }}</p>
-
-                    <p style="color: aliceblue;" class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0"|intcomma }}</p> <!-- Convertir el precio a entero -->
-                    <!-- Botón de añadir para servicios -->
-                    <div class="botnGod" data-tooltip="${{ servicio.precio_servicio|floatformat:"0"|intcomma }}">
-                      <div class="botnGod-wrapper" onclick="addToCart('{{ servicio.idServicio }}', 'servicio', '{{ servicio.nombre_servicio }}')">
+                  </div>
+                  <p class="custom-card-title">{{ producto.nombre }}</p>
+                  <p class="custom-card-des" hidden>{{ producto.descripcion }}</p>
+                  <p class="custom-card-des">Click en la imagen para ver más</p>
+                  <p class="custom-card-des">Cantidad: {{ producto.cantidad }}</p>
+                  <p style="color: #504cac;" class="custom-card-price">${{ producto.precio|floatformat:"0"|intcomma }}</p>
+                  <!-- Botón de añadir para productos -->
+                  <div class="botnGod" data-tooltip="${{ producto.precio|floatformat:"0"|intcomma }}">
+                      <div class="botnGod-wrapper" onclick="event.stopPropagation(); addToCart('{{ producto.idProducto }}', 'producto', '{{ producto.nombre }}')">
                           <div class="textbotnGod">Añadir</div>
                           <span class="iconbotnGod">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2"
-                              viewBox="0 0 16 16">
-                              <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z">
-                              </path>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2" viewBox="0 0 16 16">
+                                  <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
                               </svg>
                           </span>
                       </div>
                   </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
+              </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+      </div>
+  </div>
+
+    <!-- Contenedor para servicios -->
+    <div id="serviceSection">
+      <h1 id="TituloServicios">Servicios</h1>
+      <div class="row" id="serviceCards">
+          {% for servicio in servicios %}
+          {% if servicio.estado_catalogo == "A" and servicio.id_TipoServicio.estado_tipoServicio == "Activo" and servicio.estado_servicio == "A"%}
+          <div class="col-md-3 mb-4 custom-service-card" data-tipo-servicio="{{ servicio.id_TipoServicio.idTipo_Servicio }}">
+              <div class="custom-card">
+                  <div class="custom-card-image-container">
+                      <img src="{{ servicio.image_url }}" alt="{{ servicio.nombre_servicio }}" class="custom-image-icon"/>
+                  </div>
+                  <p class="custom-card-title">{{ servicio.nombre_servicio }}</p>
+                  <p class="custom-card-des" hidden>{{ servicio.descripcion }}</p>
+                  <p class="custom-card-des">Click en la imagen para ver más</p>
+                  <p style="color: #504cac;" class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0"|intcomma }}</p>
+                  <!-- Botón de añadir para servicios -->
+                  <div class="botnGod" data-tooltip="${{ servicio.precio_servicio|floatformat:"0"|intcomma }}">
+                      <div class="botnGod-wrapper" onclick="event.stopPropagation(); addToCart('{{ servicio.idServicio }}', 'servicio', '{{ servicio.nombre_servicio }}')">
+                          <div class="textbotnGod">Añadir</div>
+                          <span class="iconbotnGod">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2" viewBox="0 0 16 16">
+                                  <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
+                              </svg>
+                          </span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+      </div>
     </div>
+</div> 
+<!-- Modal HTML -->
+<div id="productModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="productModalTitle"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <center>
+                <img id="productModalImage" src="" alt="" class="img-fluid mb-3">
+              <p id="productModalDescription"></p>
+              </center>
+          </div>
+      </div>
+  </div>
+</div>  
+
+<!-- Modal HTML -->
+<div id="serviceModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="serviceModalTitle"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <center>
+                <img id="serviceModalImage" src="" alt="" class="img-fluid mb-3">
+              <p id="serviceModalDescription"></p>
+              </center>
+          </div>
+      </div>
+  </div>
 </div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
+  
+  document.addEventListener('DOMContentLoaded', function () {
+    // Escuchar los clics en las imágenes de los productos
+    document.querySelectorAll('.custom-product-card .custom-image-icon').forEach(image => {
+        image.addEventListener('click', function (event) {
+            event.stopPropagation(); // Evitar que se propaguen otros eventos de clic
+
+            const productoNombre = this.alt; // El nombre del producto está en el atributo alt de la imagen
+            const productoDescripcion = this.closest('.custom-product-card').querySelector('.custom-card-des').innerText;
+            const productoImagen = this.src;
+
+            document.getElementById('productModalTitle').innerText = productoNombre;
+            document.getElementById('productModalDescription').innerText = productoDescripcion;
+            document.getElementById('productModalImage').src = productoImagen;
+
+            $('#productModal').modal('show');
+        });
+    });
+
+    // Escuchar los clics en las imágenes de los servicios
+    document.querySelectorAll('.custom-service-card .custom-image-icon').forEach(image => {
+        image.addEventListener('click', function (event) {
+            event.stopPropagation(); // Evitar que se propaguen otros eventos de clic
+
+            const servicioNombre = this.alt; // El nombre del servicio está en el atributo alt de la imagen
+            const servicioDescripcion = this.closest('.custom-service-card').querySelector('.custom-card-des').innerText;
+            const servicioImagen = this.src;
+
+            document.getElementById('serviceModalTitle').innerText = servicioNombre;
+            document.getElementById('serviceModalDescription').innerText = servicioDescripcion;
+            document.getElementById('serviceModalImage').src = servicioImagen;
+
+            $('#serviceModal').modal('show');
+        });
+    });
+});
+
+
+
 function addToCart(id, type, name) {
     fetch("{% url 'pedidos:add_to_cart' %}", {
         method: 'POST',
@@ -234,26 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Definimos un array para almacenar los elementos del carrito
 let carrito = [];
 
-// function addToCart(id, tipo) {
-//     // Lógica para añadir al carrito
-//     if (tipo === 'producto') {
-//         console.log(`Añadir al carrito el producto con ID: ${id}`);
-//         // Agregar el producto al array del carrito
-//         carrito.push({ tipo: 'producto', id: id });
-//     } else if (tipo === 'servicio') {
-//         console.log(`Añadir al carrito el servicio con ID: ${id}`);
-//         // Agregar el servicio al array del carrito
-//         carrito.push({ tipo: 'servicio', id: id });
-//     } else {
-//         console.log(`Tipo desconocido: ${tipo}`);
-//     }
-
-//     // Imprimir el contenido del carrito
-//     console.log('Contenido del carrito:', carrito);
-// }
 
 
 </script>

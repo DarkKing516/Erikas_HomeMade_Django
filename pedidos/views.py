@@ -1,3 +1,4 @@
+from django.templatetags.static import static
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import *
 from .forms import *
@@ -50,15 +51,23 @@ def crear_pedido_carrito(request):
             for item_id, item_data in grouped_cart.items():
                 if item_data['tipo'] == 'producto':
                     producto = Producto.objects.get(idProducto=item_id)
-                    DetallePedidoProducto.objects.create(
-                        idPedido=pedido,
-                        idProducto=producto,
-                        cant_productos=item_data['cantidad'],
-                        nombre_productos=item_data['nombre'],
-                        descripcion=item_data['descripcion'],
-                        precio_inicial_producto=item_data['precio'],
-                        subtotal_productos=item_data['precio'] * item_data['cantidad']
-                    )
+                    if producto.cantidad < item_data['cantidad']:
+                        # Si no hay suficiente stock, mostrar un mensaje de error
+                        return render(request, 'ver_carrito.html', {'error_message': f'No hay suficiente stock para el producto {producto.nombre}'})
+
+                    else:
+                        DetallePedidoProducto.objects.create(
+                            idPedido=pedido,
+                            idProducto=producto,
+                            cant_productos=item_data['cantidad'],
+                            nombre_productos=item_data['nombre'],
+                            descripcion=item_data['descripcion'],
+                            precio_inicial_producto=item_data['precio'],
+                            subtotal_productos=item_data['precio'] * item_data['cantidad']
+                        )
+                        # Restar la cantidad del producto del stock
+                        producto.cantidad -= item_data['cantidad']
+                        producto.save()
                 elif item_data['tipo'] == 'servicio':
                     servicio = Servicio.objects.get(idServicio=item_id)
                     DetallePedidoServicio.objects.create(
@@ -204,8 +213,26 @@ def remove_cart_item(request):
 
 def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
+    default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
 
     pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id).exclude(estado_pedido='entregado')
+
+    for pedido in pedidos:
+        for detalle_pedido_producto in pedido.detallepedidoproducto_set.all():
+            producto = detalle_pedido_producto.idProducto
+            # print(f"1 {producto.imagen} \n")
+            image_url = get_image_url(producto, 'imagen', default_image_url)
+            # print(f"{image_url} \n")
+            detalle_pedido_producto.idProducto.imagen = image_url
+            # print(f"{detalle_pedido_producto.idProducto.imagen} \n")
+
+        for detalle_pedido_servicio in pedido.detallepedidoservicio_set.all():
+            servicio = detalle_pedido_servicio.idServicio
+            image_url = get_image_url(servicio, 'img', default_image_url)
+            detalle_pedido_servicio.imagen_url = image_url
+    # for pedido in pedidos:
+    #     for detalle_pedido_producto in pedido.detallepedidoproducto_set.all():
+    #         print(f"oaaaaaaaaaa {detalle_pedido_producto.idProducto.imagen} \n")
 
     return render(request, 'listar_mis_pedidos.html', {'pedidos': pedidos})
 
