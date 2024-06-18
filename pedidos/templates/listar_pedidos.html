@@ -1,6 +1,6 @@
 <title>Listar Pedidos</title>
 {% extends 'layouts/navbar.html' %}
-{% load humanize %}
+
 {% load static %}
 
 {% block content %}
@@ -34,7 +34,7 @@
                                 <td>{{ pedido.id_Usuario }}</td>
                                 <td>{{ pedido.fechaCreacion_pedido }}</td>
                                 <td>{{ pedido.fecha_pedido }}</td>
-                                <td>$ {{ pedido.total|floatformat:"0"|intcomma  }}</td>
+                                <td>$ {{ pedido.total|floatformat:"0"  }}</td>
                                 {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
                                 <td>
                                     <!-- Aquí puedes acceder al estado del pedido -->
@@ -328,29 +328,29 @@
                         <label for="productos">Productos</label><br>
                         <select id="productos" name="productos" class="select2 form-control">
                             {% for producto in productos %}
-                                <option value="{{ producto.idProducto }}">{{ producto.nombre }}</option>
+                                <option value="{{ producto.idProducto }}" data-precio="{{ producto.precio }}">{{ producto.nombre }}</option>
                             {% endfor %}
                         </select>
                         <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('producto')">Agregar</button>
                         <br>
                         <ul id="lista_productos"></ul>
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="servicios">Servicios</label><br>
                         <select id="servicios" name="servicios" class="select2 form-control">
                             {% for servicio in servicios %}
-                                <option value="{{ servicio.idServicio }}">{{ servicio.nombre_servicio }}</option>
+                                <option value="{{ servicio.idServicio }}" data-precio="{{ servicio.precio_servicio }}">{{ servicio.nombre_servicio }}</option>
                             {% endfor %}
                         </select>
                         <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('servicio')">Agregar</button>
                         <br>
                         <ul id="lista_servicios"></ul>
                     </div>
-
+                    
                     <!-- Hidden input to store the selected items -->
                     <input type="hidden" id="selectedItems" name="selectedItems" />
-
+                    
                     <script>
                         let selectedItems = [];
                     
@@ -413,10 +413,10 @@
                                         existingItem.quantity += quantity;
                                         existingItem.total += totalItem;
                     
-                                        // Actualizar la cantidad y el total mostrado en la lista
+                                        // Actualizar la cantidad, subtotal y el total mostrado en la lista
                                         let listItem = document.getElementById(itemId);
-                                        listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Total: ${existingItem.total.toFixed(2)} 
-                                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                        listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Subtotal: ${existingItem.total.toFixed(2)} 
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
                                     } else {
                                         // Agregar nuevo elemento al array selectedItems
                                         selectedItems.push({
@@ -431,8 +431,8 @@
                                         // Agregar elemento a la lista
                                         let listItem = document.createElement('li');
                                         listItem.id = itemId;
-                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Total: ${totalItem.toFixed(2)} 
-                                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Subtotal: ${totalItem.toFixed(2)} 
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
                                         listElement.appendChild(listItem);
                                     }
                     
@@ -483,8 +483,38 @@
                             hiddenInput.value = JSON.stringify(selectedItems);
                             form.submit();
                         }
+
+                        function actualizarSubtotalYTotal() {
+                            let subtotal = 0;
+                            selectedItems.forEach(item => {
+                                subtotal += item.total;
+                            });
+                        
+                            // Actualizar subtotal en el formulario principal
+                            document.getElementById('subtotal').value = subtotal.toFixed(2);
+                        
+                            // Actualizar campo de subtotal en el formulario Django
+                            document.getElementById('id_subtotal').value = subtotal.toFixed(2); // Reemplaza 'id_subtotal' con el ID correcto generado por Django
+                            
+                            // Calcular IVA (asumiendo que es 19%)
+                            let iva = subtotal * 0.19;
+
+                            // Actualizar campo de IVA en el formulario principal
+                            document.getElementById('iva').value = iva.toFixed(2);
+
+                            // Calcular total (subtotal + IVA)
+                            let total = subtotal + iva;
+
+                            // Actualizar campo de total en el formulario principal
+                            document.getElementById('total').value = total.toFixed(2);
+
+                            // Actualizar campos ocultos de Django si es necesario (opcional)
+                            document.getElementById('id_iva').value = iva.toFixed(2); // Reemplaza 'id_iva' con el ID correcto generado por Django
+                            document.getElementById('id_total').value = total.toFixed(2); // Reemplaza 'id_total' con el ID correcto generado por Django
+                        }
+
+                        
                     </script>
-                    
                     
                     <style>
                         /* Ocultar flechas del campo de entrada numérico */
