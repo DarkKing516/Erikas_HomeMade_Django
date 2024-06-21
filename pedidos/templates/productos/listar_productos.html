@@ -55,7 +55,11 @@
                             <tr class="producto-row">
                                 <td>{{ producto.id_TipoProducto }}</td>
                                 <td>{{ producto.nombre }}</td>
-                                <td>{{ producto.descripcion }}</td>
+                                <td>
+                                    <button type="button" class="badge btn-info hover-cursor" data-toggle="modal" data-target="#detalleProductoModal{{ producto.idProducto }}">
+                                        <i class="mdi mdi-eye"></i>
+                                    </button>
+                                </td>
                                 <td>$ {{ producto.precio|floatformat:"0"|intcomma }}</td>                                
 
                                 <td>
@@ -99,6 +103,7 @@
                                     </div>
                                 </td>                              
                             </tr>
+                            
                     
                                 <!-- Modal para editar Pedido -->
                                 <div class="modal fade" id="editarProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
@@ -175,6 +180,23 @@
                                     </div>
                                 </div>
                                 </div>
+
+                              <!-- Modal Detalle del Servicio -->
+                            <div class="modal fade" id="detalleProductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog" aria-labelledby="detalleProductoModal{{ producto.idProducto }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="detalleProductoModal{{ producto.idProducto }}Label">Descripcion del producto</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>             
 
                             <!-- Modal para editar imagen de Producto -->
                             <div class="modal fade" id="editevidenciaproductoModal{{ producto.idProducto }}" tabindex="-1" role="dialog"
