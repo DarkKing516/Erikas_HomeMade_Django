@@ -1,5 +1,9 @@
+
+
 <title>Listar Ventas</title>
 {% extends 'layouts/navbar.html' %}
+
+{% load humanize %}
 
 {% load static %}
 
@@ -12,16 +16,15 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Ventas</h4>
+                <h4 class="card-title">Mis compras</h4>
                 <div class="table-responsive">
                     <table id="ventasTable" class="table reserva-table" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>Fecha de venta</th>
-                                <th>Método de pago</th>
                                 <th>Total de pedido</th>
-                                <th>Descuento</th>
                                 <th>Total Final</th>
+                                <th>Detalle compra</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
 
                             </tr>
@@ -31,14 +34,38 @@
                             {% for venta in ventas %}
                             <tr>
                                 <td>{{ venta.fecha }}</td>
-                                <td>{{ venta.metodo_pago }}</td>
-                                <td>$ {{ venta.idPedido.total|floatformat:0 }}</td>
-                                <td>$ {{ venta.descuento|floatformat:0 }}</td>
-                                <td>$ {{ venta.total|floatformat:0 }}</td>
+                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.total|floatformat:0|intcomma }}</td>
+                                <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0|intcomma }}</td>
+                                <td>
+                                    <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#ventaModal{{ venta.id }}"><i class="mdi mdi-eye"></i></a>
+                                </td>
                                 <td>
                                     <a href="{% url 'ventas:generar_factura' idVenta=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
                                 </td>
                             </tr>
+                            <!-- Modal para cada venta -->
+                            <div class="modal fade" id="ventaModal{{ venta.id }}" tabindex="-1" role="dialog" aria-labelledby="ventaModalLabel{{ venta.id }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="ventaModalLabel{{ venta.id }}">Detalles de la Venta</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="order-card">
+                                                <h5>Descripción venta</h5>
+                                                <p>Fecha de venta: {{ venta.fecha }}</p>
+                                                <p>Método de Pago: {{ venta.metodo_pago }}</p>
+                                                <p>Subtotal: ${{ venta.idPedido.total|floatformat:"0"|intcomma }}</p>
+                                                <p class="discount">Descuento: -${{ venta.descuento|floatformat:"0"|intcomma }}</p>
+                                                <p class="final-total">Total: ${{ venta.total|floatformat:"0"|intcomma }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -48,107 +75,6 @@
     </div>
 </div>
 
-<!-- Modal Crear Venta -->
-<div class="modal fade" id="modalCrearVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crear Nueva Venta</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{% url 'ventas:crear_venta' %}">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="idUsuario">Usuarios</label>
-                                <select id="idUsuario" class="id_permisosEditar2" name="usuario">
-                                    <option value="">Seleccione un usuario</option>
-                                    {% for usuario in usuarios %}
-                                    <option value="{{ usuario.id }}">{{ usuario.nombre }} - {{ usuario.documento }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="idPedido">Pedido</label>
-                                <select id="idPedido" class="form-control id_permisosEditar" name="idPedido">
-                                    <option value="">Seleccione un pedido</option>
-                                </select>
-                            </div>
-                            <br>
-                            <br>
-                            <div class="form-group">
-                                <label for="id_total_pedido">Total del Pedido</label>
-                                <input type="number" id="id_total_pedido" class="form-control" name="total_pedido" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_metodo_pago">Método de Pago</label>
-                                {{ form.metodo_pago }}
-                            </div>
-                            <div class="form-group">
-                                <label for="id_descuento_aumento">Descuento/Aumento</label>
-                                <div class="input-group">
-                                    {{ form.descuento_aumento_type }}
-                                    {{ form.descuento_aumento_value }}
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="id_total">Total</label>
-                                <input type="number" id="id_total" class="form-control" name="total" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="form-row">
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary mr-2">Guardar</button>
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-{% if abrir_modal %}
-<script>
-    $(document).ready(function() {
-        $('#modalCrearVenta').modal('show');
-    });
-</script>
-{% endif %}
-
-<script>
-    $(document).ready(function () {
-        $('.select2').select2({
-            placeholder: 'Selecciona el usuario',
-            // theme: "classic",
-            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
-            height: '100%', // Opcional: establece
-            // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
-        });
-        $('.id_permisosEditar').select2({
-            placeholder: 'Selecciona el pedido',
-            theme: "classic",
-            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
-            // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
-        });
-        $('.id_permisosEditar2').select2({
-            placeholder: 'Selecciona el usuario',
-            theme: "classic",
-            width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
-            // closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
-        });
-    });
-</script>
-
 
 <!-- Scripts de Bootstrap y DataTables -->
 
@@ -156,69 +82,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script>
-// Agrega un evento de escucha al botón "Guardar" del formulario
-$('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
-    event.preventDefault();
-    var formData = new FormData($('#modalCrearVenta form')[0]);
 
-    fetch("{% url 'ventas:crear_venta' %}", {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Venta creada con éxito
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: data.message
-            }).then(() => {
-                // Recargar la página
-                location.reload();
-            });
-        } else {
-            // Mostrar errores de validación o mensaje específico
-            if (data.error_type === 'already_exists') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message
-                });
-            } else if (data.error_type === 'invalid_discount') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message
-                });
-            } else if (data.error_type === 'pedido_not_found') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message
-                });
-            } else {
-                // Mostrar los errores de validación o excepción general
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    html: data.errors || data.message || 'Se produjo un error al procesar la solicitud.'
-                });
-            }
-        }
-    })
-    .catch(error => {
-        // Captura de errores del lado del cliente (ej. errores de red)
-        console.error('Error en la solicitud:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Se produjo un error al enviar la solicitud. Por favor, inténtalo nuevamente.'
-        });
-    });
-});
-</script>
 <script>
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
@@ -252,179 +116,21 @@ $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
 
         // Mover el cuadro de búsqueda al lugar deseado
         $("#ventasTable_filter").detach().appendTo(".top");
-        {% if "Crear Ventas" in request.session.permisos %}
-        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#modalCrearVenta" style="margin: 5px">Agregar Venta</button>');
-        {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#ventasTable_filter input").addClass("form-control form-control-sm");
     });
-
-    $(document).ready(function () {
-        $('#idPedido').change(function () {
-            var idPedido = $(this).val();
-            fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener la respuesta.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                var totalPedido = data.total_pedido;
-                // Redondear el número al entero más cercano
-                totalPedido = Math.round(totalPedido);
-                // Mostrar el total del pedido en el input
-                document.getElementById("id_total_pedido").value = totalPedido.toString();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    });
-
-    function buscarPedido() {
-        var idPedido = document.getElementById("idPedido").value;
-        fetch("{% url 'ventas:obtener_total_pedido' 0 %}".replace('0', idPedido), {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al obtener la respuesta.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                var totalPedido = data.total_pedido;
-                // Redondear el número al entero más cercano
-                totalPedido = Math.round(totalPedido);
-                // Mostrar el total del pedido en el input
-                document.getElementById("id_total_pedido").value = totalPedido.toString();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectElement = document.getElementById('descuento_aumento_select');
-        const inputElement = document.getElementById('descuento_aumento_input');
-        const totalPedidoElement = document.getElementById('id_total_pedido');
-        const totalElement = document.getElementById('id_total');
-
-        function updateTotal() {
-            const totalPedido = parseFloat(totalPedidoElement.value) || 0;
-            const value = parseFloat(inputElement.value) || 0;
-            const operation = selectElement.value;
-
-            let newTotal;
-            if (operation === 'descuento') {
-                newTotal = totalPedido - value;
-            } else if (operation === 'aumento') {
-                newTotal = totalPedido + value;
-            }
-
-            // Redondear o truncar el nuevo total a número entero
-            totalElement.value = Math.floor(newTotal); // Redondear hacia abajo
-            // totalElement.value = parseInt(newTotal); // Truncar el valor decimal
-
-            // Si quieres mostrar decimales en la interfaz pero no en el valor del campo, podrías usar:
-            // totalElement.value = newTotal.toFixed(2); // Redondear a dos decimales y convertir a string
-        }
-
-        inputElement.addEventListener('input', updateTotal);
-        selectElement.addEventListener('change', updateTotal);
-    });
-
-    $(document).ready(function () {
-        $('#idUsuario').change(function () {
-            var usuarioId = $(this).val();
-            if (usuarioId) {
-                fetch("{% url 'ventas:obtener_pedidos_usuario' 0 %}".replace('0', usuarioId), {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error al obtener la respuesta.');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        var selectPedido = $('#idPedido');
-                        selectPedido.empty(); // Limpiar las opciones actuales
-                        selectPedido.append('<option value="">Seleccione un pedido</option>');
-                        data.pedidos.forEach(pedido => {
-                            var option = new Option(pedido.descripcion, pedido.idPedido);
-                            selectPedido.append(option); // Agregar nuevas opciones
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            } else {
-                $('#idPedido').empty();
-            }
-        });
-
-        $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
-            var metodoPago = $('#id_metodo_pago').val();
-            var total = $('#id_total').val();
-            var descuento = $('#id_descuento').val();
-            if (metodoPago === '' || total === '' || descuento === '') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Por favor completa todos los campos.'
-                });
-                return false;
-            }
-        });
-
-        $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
-            var total = parseFloat($('#id_total').val());
-            var descuento = parseFloat($('#id_descuento').val());
-            if (descuento > total) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'El descuento no puede ser mayor que el total.'
-                });
-                return false;
-            }
-        });
-    });
-
-    window.onload = function () {
-        var campos = document.getElementById("campos_adicionales");
-        var campos2 = document.getElementById("id_metodo_pago");
-        var campos3 = document.getElementById("id_descuento");
-        var campos4 = document.getElementById("id_total");
-        campos.style.display = "block";
-        campos2.style.display = "block";
-        campos3.style.display = "block";
-        campos4.style.display = "block";
-    };
+   
 </script>
 
 
 {% if not request.session.usuario_id %}
-<script>
-    //window.location.href = "{% url 'usuarios:requestLogin' %}";
-</script>
-{% elif "Listar Ventas" not in request.session.permisos %}
-<script>
-    //window.location.href = "{% url 'usuarios:requestLogin' %}";
-</script>
+    <script>
+        window.location.href = "{% url 'usuarios:requestLogin' %}";
+    </script>
+    {% elif "Listar Mis Ventas" not in request.session.permisos %}
+    <script>
+        window.location.href = "{% url 'usuarios:requestLogin' %}";
+    </script>
 {% endif %}
 
 
