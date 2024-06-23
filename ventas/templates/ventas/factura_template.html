@@ -70,6 +70,8 @@
 
     <h3 style="text-align: center;">Detalles de la Venta</h3>
     <p><strong>Fecha de Venta:</strong> {{ venta.fecha }}</p>
+    <p><strong>Subtotal:</strong> {{ venta.idPedido.subtotal }}</p>
+    <p><strong>Iva:</strong> {{ venta.idPedido.iva }}</p>
     <p><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
     <p><strong>Total de Pedido:</strong> $ {{ venta.idPedido.total|floatformat:0 }}</p>
     <p><strong>Descuento:</strong> $ {{ venta.descuento|floatformat:0 }}</p>
@@ -93,6 +95,28 @@
                 <td>{{ detalle.cant_productos }}</td>
                 <td>$ {{ detalle.precio_inicial_producto|floatformat:0 }}</td>
                 <td>$ {{ detalle.subtotal_productos|floatformat:0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 style="text-align: center;">Servicios Vendidos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Descripcion del Servicio</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalleS in detalles_servicios %}
+            <tr>
+                <td>{{ detalleS.descripcion }}</td>
+                <td>{{ detalleS.cantidad_servicios }}</td>
+                <td>$ {{ detalleS.precio_inicial_servicio|floatformat:0 }}</td>
+                <td>$ {{ detalleS.subtotal_servicios|floatformat:0 }}</td>
             </tr>
             {% endfor %}
         </tbody>

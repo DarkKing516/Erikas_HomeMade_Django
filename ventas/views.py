@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from .models import Venta
 from usuarios.models import *
 from .forms import VentaForm
-from pedidos.models import DetallePedidoProducto, Pedido
+from pedidos.models import DetallePedidoProducto, Pedido, DetallePedidoServicio
 from django.conf import settings
 from django.template.loader import render_to_string
 from io import BytesIO
@@ -22,6 +22,9 @@ def generar_factura_pdf(request, idVenta):
 
     # Obtener los detalles de pedido de productos asociados a este pedido
     detalles_productos = DetallePedidoProducto.objects.filter(idPedido=pedido)
+    
+    detalles_servicios = DetallePedidoServicio.objects.filter(idPedido=pedido)
+
 
     subtotal_productos = sum(detalle.subtotal_productos for detalle in detalles_productos)
 
@@ -33,6 +36,7 @@ def generar_factura_pdf(request, idVenta):
         'venta': venta,
         'pedido': pedido,
         'detalles_productos': detalles_productos,
+        'detalles_servicios': detalles_servicios,
         'subtotal_productos': subtotal_productos,
     })
 
