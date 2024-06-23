@@ -24,11 +24,7 @@
                                 <th>Fecha de venta</th>
                                 <th>Método de pago</th>
                                 <th>Total de pedido</th>
-<<<<<<< HEAD
                                 <th>Descuento / Aumento</th>
-=======
-                                <th>Descuento/Aumento</th>
->>>>>>> f0a2afbd8af706662fb89db67035f5e82da471a9
                                 <th>Total Final</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
 
@@ -40,23 +36,17 @@
                             <tr>
                                 <td>{{ venta.fecha }}</td>
                                 <td>{{ venta.metodo_pago }}</td>
-<<<<<<< HEAD
-                                <td>$ {{ venta.idPedido.total|floatformat:0|intcomma }}</td>
-                                <td>$ {{ venta.descuento|floatformat:0|intcomma }}</td>
-                                <td>$ {{ venta.total|floatformat:0|intcomma }}</td>
-=======
-                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.total|floatformat:0 }}</td>
+                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.total|floatformat:0|intcomma }}</td>
                                 <td class="descuento-aumento" data-value="{{ venta.descuento }}">
                                     {% if venta.descuento > 0 %}
-                                        -$ {{ venta.descuento|floatformat:0 }}
+                                        -$ {{ venta.descuento|floatformat:0|intcomma }}
                                     {% elif venta.descuento < 0 %}
-                                        $ {{ venta.descuento|floatformat:0 }}
+                                        $ {{ venta.descuento|floatformat:0|intcomma }}
                                     {% else %}
                                         $0
                                     {% endif %}
                                 </td>
-                                <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0 }}</td>
->>>>>>> f0a2afbd8af706662fb89db67035f5e82da471a9
+                                <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0|intcomma }}</td>
                                 <td>
                                     <a href="{% url 'ventas:generar_factura' idVenta=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
                                 </td>
@@ -89,7 +79,12 @@
                 displayValue = '$0';
             }
 
-            descuentoAumentoCell.textContent = displayValue;
+            descuentoAumentoCell.textContent = new Intl.NumberFormat().format(displayValue.replace('$', '').replace('-', ''));
+            if (difference > 0) {
+                descuentoAumentoCell.textContent = `-$${descuentoAumentoCell.textContent}`;
+            } else if (difference < 0) {
+                descuentoAumentoCell.textContent = `$${descuentoAumentoCell.textContent}`;
+            }
         });
     });
 </script>
