@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-06-2024 a las 22:19:16
+-- Tiempo de generación: 24-06-2024 a las 00:31:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -391,6 +391,7 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 ('feo7ph66aobeabg0e74xfu6zy24ik7jm', '.eJxdkMFqwzAMhl8l6Gwa2DGnjrLbNkqhu4xi1FgLGrEVpGSXsXevknZbtpv1-bP5f30C2YhJoIF7CKDS-2nXM5WRfOYUF3QXYCDNbGLQvMJD4hG12pO-ce_aI9s8P7E5S5zcCt_SX7gyD2SkH_hPXdGV--J5nJ0CTDahskROS6oi-awUb9SzPy-g2utEZ4Qf_7dVdbyRAK2okqwet1dl22XkftNKnleQsaMSh2vXBursZbCePGZc7qzmVooYGUvZvA_d_DPq6Is6fV0Ahf95IQ:1sLSE2:GsqFeoP3CW0Vv0i0mtpvTLTCtky2ANE8nK_xLt0Z-EM', '2024-07-07 18:46:06.115826'),
 ('fyznt84cyullkimft2p2f8zebcjekxbf', '.eJxdkMFqwzAMhl8l6Gwa2DGnjrLbNkqhu4xi1FgLGrEVpGSXsXevknZbtpv1-bP5f30C2YhJoIF7CKDS-2nXM5WRfOYUF3QXYCDNbGLQvMJD4hG12pO-ce_aI9s8P7E5S5zcCt_SX7gyD2SkH_hPXdGV--J5nJ0CTDahskROS6oi-awUb9SzPy-g2utEZ4Qf_7dVdbyRAK2okqwet1dl22XkftNKnleQsaMSh2vXBursZbCePGZc7qzmVooYGUvZvA_d_DPq6Is6fV0Ahf95IQ:1sLTfu:4MRssrTCWNPJQ5OOAQFlfDYc26BxNFrid4AHanpsb0o', '2024-07-07 20:18:58.275174'),
 ('gaj29kofujp89kggs1obkb2hcxd5wkm3', '.eJxdkDELwjAQhf9KuTk4OHYSJINQRcS6iJTYnHKQ9OTS6iD-d2NbNHa8731vePcEYQc5LB1h0yIoIFv1aK7ghuIpcID8CNpSayTbolzIRa2gMN6DohJjQnQ0LafBWF5TiNSSTe1_mJg7DCh3M1ETmriHOCayk4IudEaIK7L9pIb9WbAa6Wd4sdKbvYav-XtGVj7KyGsWQU4q9RAvrt6Qm9Xs4fUG49dvjw:1s7KYf:3vTmyoMixvNMWSNBepP3tNXaEZDvbSLO7mkMnUlh9v0', '2024-05-29 19:45:01.704000'),
+('hjawsdl5k6594vb97pxmogtlbm6btcf9', '.eJx9lE1vwjAMhv8KyrkC7cppCDgg7QMB22VCVWiyylOTVEmLNE3770tKkrpN2a1-bL92Etc_hJuGMkWWZEUyolXlvpgAaS1geQceMlJzLcAoQ5Yf5Alsip69mZZqsCgja82HYMugmSQHVU3QbdfDhGPP9SdUzq7A9jSU9H1YSd43Eay-Hk8LRRpUA_CS-3DanmjF2qJBp8UkdItRkMbQi52gVhOKCfayKQ_aiccXOHJ9hQK_DSZedoCCIoa421QxwbjbSe3EE2-bAcPgGQyC_rqjHUdjBIZZYTi4sQXpSBxRPzU9CIOTkFFiPztJiXcuGyQeTdRBZMPBTA61vQLjsgA64bql3JuaoHjXs6YNrVQ5mkQqLmBjdoKWXP7nmnh6Lxw8scLdCHLOSHv7oXNg3aKRSlw0zz11y2jzvHvZHU-H1eb1QGJ8WFMz0X7P7AOAq1IorblCydSFPJaCQjUvlHA7res-r2-LZUkWwt4rXbRWIu98ZgGFkspwA0rOv-rS6VLd2M13_v0DauLKaA:1sLVjr:qG7cGrvFtw75rquZc9FsgklREAH8xSHKrjIa4S35_DM', '2024-07-07 22:31:11.875785'),
 ('j375f0t1esihzivm0v4nn7ik54or7ns4', '.eJxtk01PwzAMhv_K5HOFxHUnJrbDJAZTt3JBqCpNmCylzeS0cED8d9LhpG7Tox83j9_m4wfIGljDRjXYQgaoyhu4z-CqqUFnHazf4AldV9GqcH1F6FEGj6SnYKewWyS5NQt054XKLjSOmj7RDLVBn2mq5BxeqccQoRrn6XRQpMEaACuP4W9lkBlhlWiExWRVX3diYyQJPolCCglZdsarXTAmmLUpD-6kwwNOmr6wlscoCWsnKBgllGlTY4Jl2kV30okHo1BJcEAnIG93rOPhzcB01bj_c3uunc9QzeYJynduBOHaJWS2cLx5yYhX3XZCHkuRgNl7Bv3_cyhR3Z5pa5sP0iXT4SlvD_vn_emcb7YvOcTvwyNfFd-Fp7Ul0lYsq4bmw6Wp0NzVtoHfP3bcaaU:1s7h7Y:3-Y0GwmbLM7YSOfR6xGRDVfkWKfzU9hX5398rFR-56w', '2024-05-30 19:50:32.234621'),
 ('kqzuf3dwddf7m0ll820s9tovlv9fxkys', '.eJxdkMFqwkAQhl9F5hwM9JhTRXIo2CJFexFZ1uw0jGR3wkxSD-K7O4lW0952vvl2-f89A2rnA0MBC8hAuLHTsiFMHdpMwY3oJYMWJZKyQrGDMlDnZbZG-abGtBXpML-TGgsUzMp-pb9wYn6iovz4f-qETtwvy2Nsn0GvvRdiR2FMlTgeBN2dDtlXb-XHpoSH-ewz2562xisWQZ5cqW7r1zp6auYVx6F49DUm194aFpBHq-Dz3sK5cac5VZxYUYnT_NjWw8teOvue_eUKWlV0fA:1sHqHF:gNlZ69-UvehdBYQcYFgKKDxD_u4B6j_OmFXUtduCgrs', '2024-06-27 19:38:29.837468'),
 ('l0uudw26i87mbljp9kfci11nib1jlelz', '.eJxdkDELwjAQhf9KuTk4OHYSJINQRcS6iJTYnHKQ9OTS6iD-d2NbNHa8731vePcEYQc5LB1h0yIoIFv1aK7ghuIpcID8CNpSayTbolzIRa2gMN6DohJjQnQ0LafBWF5TiNSSTe1_mJg7DCh3M1ETmriHOCayk4IudEaIK7L9pIb9WbAa6Wd4sdKbvYav-XtGVj7KyGsWQU4q9RAvrt6Qm9Xs4fUG49dvjw:1s7KYf:3vTmyoMixvNMWSNBepP3tNXaEZDvbSLO7mkMnUlh9v0', '2024-05-29 19:45:01.324971'),
@@ -643,7 +644,6 @@ INSERT INTO `roles_permisos` (`id`, `rol_id`, `permiso_id`) VALUES
 (34, 1, 34),
 (35, 1, 35),
 (36, 1, 36),
-(37, 1, 37),
 (38, 1, 38),
 (39, 1, 39),
 (40, 1, 40),

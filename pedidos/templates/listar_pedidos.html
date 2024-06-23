@@ -1,5 +1,6 @@
 <title>Listar Pedidos</title>
 {% extends 'layouts/navbar.html' %}
+{% load humanize %}
 
 {% load static %}
 
@@ -34,7 +35,7 @@
                                 <td>{{ pedido.id_Usuario }}</td>
                                 <td>{{ pedido.fechaCreacion_pedido }}</td>
                                 <td>{{ pedido.fecha_pedido }}</td>
-                                <td>$ {{ pedido.total|floatformat:0}}</td>
+                                <td>$ {{ pedido.total|floatformat:0|intcomma  }}</td>
                                 {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
                                 <td>
                                     <!-- Aquí puedes acceder al estado del pedido -->
@@ -96,8 +97,8 @@
                                         </div>
                                         <div class="modal-body">
                                             <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
-                                            <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
-                                            <p><strong>IVA:</strong> {{ pedido.iva }}</p>
+                                            <p><strong>Subtotal:</strong> {{ pedido.subtotal|floatformat:0|intcomma  }}</p>
+                                            <p><strong>IVA:</strong> {{ pedido.iva|floatformat:0|intcomma }}</p>
                                             <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
 
                                             <!-- Detalles de los productos -->
@@ -105,7 +106,7 @@
                                             <ul>
                                                 {% for detalle in detalles_productos %}
                                                     {% if detalle.idPedido == pedido %}
-                                                        <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos }}</li>
+                                                        <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos|floatformat:0|intcomma }}</li>
                                                     {% endif %}
                                                 {% endfor %}
                                             </ul>
@@ -114,7 +115,7 @@
                                             <ul>
                                                 {% for detalle in detalles_servicios %}
                                                     {% if detalle.idPedido == pedido %}
-                                                        <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios }}</li>
+                                                        <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios|floatformat:0|intcomma }}</li>
                                                     {% endif %}
                                                 {% endfor %}
                                             </ul>
@@ -163,16 +164,16 @@
                                                         <div class="form-group">
                                                             <label for="subtotal">Subtotal</label>
                                                             <input type="number" class="form-control" id="subtotal"
-                                                                name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
+                                                                name="subtotal" value="{{ pedido.subtotal|floatformat:0|intcomma }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="iva">Iva</label>
                                                             <input type="number" class="form-control" id="iva"
-                                                                name="iva" value="{{ pedido.iva|floatformat:"0" }}">
+                                                                name="iva" value="{{ pedido.iva|floatformat:0|intcomma }}">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="total">Total</label>
-                                                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
+                                                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:0|intcomma }}">
                                                         </div>
                                                         {% comment %} <div class="form-group">
                                                             <label for="evidencia_pago">Evidencia de Pago</label>
