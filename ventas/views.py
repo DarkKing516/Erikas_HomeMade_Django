@@ -25,6 +25,8 @@ def generar_factura_pdf(request, idVenta):
     
     detalles_servicios = DetallePedidoServicio.objects.filter(idPedido=pedido)
 
+    descuento_aumento =  venta.total - venta.idPedido.total
+
 
     subtotal_productos = sum(detalle.subtotal_productos for detalle in detalles_productos)
 
@@ -38,6 +40,8 @@ def generar_factura_pdf(request, idVenta):
         'detalles_productos': detalles_productos,
         'detalles_servicios': detalles_servicios,
         'subtotal_productos': subtotal_productos,
+        'descuento_aumento': descuento_aumento,  # Variable calculada
+
     })
 
     # Define las opciones para pdfkit

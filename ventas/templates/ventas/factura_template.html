@@ -1,3 +1,7 @@
+
+{% load humanize %}
+
+
 <!DOCTYPE html>
 <html>
 
@@ -70,12 +74,12 @@
 
     <h3 style="text-align: center;">Detalles de la Venta</h3>
     <p><strong>Fecha de Venta:</strong> {{ venta.fecha }}</p>
-    <p><strong>Subtotal:</strong> {{ venta.idPedido.subtotal }}</p>
-    <p><strong>Iva:</strong> {{ venta.idPedido.iva }}</p>
     <p><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
-    <p><strong>Total de Pedido:</strong> $ {{ venta.idPedido.total|floatformat:0 }}</p>
-    <p><strong>Descuento:</strong> $ {{ venta.descuento|floatformat:0 }}</p>
-    <p class="total"><strong>Total Final:</strong> $ {{ venta.total|floatformat:0 }}</p>
+    <p><strong>Subtotal:</strong> {{ venta.idPedido.subtotal|floatformat:0|intcomma }}</p>
+    <p><strong>Iva:</strong> {{ venta.idPedido.iva|floatformat:0 }}</p>
+    <p><strong>Total de Pedido:</strong> $ {{ venta.idPedido.total|floatformat:0|intcomma }}</p>
+    <p><strong>Descuento/Aumento:</strong> $ {{ descuento_aumento|floatformat:0|intcomma }}</p>
+    <p class="total"><strong>Total Final:</strong> $ {{ venta.total|floatformat:0|intcomma }}</p>
 
     <!-- Detalles de los productos vendidos -->
     <h3 style="text-align: center;">Productos Vendidos</h3>
@@ -93,8 +97,8 @@
             <tr>
                 <td>{{ detalle.nombre_productos }}</td>
                 <td>{{ detalle.cant_productos }}</td>
-                <td>$ {{ detalle.precio_inicial_producto|floatformat:0 }}</td>
-                <td>$ {{ detalle.subtotal_productos|floatformat:0 }}</td>
+                <td>$ {{ detalle.precio_inicial_producto|floatformat:0|intcomma }}</td>
+                <td>$ {{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
             </tr>
             {% endfor %}
         </tbody>

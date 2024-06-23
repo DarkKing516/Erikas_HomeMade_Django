@@ -1,5 +1,9 @@
+
+
 <title>Listar Ventas</title>
 {% extends 'layouts/navbar.html' %}
+
+{% load humanize %}
 
 {% load static %}
 
@@ -20,7 +24,7 @@
                                 <th>Fecha de venta</th>
                                 <th>Método de pago</th>
                                 <th>Total de pedido</th>
-                                <th>Descuento</th>
+                                <th>Descuento / Aumento</th>
                                 <th>Total Final</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
 
@@ -32,9 +36,9 @@
                             <tr>
                                 <td>{{ venta.fecha }}</td>
                                 <td>{{ venta.metodo_pago }}</td>
-                                <td>$ {{ venta.idPedido.total|floatformat:0 }}</td>
-                                <td>$ {{ venta.descuento|floatformat:0 }}</td>
-                                <td>$ {{ venta.total|floatformat:0 }}</td>
+                                <td>$ {{ venta.idPedido.total|floatformat:0|intcomma }}</td>
+                                <td>$ {{ venta.descuento|floatformat:0|intcomma }}</td>
+                                <td>$ {{ venta.total|floatformat:0|intcomma }}</td>
                                 <td>
                                     <a href="{% url 'ventas:generar_factura' idVenta=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
                                 </td>
