@@ -20,7 +20,7 @@
                                 <th>Fecha de venta</th>
                                 <th>Método de pago</th>
                                 <th>Total de pedido</th>
-                                <th>Descuento</th>
+                                <th>Descuento/Aumento</th>
                                 <th>Total Final</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
 
@@ -32,9 +32,17 @@
                             <tr>
                                 <td>{{ venta.fecha }}</td>
                                 <td>{{ venta.metodo_pago }}</td>
-                                <td>$ {{ venta.idPedido.total|floatformat:0 }}</td>
-                                <td>$ {{ venta.descuento|floatformat:0 }}</td>
-                                <td>$ {{ venta.total|floatformat:0 }}</td>
+                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.total|floatformat:0 }}</td>
+                                <td class="descuento-aumento" data-value="{{ venta.descuento }}">
+                                    {% if venta.descuento > 0 %}
+                                        -$ {{ venta.descuento|floatformat:0 }}
+                                    {% elif venta.descuento < 0 %}
+                                        $ {{ venta.descuento|floatformat:0 }}
+                                    {% else %}
+                                        $0
+                                    {% endif %}
+                                </td>
+                                <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0 }}</td>
                                 <td>
                                     <a href="{% url 'ventas:generar_factura' idVenta=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
                                 </td>
@@ -47,7 +55,30 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('#ventasTable tbody tr');
 
+        rows.forEach(row => {
+            const totalPedido = parseFloat(row.querySelector('.total-pedido').getAttribute('data-value'));
+            const totalFinal = parseFloat(row.querySelector('.total-final').getAttribute('data-value'));
+            const descuentoAumentoCell = row.querySelector('.descuento-aumento');
+
+            const difference = totalPedido - totalFinal;
+            let displayValue;
+
+            if (difference > 0) {
+                displayValue = `-$${difference.toFixed(0)}`;
+            } else if (difference < 0) {
+                displayValue = `$${Math.abs(difference).toFixed(0)}`;
+            } else {
+                displayValue = '$0';
+            }
+
+            descuentoAumentoCell.textContent = displayValue;
+        });
+    });
+</script>
 <!-- Modal Crear Venta -->
 <div class="modal fade" id="modalCrearVenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
