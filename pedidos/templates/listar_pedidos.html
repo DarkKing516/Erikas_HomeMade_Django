@@ -270,7 +270,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data">
+                <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data" onsubmit="submitForm()">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-6">
