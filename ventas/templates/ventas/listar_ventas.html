@@ -247,9 +247,9 @@ $('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
 
         // Mover el cuadro de búsqueda al lugar deseado
         $("#ventasTable_filter").detach().appendTo(".top");
-
+        {% if "Crear Ventas" in request.session.permisos %}
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#modalCrearVenta" style="margin: 5px">Agregar Venta</button>');
-
+        {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#ventasTable_filter input").addClass("form-control form-control-sm");
     });
