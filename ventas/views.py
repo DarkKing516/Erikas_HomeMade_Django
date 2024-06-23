@@ -9,8 +9,18 @@ def listar_ventas(request):
     ventas = Venta.objects.all()
     usuarios = Usuario.objects.all()
 
+    # Obtener parámetros de la URL
+    abrir_modal = request.GET.get('abrir_modal', 'false').lower() == 'true'
+    pedido_id = request.GET.get('pedido_id', '')
+
     form = VentaForm()
-    return render(request, 'ventas/listar_ventas.html', {'ventas': ventas,'form': form, 'usuarios': usuarios})
+    return render(request, 'ventas/listar_ventas.html', {
+        'ventas': ventas,
+        'form': form,
+        'usuarios': usuarios,
+        'abrir_modal': abrir_modal,
+        'pedido_id': pedido_id,
+    })
 
 def listar_mis_ventas(request):
     usuario_id = request.session.get('usuario_id')

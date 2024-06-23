@@ -96,10 +96,8 @@
                                 <label for="id_total">Total</label>
                                 <input type="number" id="id_total" class="form-control" name="total" readonly>
                             </div>
-                            
                         </div>
                     </div>
-
 
                     <!-- Botones -->
                     <div class="form-row">
@@ -113,6 +111,14 @@
         </div>
     </div>
 </div>
+
+{% if abrir_modal %}
+<script>
+    $(document).ready(function() {
+        $('#modalCrearVenta').modal('show');
+    });
+</script>
+{% endif %}
 
 <script>
     $(document).ready(function () {
