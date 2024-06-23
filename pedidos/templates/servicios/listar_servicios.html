@@ -76,6 +76,8 @@
                                 </td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Servicios' in request.session.permisos %}
+
                                         <button type="button" class="btn btn-inverse-warning edit-servicio"
                                         data-toggle="modal" data-target="#editServicioModal{{ servicio.idServicio }}"
                                         data-servicio="{{ servicio.servicio.idServicio }}" 
@@ -86,11 +88,24 @@
                                         data-servicio-id="{{ servicio.idServicio }}">
                                         <i class="mdi mdi-pencil"></i>
                                         </button>
-                                        
+                                        {% endif %}
+                                        {% if 'Cambiar Imagen Servicios' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-primary" data-servicio-id="{{ servicio.idServicio }}" data-toggle="modal" data-target="#editimgModal{{ servicio.idServicio }}">
                                             <i class="bi bi-file-earmark-image"></i>
                                         </button> 
+                                        {% endif %}
+                                        {% if 'Eliminar Servicios' in request.session.permisos %}
                                         <a href="#" onclick="confirmarEliminarServicio('{{ servicio.idServicio }}')" class="btn btn-inverse-danger delete-servicio"><i class="mdi mdi-delete"></i></a>
+                                        {% endif %}
+                                        {% if 'Eliminar Servicios' not in request.session.permisos and 'Editar Servicios' not in request.session.permisos %}
+                                            <button type="button" class="btn btn-inverse-primary">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        
+
+
                                     </div>
                                 </td>
                             </tr>
@@ -394,7 +409,7 @@
         $("#ServiciosTable_filter").detach().appendTo(".top");
 
         // Mover el botón "Agregar" al lado del cuadro de búsqueda
-        {% if "Crear Tipo Servicios" in request.session.permisos %}
+        {% if "Crear Servicios" in request.session.permisos %}
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
         {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
@@ -805,7 +820,7 @@
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 
 </script>
-{% elif "Listar Tipo Servicios" not in request.session.permisos %}
+{% elif "Listar Servicios" not in request.session.permisos %}
 <script>
     window.location.href = "{% url 'usuarios:requestLogin' %}";
 

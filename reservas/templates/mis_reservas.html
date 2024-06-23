@@ -102,6 +102,10 @@
         };
 
         $('#reservaTable').DataTable(dataTableConfig);
+        $("#reservaTable_filter").detach().appendTo(".top");
+
+        // Mover el botón "Agregar" al lado del cuadro de búsqueda
+        $(".top").append('<a type="button" class="btn btn-inverse-success btn-fw ml-2" href="{% url 'home:index' %}#CrearReserva">Crear</a>');
 
         $('#reservaTable').on('click', 'td .change-estado', function () {
             var reserva_id = $(this).data('reserva-id');

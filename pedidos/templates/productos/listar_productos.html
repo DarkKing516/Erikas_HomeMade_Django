@@ -64,25 +64,26 @@
 
                                 <td>
                                     {% if producto.estado_producto == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status"
+                                    <label class="badge btn-inverse-success hover-cursor {% if "Editar Estado Productos"  in request.session.permisos %}change-status{% endif %}"
                                     data-producto-id="{{ producto.idProducto }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    <label class="badge btn-inverse-danger hover-cursor {% if "Editar Estado Productos"  in request.session.permisos %}change-status{% endif %}"
                                     data-producto-id="{{ producto.idProducto }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if producto.estado_catalogo == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status-catalogo"
+                                    <label class="badge btn-inverse-success hover-cursor {% if "Editar Estado Catalogo Productos"  in request.session.permisos %}change-status-catalogo{% endif %}"
                                     data-producto-id="{{ producto.idProducto }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status-catalogo"
+                                    <label class="badge btn-inverse-danger hover-cursor {% if "Editar Estado Catalogo Productos"  in request.session.permisos %}change-status-catalogo{% endif %}"
                                     data-producto-id="{{ producto.idProducto }}">Inactivo</label>
                                     {% endif %}
                                 </td>                                
-                                <td>{{ producto.cantidad }}</td>                                
+                                <td><center>{{ producto.cantidad }}</center></td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Productos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-warning edit-producto"
                                         data-toggle="modal" data-target="#editarproductoModal{{ producto.idProducto }}"
                                         data-nombre="{{ producto.nombre }}"
@@ -93,13 +94,22 @@
                                         data-cantidad=" {{ producto.cantidad }} ">
                                         <i class="mdi mdi-pencil"></i>
                                         </button>
-                                        
+                                        {% endif %}
+                                        {% if 'Cambiar Imagen Productos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-primary" data-producto-id="{{ producto.idProducto }}" data-toggle="modal" data-target="#editevidenciaproductoModal{{ producto.idProducto }}">
                                             <i class="bi bi-file-earmark-image"></i>
-                                        </button> 
+                                        </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Productos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-danger delete-producto" data-producto-id="{{ producto.idProducto }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button> 
+                                        {% endif %}
+                                        {% if 'Eliminar Productos' not in request.session.permisos and 'Editar Productos' not in request.session.permisos %}
+                                            <button type="button" class="btn btn-inverse-primary">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                            </button>
+                                        {% endif %}
                                     </div>
                                 </td>                              
                             </tr>
@@ -643,10 +653,10 @@ function cambiarEstadoCatalogo(producto_id, nuevo_estado) {
 
         // Mover el cuadro de búsqueda al lugar deseado
         $("#pedidoTable_filter").detach().appendTo(".top");
-
+        {% if "Crear Productos"  in request.session.permisos %}
         // Agregar el botón "Agregar" al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal" style="margin: 5px">Agregar</button>');
-
+        {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#pedidoTable_filter input").addClass("form-control form-control-sm");
 
@@ -872,6 +882,14 @@ document.querySelectorAll('.delete-producto').forEach(button => {
 
 
 
-
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% elif "Listar Productos" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% endif %}
 
 {% endblock %}
