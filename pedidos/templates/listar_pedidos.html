@@ -663,7 +663,7 @@
         // Mostrar SweetAlert con el campo de selección y el token CSRF
         Swal.fire({
             title: 'Cambiar Estado',
-            html: '<select class="form-control" id="estado_pedido2" name="estado_pedido">'+
+            html: '<select class="form-control" id="estado_pedido2" name="estado_pedido">' +
                 '<option value="Por hacer">Por hacer</option>' +
                 '<option value="En proceso">En proceso</option>' +
                 '<option value="Hecho">Hecho</option>' +
@@ -691,26 +691,33 @@
                         'estado_pedido': nuevoPedido,
                     }),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Hubo un problema al cambiar el Estado.');
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el Estado.');
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                var nuevoRol = $('#estado_pedido').val();
-
-                Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
-                    location.reload();
-                });
+                var nuevoRol = $('#estado_pedido2').val();
+                if (nuevoRol === 'Entregado') {
+                    Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                        // Redirigir a la vista de ventas con el pedido_id
+                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id + "&abrir_modal=true";
+                    });
+                } else {
+                    Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
+                }
             }
         });
     }
+
 
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
