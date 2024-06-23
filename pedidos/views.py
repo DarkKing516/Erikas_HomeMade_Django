@@ -295,7 +295,7 @@ def listar_pedidos(request):
                         precio_inicial_servicio=servicio.precio_servicio / 2,
                         subtotal_servicios=servicio.precio_servicio * quantity
                     )
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'message': 'Pedido creada correctamente.'})
         else:
             errors = dict(form.errors.items())
             return JsonResponse({'success': False, 'errors': errors})

@@ -197,68 +197,69 @@
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
-// Agrega un evento de escucha al botón "Guardar" del formulario
-$('#modalCrearVenta').on('click', 'button[type="submit"]', function () {
-    event.preventDefault();
-    var formData = new FormData($('#modalCrearVenta form')[0]);
-
-    fetch("{% url 'ventas:crear_venta' %}", {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Venta creada con éxito
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: data.message
-            }).then(() => {
-                // Recargar la página
-                location.reload();
-            });
-        } else {
-            // Mostrar errores de validación o mensaje específico
-            if (data.error_type === 'already_exists') {
+    // Agrega un evento de escucha al botón "Guardar" del formulario
+    $('#modalCrearVenta').on('click', 'button[type="submit"]', function (event) {
+        event.preventDefault();
+        var formData = new FormData($('#modalCrearVenta form')[0]);
+    
+        fetch("{% url 'ventas:crear_venta' %}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Venta creada con éxito
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
+                    icon: 'success',
+                    title: 'Éxito',
                     text: data.message
-                });
-            } else if (data.error_type === 'invalid_discount') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message
-                });
-            } else if (data.error_type === 'pedido_not_found') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message
+                }).then(() => {
+                    // Redirigir a la lista de ventas
+                    window.location.href = "{% url 'ventas:listar_ventas' %}";
                 });
             } else {
-                // Mostrar los errores de validación o excepción general
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    html: data.errors || data.message || 'Se produjo un error al procesar la solicitud.'
-                });
+                // Mostrar errores de validación o mensaje específico
+                if (data.error_type === 'already_exists') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                } else if (data.error_type === 'invalid_discount') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                } else if (data.error_type === 'pedido_not_found') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                } else {
+                    // Mostrar los errores de validación o excepción general
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: data.errors || data.message || 'Se produjo un error al procesar la solicitud.'
+                    });
+                }
             }
-        }
-    })
-    .catch(error => {
-        // Captura de errores del lado del cliente (ej. errores de red)
-        console.error('Error en la solicitud:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Se produjo un error al enviar la solicitud. Por favor, inténtalo nuevamente.'
+        })
+        .catch(error => {
+            // Captura de errores del lado del cliente (ej. errores de red)
+            console.error('Error en la solicitud:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Se produjo un error al enviar la solicitud. Por favor, inténtalo nuevamente.'
+            });
         });
     });
-});
 </script>
+    
 <script>
     $(document).ready(function () {
         // Destruir la instancia actual, si existe
