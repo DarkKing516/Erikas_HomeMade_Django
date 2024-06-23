@@ -39,26 +39,34 @@
                                 <td>{{ tipo_producto.nombre_producto }}</td>
                                 <td>
                                     {% if tipo_producto.estado_producto == 'Activo' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status" data-cambiarestado-id="{{ tipo_producto.idTipo_Producto }}">Activo</label>
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Tipo Productos' in request.session.permisos %}change-status{% endif %}" data-cambiarestado-id="{{ tipo_producto.idTipo_Producto }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status" data-cambiarestado-id="{{ tipo_producto.idTipo_Producto }}">Inactivo</label>
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Tipo Productos' in request.session.permisos %}change-status{% endif %}" data-cambiarestado-id="{{ tipo_producto.idTipo_Producto }}">Inactivo</label>
                                     {% endif %}
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-inverse-warning edit-tipo-producto"
-                                            data-toggle="modal"
-                                            data-target="#editTipoProductoModal{{ tipo_producto.idTipo_Producto }}"
-                                            data-tipo-producto="{{ tipo_producto.idTipo_Producto }}"
-                                            data-nombre-producto="{{ tipo_producto.nombre_producto }}"
-                                            data-estado-producto="{{ tipo_producto.estado_producto }}">
-                                            <i class="mdi mdi-pencil"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
-                                            data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}"
-                                            value="{{ tipo_producto.idTipo_Producto }}">
-                                            <i class="mdi mdi-delete"></i>
-                                        </button>
+                                        {% if 'Editar Tipo Productos' in request.session.permisos %}
+                                            <button type="button" class="btn btn-inverse-warning edit-tipo-producto"
+                                                    data-toggle="modal" data-target="#editTipoProductoModal{{ tipo_producto.idTipo_Producto }}"
+                                                    data-tipo-producto="{{ tipo_producto.idTipo_Producto }}"
+                                                    data-nombre-producto="{{ tipo_producto.nombre_producto }}"
+                                                    data-estado-producto="{{ tipo_producto.estado_producto }}">
+                                                <i class="mdi mdi-pencil"></i>
+                                            </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Tipo Productos' in request.session.permisos %}
+                                            <button type="button" class="btn btn-inverse-danger delete-tipo-producto"
+                                                    data-tipo-producto-id="{{ tipo_producto.idTipo_Producto }}"
+                                                    value="{{ tipo_producto.idTipo_Producto }}">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Tipo Productos' not in request.session.permisos and 'Editar Tipo Productos' not in request.session.permisos %}
+                                            <button type="button" class="btn btn-inverse-primary">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                            </button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -199,10 +207,10 @@
 
         // Mover el cuadro de búsqueda al lugar deseado
         $("#tipoProductoTable_filter").detach().appendTo(".top");
-
+        {% if "Crear Tipo Productos" in request.session.permisos %}
         // Agregar el botón de crear al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#crearTipoProductoModal" style="margin: 5px">Crear</button>');
-
+        {% endif %}
     });
 
 
@@ -537,4 +545,15 @@
 
 
 </script>
+
+
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% elif "Listar Tipo Productos" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% endif %}
 {% endblock %}
