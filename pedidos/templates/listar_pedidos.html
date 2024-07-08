@@ -555,7 +555,30 @@
     });
 </script>
 
+<style>
+    /* Asegúrate de que la tabla no tenga scroll horizontal */
+    .dataTables_wrapper {
+        width: 100%;
+        overflow-x: hidden;
+    }
 
+    /* table.dataTable {
+        width: 100% !important;
+        table-layout: fixed;
+        word-wrap: break-word;
+    } */
+
+    /* table.dataTable th, table.dataTable td {
+        white-space: normal;
+    } */
+
+    /* Ajustar el contenedor superior */
+    /* .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    } */
+</style>
 
 <script>
     function submitForm(event) {
