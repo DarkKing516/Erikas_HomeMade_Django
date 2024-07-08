@@ -237,21 +237,6 @@ def listar_mis_pedidos(request):
     return render(request, 'listar_mis_pedidos.html', {'pedidos': pedidos})
 
 
-# def listar_pedidos(request):
-#     if request.method == 'POST':
-#         form = CreatePedidoForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return JsonResponse({'success': True})
-#         else:
-#             errors = dict(form.errors.items())
-#             return JsonResponse({'success': False, 'errors': errors})
-#     else:
-#         formCreate = CreatePedidoForm()
-#         pedidos = Pedido.objects.all()
-#         servicios = Servicio.objects.all()
-#         productos = Producto.objects.all()
-#         return render(request, 'listar_pedidos.html', {'pedidos': pedidos, 'servicios': servicios, 'productos': productos, 'formCreate': formCreate})
 
 def listar_pedidos(request):
     if request.method == 'POST':
