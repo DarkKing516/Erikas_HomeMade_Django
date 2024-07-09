@@ -1,12 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperación de Contraseña</title>
     <style>
-        /* Aquí puedes agregar estilos CSS para dar formato al correo electrónico */
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
@@ -14,26 +15,64 @@
             padding: 0;
             text-align: center;
         }
+
         .container {
             max-width: 600px;
             margin: 20px auto;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 30px;
         }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+
         h1 {
             color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
+
+        h2 {
+            color: #555;
+            font-size: 20px;
+            margin-top: 0;
+        }
+
         p {
             color: #666;
             margin-bottom: 20px;
+            line-height: 1.5;
         }
+
         .code {
             font-size: 24px;
             color: #007bff;
             margin-bottom: 20px;
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 5px;
         }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
         .footer {
             margin-top: 20px;
             color: #888;
@@ -41,14 +80,29 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
+        <div class="header">
+            <!-- <img src="{% static 'images/logo-lg.png' %}" alt="Erika's HomeMade"> -->
+            <img src="https://raw.githubusercontent.com/DarkKing516/Erikas_HomeMade_Django/main/home/static/images/logo-lg.png" alt="Erika's HomeMade">
+            <h2>Somos Erika's HomeMade</h2>
+        </div>
         <h1>Recuperación de Contraseña</h1>
         <p>Hemos enviado un correo con instrucciones para recuperar tu contraseña.</p>
-        <p>Tu código de verificación es: <span class="code">{{ codigo }}</span></p>
+        <p>Tu código de verificación es:</p>
+        <center>
+            <p class="code">{{ codigo }}</p>
+        </center>
         <p>Por favor, sigue las instrucciones del correo electrónico para completar el proceso de recuperación.</p>
-        <p>Ve a <a href="{% url 'usuarios:login' %}">la página de inicio de sesión</a> para iniciar sesión con la nueva contraseña.</p>
+        <center>
+            <!-- <a style="text-decoration: none;" href="{% url 'usuarios:login' %}" class="btn">Iniciar Sesión</a> -->
+            <a style="text-decoration: none; color: #fff;" href="http://127.0.0.1:8000/configuracion/iniciar_sesion/" class="btn">Iniciar Sesión</a>
+
+        </center>
+        <p>Ve a <a href="http://127.0.0.1:8000/configuracion/iniciar_sesion/">la página de inicio de sesión</a> para iniciar sesión con la nueva contraseña.</p>
         <p class="footer">Este es un mensaje automático. Por favor, no respondas a este correo electrónico.</p>
     </div>
 </body>
+
 </html>

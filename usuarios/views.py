@@ -634,12 +634,12 @@ def forgotPassword(request):
             html_message = render_to_string('email_template.html', {'codigo': codigo})
 
             # Configurar el correo electrónico
-            subject = 'Recuperación de Contraseña'
-            from_email = 'Holisnegros1312@gmail.com'
+            subject = "🧵🏠Erika's HomeMade Recuperación de Contraseña🧷🧶"
+            from_email = 'erikashomemade.bello@gmail.com'
             to_email = [email]
 
             # Crear el correo electrónico
-            msg = EmailMultiAlternatives(subject, 'Mensaje vacío', from_email, to_email)
+            msg = EmailMultiAlternatives(subject, 'Erika´s HomeMade', from_email, to_email)
             msg.attach_alternative(html_message, "text/html")
 
             # Enviar el correo electrónico
