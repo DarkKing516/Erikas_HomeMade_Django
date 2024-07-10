@@ -63,7 +63,7 @@
                                 </td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        {% comment %} <button type="button" class="btn btn-inverse-warning edit-pedido"
+                                        <button type="button" class="btn btn-inverse-warning edit-pedido"
                                         data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
                                         data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
                                         data-fecha-pedido="{{ pedido.fecha_pedido }}"
@@ -73,7 +73,7 @@
                                         data-iva=" {{ pedido.iva }} "
                                         data-total=" {{ pedido.total }} ">
                                         <i class="mdi mdi-pencil"></i>
-                                        </button> {% endcomment %}
+                                        </button>
                                         
                                         <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
                                             <i class="bi bi-file-earmark-image"></i>
