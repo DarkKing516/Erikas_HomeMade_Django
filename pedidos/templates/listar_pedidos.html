@@ -40,19 +40,19 @@
                                 <td>
                                     <!-- Aquí puedes acceder al estado del pedido -->
                                     {% if pedido.estado_pedido == 'Por hacer' %}
-                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
+                                    <label class="badge btn-inverse-secondary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
                                     data-pedido-id="{{ pedido.idPedido }}">Por hacer</label>
                                     {% elif pedido.estado_pedido == 'En proceso' %}
-                                    <label class="badge btn-inverse-warning hover-cursor change-status"
+                                    <label class="badge btn-inverse-warning hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
                                     data-pedido-id="{{ pedido.idPedido }}">En proceso</label>
                                     {% elif pedido.estado_pedido == 'Hecho' %}
-                                    <label class="badge btn-inverse-primary hover-cursor change-status"
+                                    <label class="badge btn-inverse-primary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
                                     data-pedido-id="{{ pedido.idPedido }}">Hecho</label>
                                     {% elif pedido.estado_pedido == 'Entregado' %}
-                                    <label class="badge btn-inverse-success hover-cursor change-status"
+                                    <label class="badge btn-inverse-success hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
                                     data-pedido-id="{{ pedido.idPedido }}">Entregado</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    <label class="badge btn-inverse-danger hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
                                     data-pedido-id="{{ pedido.idPedido }}">Cancelado</label>
                                     {% endif %}
                                 </td>
@@ -63,6 +63,7 @@
                                 </td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% if 'Editar Pedidos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-warning edit-pedido"
                                         data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
                                         data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
@@ -74,13 +75,22 @@
                                         data-total=" {{ pedido.total }} ">
                                         <i class="mdi mdi-pencil"></i>
                                         </button>
-                                        
+                                        {% endif %}
+                                        {% if 'Editar Evidencia Pedidos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
                                             <i class="bi bi-file-earmark-image"></i>
-                                        </button> 
+                                        </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Pedidos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
+                                        {% endif %}
+                                        {% if 'Eliminar Pedidos' not in request.session.permisos and 'Editar Pedidos' not in request.session.permisos and 'Editar Evidencia Pedidos' not in request.session.permisos %}
+                                        <button type="button" class="btn btn-inverse-primary">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -757,9 +767,10 @@
         // Mover el cuadro de búsqueda al lugar deseado
         $("#pedidoTable_filter").detach().appendTo(".top");
 
+        {% if "Crear Pedidos" in request.session.permisos %}
         // Agregar el botón "Agregar" al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal" style="margin: 5px">Agregar</button>');
-
+        {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#pedidoTable_filter input").addClass("form-control form-control-sm");
 
@@ -987,5 +998,15 @@
         });
     });
 </script>
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
 
+</script>
+{% elif "Listar Pedidos" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+
+</script>
+{% endif %}
 {% endblock %}

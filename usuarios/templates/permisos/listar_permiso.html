@@ -38,7 +38,10 @@
                             <tr>
                                 <th>Nombre del Permiso</th>
                                 <th>Estado</th>
+                                {% if 'Eliminar Permisos' in request.session.permisos or 'Editar Permisos' in request.session.permisos %}
                                 <th>Acciones</th>
+                                {% endif %}
+
                             </tr>
                         </thead>
                         <tbody>
@@ -54,6 +57,7 @@
                                     data-permiso-id="{{ permiso.id }}">Inactivo</label>
                                     {% endif %}
                                 </td>
+                                {% if 'Eliminar Permisos' in request.session.permisos or 'Editar Permisos' in request.session.permisos %}
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         {% if 'Editar Permisos' in request.session.permisos %}
@@ -72,6 +76,8 @@
                                         {% endif %}
                                     </div>
                                 </td>
+                                {% endif %}
+
                             </tr>
                             <div class="modal fade" id="editpermisoModal{{ permiso.id }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editpermisoModal{{ permiso.id }}Label" aria-hidden="true">

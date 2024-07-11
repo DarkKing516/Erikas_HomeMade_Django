@@ -145,7 +145,7 @@
                                     $('#id_permisosEditarform{{ rol.id }}').select2({
                                         placeholder: 'Selecciona los permisos',
                                         theme: "classic",
-                                        width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
+                                        width: '90%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
                                         closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
                                     });
                                 });
@@ -519,6 +519,8 @@
             width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
             placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
             closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
+            dropdownParent: $('body') // Adjunta el dropdown al cuerpo del documento
+
         });
     });
 
@@ -539,6 +541,13 @@
         });
     });
 </script>
+<style>
+    /* Estilo personalizado para desplegar hacia arriba */
+    .select2-container--classic .select2-dropdown {
+        top: auto !important;
+        bottom: 100% !important;
+    }
+</style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
 
