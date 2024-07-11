@@ -74,6 +74,17 @@
 </style>
 
 <div class="row">
+    {% if pedidos|length < 1 %}
+        <div class="col-lg-12">
+            <h1 class="text-center">Parece que aún no tienes ningún pedido...</h1>
+            <center><img src="https://http.cat/404.jpg" alt=""></center>
+            <br>
+            <p class="text-center">Puedes crear un nuevo pedido haciendo click en el botón de abajo.</p>
+            <div class="text-center">
+                <a href="{% url 'home:catalogo' %}" class="btn btn-outline-dark">Crear Pedido</a>
+            </div>
+        </div>
+    {% endif %}
     {% for pedido in pedidos %}
     <div class="col-lg-4">
         <div class="card">
