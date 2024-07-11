@@ -53,12 +53,12 @@
                             <tr>
                                 <td>{{ reserva.usuario.nombre }}</td>
                                 <td>
-                                    <label class="badge badge-info hover-cursor editarfechacita" data-reserva-id="{{ reserva.id }}">{{ reserva.fecha_cita }}</label>
+                                    <label class="badge badge-primary hover-cursor {% if 'Editar Mis Reservas' in request.session.permisos %}badge-info editarfechacita{% endif %}" data-reserva-id="{{ reserva.id }}">{{ reserva.fecha_cita }}</label>
                                 </td>
                                 <td>{{ reserva.descripcion }}</td>
                                 <td>
                                     <label 
-                                        class="badge badge-outline-primary hover-cursor change-estado" 
+                                        class="badge badge-outline-primary hover-cursor {% if 'Editar Mis Reservas' in request.session.permisos %}badge-outline-info change-estado{% endif %}" 
                                         data-reserva-id="{{ reserva.id }}"
                                         {% if reserva.estado == 'Completada' or reserva.estado == 'Cancelada' %}style="pointer-events: none; color: grey;"{% endif %}
                                     >
