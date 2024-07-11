@@ -78,20 +78,8 @@ class PedidoFormEditarEvidencia(forms.ModelForm):
 class PedidoFormEditar(forms.ModelForm):    
     class Meta:
         model = Pedido
-        fields = ['fecha_pedido', 'descripcion_pedido', 'subtotal', 'iva', 'total']
+        fields = ['descripcion_pedido']
 
-    def clean_fecha_pedido(self):
-        fecha_pedido = self.cleaned_data.get('fecha_pedido')
-
-        # Convertir fecha_pedido a datetime.date
-        fecha_pedido_date = fecha_pedido.date()
-
-        if fecha_pedido_date < datetime.now().date():
-            raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
-        elif fecha_pedido_date < self.instance.fechaCreacion_pedido.date():
-            raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha de creación del pedido.")
-
-        return fecha_pedido
         
 #------------------------------------------------------------productos---------------------------------------------------------
 
