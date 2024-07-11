@@ -151,47 +151,7 @@
                                                 {% csrf_token %}
                                                 <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
                                                 <div class="form-row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="usuario">Nombre</label>
-                                                            <input type="text" class="form-control" id="usuario"
-                                                                readonly value="{{ pedido.id_Usuario }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha">Fecha</label>
-                                                            <input type="datetime-local" class="form-control" id="fecha" readonly
-                                                                value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha_pedido">Fecha del pedido</label>
-                                                            <input type="datetime-local" class="form-control"
-                                                                id="fecha_pedido" name="fecha_pedido"
-                                                                value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
-                                                        </div>
-                                                        
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="subtotal">Subtotal</label>
-                                                            <input type="number" class="form-control" id="subtotal"
-                                                                name="subtotal" value="{{ pedido.subtotal|floatformat:0|intcomma }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="iva">Iva</label>
-                                                            <input type="number" class="form-control" id="iva"
-                                                                name="iva" value="{{ pedido.iva|floatformat:0|intcomma }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="total">Total</label>
-                                                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:0|intcomma }}">
-                                                        </div>
-                                                        {% comment %} <div class="form-group">
-                                                            <label for="evidencia_pago">Evidencia de Pago</label>
-                                                            <input type="file" name="evidencia_pago" class="form-control-file" accept="image/*" required="" id="evidencia_pago" value="{{ pedido.evidencia_pago.url }}">
-                                                        </div> {% endcomment %}
-
-                                                    </div>
-                                                    <div class="form-row">
+                                                    <div class="col">
                                                         <div class="col-md-12">
                                                             <label for="descripcion_pedido">Descripción</label>
                                                             <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
