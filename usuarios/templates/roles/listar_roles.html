@@ -519,7 +519,10 @@
             width: '100%', // Opcional: establece el ancho al 100% para que se ajuste al contenedor
             placeholder: 'Selecciona permisos', // Opcional: establece un marcador de posición
             closeOnSelect: false, // Opcional: permite mantener abierta la lista desplegable después de seleccionar un elemento
-            dropdownParent: $('body') // Adjunta el dropdown al cuerpo del documento
+            dropdownParent: $('body'), // Adjunta el dropdown al cuerpo del documento
+            dropdownSelection: function (data) {
+                $(data.el).closest('.select2-results__option').hide();
+            }
 
         });
     });
@@ -546,6 +549,10 @@
     .select2-container--classic .select2-dropdown {
         top: auto !important;
         bottom: 100% !important;
+    }
+    /* Estilo personalizado para ocultar elementos seleccionados */
+    .select2-results__option[aria-selected=true] {
+    display: none;
     }
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
