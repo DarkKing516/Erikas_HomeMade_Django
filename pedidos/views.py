@@ -367,12 +367,19 @@ def editar_pedido(request):
     print(pedido_id)
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
+    # Verificar si el estado del pedido es "Por hacer"
+    if pedido.estado_pedido != 'Por hacer':
+        return JsonResponse({
+            'success': False,
+            'errors': {'estado_pedido': 'La descripción solo se puede editar si el pedido está en estado "Por hacer".'}
+        })
+
     # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
     form = PedidoFormEditar(request.POST, instance=pedido)
 
     # Validamos el formulario
     if form.is_valid():
-        # Guardamos los cambios en la reserva
+        # Guardamos los cambios en el pedido
         saved_instance = form.save()
         print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
         return JsonResponse({'success': True})
