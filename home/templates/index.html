@@ -668,10 +668,12 @@ body {
                         icon: 'success',
                         onClose: () => {
                             // Recargar la página o realizar alguna otra acción
-                            location.reload();
+                            // location.reload();
+                            window.location.href = "{% url 'reservas:listar_reserva_cliente' %}";
                         }
                     }).then(() => {
-                        location.reload();
+                        // location.reload();
+                        window.location.href = "{% url 'reservas:listar_reserva_cliente' %}";
                     });
                 } else if (data.message) { // Check if a message is provided in the response
                     // Mostrar SweetAlert de error con el mensaje recibido

@@ -12,7 +12,7 @@ class Reserva(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=timezone.now)
     fecha_cita = models.DateTimeField()
-    descripcion = models.CharField(max_length=80, null=True, blank=True)
+    descripcion = models.CharField(max_length=255, null=True, blank=True)
     estado = models.CharField(max_length=80, default="Pendiente")
 
     def __str__(self):
