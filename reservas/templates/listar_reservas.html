@@ -162,7 +162,7 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del formulario con Bootstrap grid system -->
-                <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm()">
+                <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm(event)">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="col-md-6">
@@ -199,12 +199,32 @@
 
 <script>
 
-    function validateForm() {
+function validateForm() {
         // Evitar que el formulario se envíe automáticamente
         event.preventDefault();
 
         // Obtener el formulario de la modal
         const form = document.getElementById('myForm');
+
+        // Obtener el valor de la fecha y hora de la reserva
+        const fechaCitaInput = document.querySelector('input[name="fecha_cita"]');
+        const fechaCita = new Date(fechaCitaInput.value);
+
+        // Definir las horas límites
+        const horaInicio = 8; // 8:00 AM
+        const horaFin = 17; // 5:00 PM
+
+        // Validar la hora de la reserva
+        const horaReserva = fechaCita.getHours();
+        if (horaReserva < horaInicio || horaReserva >= horaFin) {
+            // Mostrar SweetAlert de error
+            Swal.fire({
+                title: 'Error',
+                text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM.',
+                icon: 'error'
+            });
+            return;
+        }
 
         // Crear un objeto FormData para enviar los datos del formulario
         const formData = new FormData(form);
