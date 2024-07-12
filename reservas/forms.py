@@ -27,24 +27,19 @@ class ReservaFormIndex(forms.ModelForm):
         model = Reserva
         fields = ['usuario', 'fecha_cita', 'descripcion']
         widgets = {
-            # 'fecha': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_cita': forms.DateTimeInput(attrs={'type': 'datetime-local'}),  # Usa DateTimeInput para fechas y horas
-            # 'descripcion': forms.Textarea(attrs={'type': 'textarea'})
-            'usuario': forms.Select(attrs={'class': 'form-input', 'placeholder': 'Usuario'}),  # Agrega la clase 'form-input'
-            'fecha_cita': forms.DateTimeInput(attrs={'class': 'form-input', 'placeholder': 'Fecha', 'type': 'datetime-local'}),  # Agrega la clase 'form-input'
-            'descripcion': forms.Textarea(attrs={'class': 'form-input textarea-lg', 'placeholder': 'Descripción'}),  # Agrega las clases 'form-input' y 'textarea-lg'
-
+            'fecha_cita': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input', 'placeholder': 'Fecha'}),
+            'usuario': forms.Select(attrs={'class': 'form-input', 'placeholder': 'Usuario'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-input textarea-lg', 'placeholder': 'Descripción'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        instance = kwargs.get('instance')
-        if instance:
-            self.fields['fecha'].widget = forms.HiddenInput()
-            # Opcionalmente, si deseas mostrar la fecha de reserva pero sin ser editable:
-            # self.fields['fecha'].widget.attrs['readonly'] = True
-
-
+    def clean_fecha_cita(self):
+        fecha_cita = self.cleaned_data.get('fecha_cita')
+        if fecha_cita:
+            hora_inicio = datetime.time(7, 0)
+            hora_fin = datetime.time(20, 0)
+            if not (hora_inicio <= fecha_cita.time() <= hora_fin):
+                raise forms.ValidationError("La hora debe estar entre las 7:00 AM y las 8:00 PM.")
+        return fecha_cita
 
 
 class ReservaFormEditar(forms.ModelForm):

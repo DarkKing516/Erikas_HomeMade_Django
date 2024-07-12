@@ -32,7 +32,7 @@ def listar_reservas(request):
         else:
             # Si el formulario no es válido, se envían los errores de validación
             errors = dict(form.errors.items())
-            return JsonResponse({'success': False, 'message': 'Hubo un error de validación', 'errors': errors})
+            return JsonResponse({'success': False, 'message': 'Por favor ingrese la fecha valida (que sea dos dias a partir de hoy)', 'errors': errors})
     else:
         reservas = Reserva.objects.all()
         form = ReservaForm()
