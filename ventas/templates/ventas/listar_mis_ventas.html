@@ -54,14 +54,38 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <div class="order-card">
-                                                <h5>Descripción venta</h5>
-                                                <p>Fecha de venta: {{ venta.fecha }}</p>
-                                                <p>Método de Pago: {{ venta.metodo_pago }}</p>
-                                                <p>Subtotal: ${{ venta.idPedido.total|floatformat:"0"|intcomma }}</p>
-                                                <p class="discount">Descuento: -${{ venta.descuento|floatformat:"0"|intcomma }}</p>
-                                                <p class="final-total">Total: ${{ venta.total|floatformat:"0"|intcomma }}</p>
+                                            <div class="row w-100">
+                                                <div class="col-md-5">
+                                                    <p><strong>Fecha de Venta:</strong> {{ venta.fecha|date:"d M Y H:i" }}</p>
+                                                    <p><strong>Metodo Pago:</strong> {{ venta.metodo_pago }}</p>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <p><strong>Subtotal:</strong> ${{ venta.idPedido.total|floatformat:"0"|intcomma }}</p>
+                                                    <p class="discount"><strong>Descuento:</strong> -${{ venta.descuento|floatformat:"0"|intcomma }}</p>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <p class="final-total"><strong>Total:</strong> ${{ venta.total|floatformat:"0"|intcomma }}</p>
+                                                </div>
                                             </div>
+                                            <hr>
+                                            <div class="row">
+                                                {% if venta.idPedido.productos.count and venta.idPedido.servicios.count %}
+                                                <!-- <div class="col-md-6">
+                                                    <h5>Productos</h5>
+                                                    <table>
+                                                        <thead>
+                                                            <tr>
+                                                                <th><center>Img</center></th>
+                                                                <th>Nombre</th>
+                                                                <th>Cantidad</th>
+                                                                <th>Subtotal</th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div> -->
+                                                {% endif %}
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>

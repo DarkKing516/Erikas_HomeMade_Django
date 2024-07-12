@@ -1,6 +1,4 @@
-
 {% load humanize %}
-
 
 <!DOCTYPE html>
 <html>
@@ -11,121 +9,126 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f0f0f0;
-            padding: 20px;
+            line-height: 1.2;
+            background-color: #fff;
+            padding: 10px;
             margin: auto;
-            width: 80%;
-            max-width: 800px;
+            width: 60mm; /* Ancho típico de un recibo de tirilla */
+            max-width: 60mm;
         }
-        h4 {
+        h2, h3, h4 {
             text-align: center;
             color: #333;
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
-        }
-        .factura {
-            text-align: center;
-        }
-        h3 {
-            text-align: center;
-            margin-top: 20px;
-            color: #555;
+            margin: 5px 0;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         th, td {
             border: 1px solid #000; /* Borde negro */
-            padding: 10px; /* Relleno interno */
+            padding: 5px; /* Relleno interno */
             text-align: left;
+            font-size: 12px; /* Tamaño de fuente reducido */
         }
         th {
             background-color: #f2f2f2; /* Fondo gris claro para las cabeceras */
         }
         .total {
-            margin-top: 20px;
+            margin-top: 10px;
             text-align: right;
             font-weight: bold;
             font-size: 18px;
         }
-        .cliente-info {
-            margin-top: 20px;
-            border-top: 2px solid #333;
-            padding-top: 10px;
+        .cliente-info, .venta-info, .productos, .servicios {
+            margin-top: 10px;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+        }
+        .info-item {
+            margin: 3px 0;
         }
     </style>
 </head>
 
 <body>
 
-    <h2 class="factura">Factura de Venta</h2>
+    <h2>Factura de Venta</h2>
 
-    <!-- Información del Usuario -->
+    <!-- Información del Cliente -->
     <div class="cliente-info">
-        <h3 style="text-align: center;">Información del Cliente</h3>
-        <p><strong>Nombre del Cliente:</strong> {{ venta.idPedido.id_Usuario.nombre }}</p>
-        <p><strong>Documento del Cliente:</strong> {{ venta.idPedido.id_Usuario.documento }}</p>
+        <h3>Información del Cliente</h3>
+        <p class="info-item"><strong>Nombre:</strong> {{ venta.idPedido.id_Usuario.nombre }}</p>
+        <p class="info-item"><strong>Documento:</strong> {{ venta.idPedido.id_Usuario.documento }}</p>
     </div>
 
-    <h4></h4>
+    <!-- Información de la Venta -->
+    <div class="venta-info">
+        <h3>Detalles de la Venta</h3>
+        <p class="info-item"><strong>Fecha:</strong> {{ venta.fecha }}</p>
+        <p class="info-item"><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
+        <p class="info-item"><strong>Subtotal:</strong> ${{ venta.idPedido.subtotal|floatformat:0|intcomma }}</p>
+        <p class="info-item"><strong>IVA:</strong> ${{ venta.idPedido.iva|floatformat:0|intcomma }}</p>
+        <p class="info-item"><strong>Total Pedido:</strong> ${{ venta.idPedido.total|floatformat:0|intcomma }}</p>
+        <p class="info-item"><strong>Descuento/Aumento:</strong> ${{ descuento_aumento|floatformat:0|intcomma }}</p>
+        <p class="total"><strong>Total Final:</strong> ${{ venta.total|floatformat:0|intcomma }}</p>
+    </div>
+    {% if venta.idPedido.productos.count %}
 
-    <h3 style="text-align: center;">Detalles de la Venta</h3>
-    <p><strong>Fecha de Venta:</strong> {{ venta.fecha }}</p>
-    <p><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
-    <p><strong>Subtotal:</strong> {{ venta.idPedido.subtotal|floatformat:0|intcomma }}</p>
-    <p><strong>Iva:</strong> {{ venta.idPedido.iva|floatformat:0 }}</p>
-    <p><strong>Total de Pedido:</strong> $ {{ venta.idPedido.total|floatformat:0|intcomma }}</p>
-    <p><strong>Descuento/Aumento:</strong> $ {{ descuento_aumento|floatformat:0|intcomma }}</p>
-    <p class="total"><strong>Total Final:</strong> $ {{ venta.total|floatformat:0|intcomma }}</p>
+    <!-- Detalles de los Productos Vendidos -->
+    <div class="productos">
+        <h3>Productos Vendidos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cant</th>
+                    <th>Precio Unit</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in detalles_productos %}
+                <tr>
+                    <td>{{ detalle.nombre_productos }}</td>
+                    <td>{{ detalle.cant_productos }}</td>
+                    <td>${{ detalle.precio_inicial_producto|floatformat:0|intcomma }}</td>
+                    <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 
-    <!-- Detalles de los productos vendidos -->
-    <h3 style="text-align: center;">Productos Vendidos</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre del Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for detalle in detalles_productos %}
-            <tr>
-                <td>{{ detalle.nombre_productos }}</td>
-                <td>{{ detalle.cant_productos }}</td>
-                <td>$ {{ detalle.precio_inicial_producto|floatformat:0|intcomma }}</td>
-                <td>$ {{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if venta.idPedido.servicios.count %}
 
-    <h3 style="text-align: center;">Servicios Vendidos</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Descripcion del Servicio</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for detalleS in detalles_servicios %}
-            <tr>
-                <td>{{ detalleS.descripcion }}</td>
-                <td>{{ detalleS.cantidad_servicios }}</td>
-                <td>$ {{ detalleS.precio_inicial_servicio|floatformat:0 }}</td>
-                <td>$ {{ detalleS.subtotal_servicios|floatformat:0 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+    <!-- Detalles de los Servicios Vendidos -->
+    <div class="servicios">
+        <h3>Servicios Vendidos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Servicio</th>
+                    <th>Cant</th>
+                    <th>Precio Unit</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalleS in detalles_servicios %}
+                <tr>
+                    <td>{{ detalleS.idServicio.nombre_servicio }}</td>
+                    <td>{{ detalleS.cantidad_servicios }}</td>
+                    <td>${{ detalleS.precio_inicial_servicio|floatformat:0|intcomma }}</td>
+                    <td>${{ detalleS.subtotal_servicios|floatformat:0|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 
 </body>
 
