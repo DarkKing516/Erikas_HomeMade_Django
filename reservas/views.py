@@ -3,7 +3,7 @@ from .models import Reserva
 from .forms import *
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.hashers import make_password
-
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
 from django.contrib.auth.hashers import make_password  # Importa make_password
@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import login as auth_login
-
+from datetime import timedelta, datetime
 
 # Create your views here.
 def hello(request):
@@ -42,29 +42,39 @@ def crear_reserva(request):
     if request.method == 'POST':
         form = ReservaForm(request.POST)
         if form.is_valid():
-            
             reserva = form.save(commit=False)
-            # Aquí puedes realizar cualquier procesamiento adicional antes de guardar el objeto
+            fecha_cita = reserva.fecha_cita
+
+            # Redondear la hora al intervalo de media hora más cercano
+            minuto = fecha_cita.minute
+            if minuto >= 30:
+                fecha_cita = fecha_cita.replace(minute=30, second=0, microsecond=0)
+            else:
+                fecha_cita = fecha_cita.replace(minute=0, second=0, microsecond=0)
+
+            # Verificar si ya existe una reserva en el mismo día y hora
+            reservas_existentes = Reserva.objects.filter(fecha_cita=fecha_cita)
+            if reservas_existentes.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Ya existe una reserva para esa fecha y hora.'
+                })
+
+            # Guardar la reserva si no hay conflicto
+            reserva.fecha_cita = fecha_cita
             reserva.save()
             return JsonResponse({'success': True})
         else:
             # Si el formulario no es válido, se envían los errores de validación
             errors = dict(form.errors.items())
-            return JsonResponse({'success': False, 'message': 'Por favor ingrese ua fecha valida (que sea dos dias a partir de hoy)', 'errors': errors})
+            return JsonResponse({
+                'success': False,
+                'message': 'Por favor ingrese una fecha válida (que sea dos días a partir de hoy)',
+                'errors': errors
+            })
     else:
         form = ReservaForm()
     return render(request, 'crear_reserva.html', {'form': form})
-
-# def editar_reserva(request, id_reserva):
-#     reserva = get_object_or_404(Reserva, pk=id_reserva)
-#     if request.method == 'POST':
-#         form = ReservaFormEditar(request.POST, instance=reserva)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('reservas:listar_reserva')
-#     else:
-#         form = ReservaFormEditar(instance=reserva)
-#     return render(request, 'editar_reserva.html', {'form': form})
 
 
 @require_POST
@@ -126,7 +136,7 @@ def listar_reservas_cliente(request):
         form = ReservaForm()
         return render(request, 'mis_reservas.html', {'reservas': reservas, 'form': form})
     
-from django.views.decorators.csrf import csrf_exempt
+
 @csrf_exempt
 def cambiar_estado_reserva(request):
     if request.method == 'POST':
