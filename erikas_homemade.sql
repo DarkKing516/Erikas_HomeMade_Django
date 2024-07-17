@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-06-2024 a las 00:31:44
+-- Tiempo de generación: 17-07-2024 a las 23:03:32
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -361,7 +361,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (53, 'pedidos', '0018_alter_servicio_estado_catalogo_and_more', '2024-05-28 19:23:52.375376'),
 (54, 'pedidos', '0019_alter_producto_estado_catalogo', '2024-05-28 19:23:52.431542'),
 (55, 'usuarios', '0011_usuario_imagen', '2024-05-30 19:28:44.903664'),
-(56, 'pedidos', '0020_pedido_productos_pedido_servicios', '2024-06-07 21:20:06.167601');
+(56, 'pedidos', '0020_pedido_productos_pedido_servicios', '2024-06-07 21:20:06.167601'),
+(57, 'reservas', '0007_alter_reserva_descripcion', '2024-07-17 21:03:12.016913');
 
 -- --------------------------------------------------------
 
@@ -558,7 +559,7 @@ CREATE TABLE `reservas` (
   `id` bigint(20) NOT NULL,
   `fecha` datetime(6) NOT NULL,
   `fecha_cita` datetime(6) NOT NULL,
-  `descripcion` varchar(80) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
   `estado` varchar(80) NOT NULL,
   `usuario_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1087,7 +1088,7 @@ ALTER TABLE `django_content_type`
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
