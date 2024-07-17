@@ -197,99 +197,119 @@
 
 
 
+
 <script>
-
 function validateForm() {
-        // Evitar que el formulario se envíe automáticamente
-        event.preventDefault();
+    // Evitar que el formulario se envíe automáticamente
+    event.preventDefault();
 
-        // Obtener el formulario de la modal
-        const form = document.getElementById('myForm');
+    // Obtener el formulario de la modal
+    const form = document.getElementById('myForm');
 
-        // Obtener el valor de la fecha y hora de la reserva
-        const fechaCitaInput = document.querySelector('input[name="fecha_cita"]');
-        const fechaCita = new Date(fechaCitaInput.value);
+    // Obtener el valor de la fecha y hora de la reserva dentro del formulario específico
+    const fechaCitaInput = form.querySelector('input[name="fecha_cita"]');
+    console.log("Valor del input fecha_cita:", fechaCitaInput.value);
 
-        // Definir las horas límites
-        const horaInicio = 8; // 8:00 AM
-        const horaFin = 17; // 5:00 PM
+    const fechaCita = new Date(fechaCitaInput.value);
+    console.log("Objeto Date creado a partir del input:", fechaCita);
 
-        // Validar la hora de la reserva
-        const horaReserva = fechaCita.getHours();
-        if (horaReserva < horaInicio || horaReserva >= horaFin) {
-            // Mostrar SweetAlert de error
+    // Comprobar si la fecha y hora se ha obtenido correctamente
+    if (isNaN(fechaCita.getTime())) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Fecha y hora no válidas. Por favor, ingrese una fecha y hora correctas.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    // Definir las horas límites
+    const horaInicio = 8; // 8:00 AM
+    const horaFin = 17; // 5:00 PM
+
+    // Validar la hora de la reserva
+    const horaReserva = fechaCita.getHours();
+    const minutoReserva = fechaCita.getMinutes();
+
+    // Mostrar los valores de hora y minuto para depuración
+    console.log("Hora de la reserva:", horaReserva);
+    console.log("Minuto de la reserva:", minutoReserva);
+
+    if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
+        // Mostrar SweetAlert de error
+        Swal.fire({
+            title: 'Error',
+            text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).',
+            icon: 'error'
+        });
+        return;
+    }
+
+    // Crear un objeto FormData para enviar los datos del formulario
+    const formData = new FormData(form);
+
+    // Realizar la solicitud POST utilizando fetch
+    fetch("{% url 'reservas:crear_reserva' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Verificar si la solicitud fue exitosa
+        if (data.success) {
+            // Mostrar SweetAlert de éxito
+            Swal.fire({
+                title: '¡Registro exitoso!',
+                text: 'La reserva se ha registrado correctamente.',
+                icon: 'success',
+                onClose: () => {
+                    // Recargar la página o realizar alguna otra acción
+                    window.location.href = "{% url 'reservas:listar_reserva' %}";
+                }
+            }).then(() => {
+                window.location.href = "{% url 'reservas:listar_reserva' %}";
+            });
+        } else if (data.message) { // Check if a message is provided in the response
+            // Mostrar SweetAlert de error con el mensaje recibido
             Swal.fire({
                 title: 'Error',
-                text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM.',
+                text: data.message,
+                icon: 'error',
+            });
+        } else if (data.errors) { // Verificar si hay errores de validación
+            let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+            for (const key in data.errors) {
+                errorMessage += `${data.errors[key]}<br>`;
+            }
+            // Mostrar SweetAlert de error con los errores de validación
+            Swal.fire({
+                title: 'Error',
+                html: errorMessage,
+                icon: 'error',
+            });
+        } else { // If no message is provided, show a generic error message
+            // Mostrar SweetAlert de error genérico
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
                 icon: 'error'
             });
-            return;
         }
+    })
+    .catch(errors => {
+        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error'
+        });
+        console.error('Error:', errors);
+    });
+}
 
-        // Crear un objeto FormData para enviar los datos del formulario
-        const formData = new FormData(form);
-
-        // Realizar la solicitud POST utilizando fetch
-        fetch("{% url 'reservas:listar_reserva' %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Verificar si la solicitud fue exitosa
-                if (data.success) {
-                    // Mostrar SweetAlert de éxito
-                    Swal.fire({
-                        title: '¡Registro exitoso!',
-                        text: 'La reserva se ha registrado correctamente.',
-                        icon: 'success',
-                        onClose: () => {
-                            // Recargar la página o realizar alguna otra acción
-                            location.reload();
-                        }
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else if (data.message) { // Check if a message is provided in the response
-                    // Mostrar SweetAlert de error con el mensaje recibido
-                    Swal.fire({
-                        title: 'Error',
-                        text: data.message,
-                        icon: 'error',
-                    });
-                } else if (data.errors) { // Verificar si hay errores de validación
-                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
-                    for (const key in data.errors) {
-                        errorMessage += `${data.errors[key]}<br>`;
-                    }
-                    // Mostrar SweetAlert de error con los errores de validación
-                    Swal.fire({
-                        title: 'Error',
-                        html: errorMessage,
-                        icon: 'error',
-                    });
-                } else { // If no message is provided, show a generic error message
-                    // Mostrar SweetAlert de error genérico
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
-                        icon: 'error'
-                    });
-                }
-            })
-            .catch(errors => {
-                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
-                    icon: 'error'
-                });
-                console.error('Error:', errors);
-            });
-    }
 
     // Agregar evento clic para el botón edit-reserva
     $('.edit-reserva').on('click', function () {
@@ -488,7 +508,7 @@ function validateForm() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                Swal.fire('reserva eliminada correctamente', 'success').then(() => {
+                Swal.fire('reserva eliminada correctamente').then(() => {
                         location.reload();
                     });
             } else {
