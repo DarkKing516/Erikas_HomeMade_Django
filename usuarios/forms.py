@@ -97,27 +97,46 @@ class RegistroForm(forms.ModelForm):
             'usuario': forms.TextInput(attrs={'class': 'inputField', 'placeholder': 'Usuario'}),
             'contraseña': forms.PasswordInput(attrs={'class': 'inputField', 'placeholder': 'Contraseña'}),
         }
-    def clean_documento(self):
-        documento = self.cleaned_data['documento']
-        # Validar si el documento contiene solo números
-        if not documento.isdigit():
-            raise forms.ValidationError("El documento debe contener solo números.")
-
-        # Verificar si el documento ya está en uso
-        if Usuario.objects.filter(documento=documento).exists():
-            raise forms.ValidationError("Este documento ya está en uso.")
-        return documento
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        if len(nombre) < 3:
+            raise forms.ValidationError("El nombre debe tener al menos 3 caracteres.")
+        return nombre
 
     def clean_telefono(self):
         telefono = self.cleaned_data['telefono']
-        # Validar si el teléfono contiene solo números
-        if not telefono.isdigit():
-            raise forms.ValidationError("El teléfono debe contener solo números.")
+        if not telefono.isdigit() or len(telefono) != 10:
+            raise forms.ValidationError("El teléfono debe contener 10 dígitos y solo números.")
         return telefono
+
+    def clean_documento(self):
+        documento = self.cleaned_data['documento']
+        if len(documento) < 6 or len(documento) > 15:
+            raise forms.ValidationError("El documento debe tener entre 6 y 15 caracteres.")
+        return documento
+
+    def clean_usuario(self):
+        usuario = self.cleaned_data['usuario']
+        if len(usuario) < 3 or len(usuario) > 20:
+            raise forms.ValidationError("El usuario debe tener entre 3 y 20 caracteres.")
+        return usuario
+
+    def clean_contraseña(self):
+        contraseña = self.cleaned_data['contraseña']
+        if len(contraseña) < 4 or len(contraseña) > 100:
+            raise forms.ValidationError("La contraseña debe tener entre 4 y 100 caracteres.")
+        if not any(char.isdigit() for char in contraseña):
+            raise forms.ValidationError("La contraseña debe contener al menos un número.")
+        if not any(char.isupper() for char in contraseña):
+            raise forms.ValidationError("La contraseña debe contener al menos una letra mayúscula.")
+        if not any(char.islower() for char in contraseña):
+            raise forms.ValidationError("La contraseña debe contener al menos una letra minúscula.")
+        if not any(char in "!@#$%^&*()-_+=<>?{}[]|\/:;\"'`~" for char in contraseña):
+            raise forms.ValidationError("La contraseña debe contener al menos un carácter especial.")
+        return contraseña
 
     def clean_correo(self):
         correo = self.cleaned_data['correo']
-        # Verificar si el correo ya está en uso
         if Usuario.objects.filter(correo=correo).exists():
             raise forms.ValidationError("Este correo electrónico ya está en uso.")
         return correo
