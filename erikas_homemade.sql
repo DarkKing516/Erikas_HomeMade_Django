@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-07-2024 a las 23:03:32
+-- Tiempo de generación: 18-07-2024 a las 23:34:20
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -208,7 +208,9 @@ INSERT INTO `detalle_pedido_productos` (`idDetalle_Pedido_Productos`, `cant_prod
 (5, 1, 'Muñeco Mario panadero', 'Muñeco de Mario versión panadero', 50000.00, 50000.00, 5, 10),
 (6, 1, 'Mantel Crochet', 'Mantel para mesa redonda tejido a mano tamaño 1m de diámetro', 40000.00, 40000.00, 9, 10),
 (7, 1, 'Caballerito Crochet', 'Manualidad De Hollow knight Caballerito de crochet', 100000.00, 100000.00, 24, 10),
-(8, 2, 'Luffy Crochet', 'Manualidad de one piece personaje Monkey D Luffy', 100000.00, 200000.00, 23, 10);
+(8, 2, 'Luffy Crochet', 'Manualidad de one piece personaje Monkey D Luffy', 100000.00, 200000.00, 23, 10),
+(9, 1, 'Muñeco de costura', 'Muñeco con costura remarcada', 10000.00, 10000.00, 7, 11),
+(10, 1, 'Muñeco Mario panadero', 'Muñeco de Mario versión panadero', 50000.00, 50000.00, 5, 11);
 
 -- --------------------------------------------------------
 
@@ -362,7 +364,7 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (54, 'pedidos', '0019_alter_producto_estado_catalogo', '2024-05-28 19:23:52.431542'),
 (55, 'usuarios', '0011_usuario_imagen', '2024-05-30 19:28:44.903664'),
 (56, 'pedidos', '0020_pedido_productos_pedido_servicios', '2024-06-07 21:20:06.167601'),
-(57, 'reservas', '0007_alter_reserva_descripcion', '2024-07-17 21:03:12.016913');
+(57, 'reservas', '0007_alter_reserva_descripcion', '2024-07-11 19:54:27.852080');
 
 -- --------------------------------------------------------
 
@@ -396,7 +398,9 @@ INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALU
 ('j375f0t1esihzivm0v4nn7ik54or7ns4', '.eJxtk01PwzAMhv_K5HOFxHUnJrbDJAZTt3JBqCpNmCylzeS0cED8d9LhpG7Tox83j9_m4wfIGljDRjXYQgaoyhu4z-CqqUFnHazf4AldV9GqcH1F6FEGj6SnYKewWyS5NQt054XKLjSOmj7RDLVBn2mq5BxeqccQoRrn6XRQpMEaACuP4W9lkBlhlWiExWRVX3diYyQJPolCCglZdsarXTAmmLUpD-6kwwNOmr6wlscoCWsnKBgllGlTY4Jl2kV30okHo1BJcEAnIG93rOPhzcB01bj_c3uunc9QzeYJynduBOHaJWS2cLx5yYhX3XZCHkuRgNl7Bv3_cyhR3Z5pa5sP0iXT4SlvD_vn_emcb7YvOcTvwyNfFd-Fp7Ul0lYsq4bmw6Wp0NzVtoHfP3bcaaU:1s7h7Y:3-Y0GwmbLM7YSOfR6xGRDVfkWKfzU9hX5398rFR-56w', '2024-05-30 19:50:32.234621'),
 ('kqzuf3dwddf7m0ll820s9tovlv9fxkys', '.eJxdkMFqwkAQhl9F5hwM9JhTRXIo2CJFexFZ1uw0jGR3wkxSD-K7O4lW0952vvl2-f89A2rnA0MBC8hAuLHTsiFMHdpMwY3oJYMWJZKyQrGDMlDnZbZG-abGtBXpML-TGgsUzMp-pb9wYn6iovz4f-qETtwvy2Nsn0GvvRdiR2FMlTgeBN2dDtlXb-XHpoSH-ewz2562xisWQZ5cqW7r1zp6auYVx6F49DUm194aFpBHq-Dz3sK5cac5VZxYUYnT_NjWw8teOvue_eUKWlV0fA:1sHqHF:gNlZ69-UvehdBYQcYFgKKDxD_u4B6j_OmFXUtduCgrs', '2024-06-27 19:38:29.837468'),
 ('l0uudw26i87mbljp9kfci11nib1jlelz', '.eJxdkDELwjAQhf9KuTk4OHYSJINQRcS6iJTYnHKQ9OTS6iD-d2NbNHa8731vePcEYQc5LB1h0yIoIFv1aK7ghuIpcID8CNpSayTbolzIRa2gMN6DohJjQnQ0LafBWF5TiNSSTe1_mJg7DCh3M1ETmriHOCayk4IudEaIK7L9pIb9WbAa6Wd4sdKbvYav-XtGVj7KyGsWQU4q9RAvrt6Qm9Xs4fUG49dvjw:1s7KYf:3vTmyoMixvNMWSNBepP3tNXaEZDvbSLO7mkMnUlh9v0', '2024-05-29 19:45:01.324971'),
+('mfa2ojwvo5wg03q64nms0t29dssqa0vb', '.eJx9lE1rwzAMhv_K8Dm0sA8GOW10PQw6KPu6jBLU2A0ajh3spIeN_fc5iZ2ocdpb_LzSK9kR-mXC1sA1S9kjS5jRsv1SINFhB5BnHbtNWCVMiVZbln6xTSubqw_bgEGHErYy4hSsOdaz5FXLGbru2pgRtsIcULqzr-nSxVgwnEZvEZsOVGKJioR5y2242TSRCCHUaN7kNbkyJaFlikJNCr3ZO1Z6xjHC3jbmwTtSfIE3YY6Y0x9Eibc9QcGRQtpt7Bhh2u2sd6QMv4Ejp-AFLYH-uYfzMB8TcJoVpkZYVxAm5oT6cRpBmKiITBLHoYpKfApVE_PhSDqYhFyYxMkt10fkQuUIM1Kfcm6MguNZZQU1SF1MRhPKPbqY5xIKoS5JM7PgjYMyVDgbwXYJa_pVkCFn6U3ClC73RmSeui31BAqldi9oCjBwtdGV-GFDWh-QGzjUDubaGKFJMu-Sj33u9d39Q1ECykWuy3bpdRfJqn7zpGxZuieGZeP-b9Zpdom5VtoKi1otvquiLQGmdqtx9_cPzJ7YKA:1sRfSd:H3UIdKSZhvyBeLC-Tw5MZyYrTduw5VkNzUBLbuZA1lM', '2024-07-24 22:06:51.481008'),
 ('pe8noj4uyrz9sytzlvopi7alkk12zac0', '.eJxtlMFugzAMhl-lyhm12rWnVWsPldatou0uU4Uy4lWeCEYJbIdp775AEzCEG_6Mf_84Mb8CbC0VibXYiEQYKtonpbF0EaqsAw-JqMBotGTF-l08oysxi4ttpEGHEvFkYAx2CutZklIxQ3edh5nEEcwnFm1coPM0lvQ-nCQMJkI09IO4UU-DagBe8hi-lhuZEC_FEqHYkGrymg2Gk6DHUXDBoRc7Y0UzihH2sjEP2lHGNziB-cacHyMnXnaEgiKH3G2sGGHudlY7yvQHo1BxcEDLoB93H_eHNwHjqmH-U_UUrPMgJ_0Y9XduAOHaRWRSONy8qMUblDUT70PmwLNrIpr7OmSoujUtSX8YyDxtV3l72L_sT-d0s31NRf9-WPLF5efiaE7GALEy2SYfb1piscxJt_8CLW9QZtV9Iddipd2w5Kpx7rMuZ1eYU0kWLFK5_Kpura40tftjXP_-AWydg9k:1sJHkG:a0NG0w1tWEWyI9WbRHrM6EgSaoLXYN1omz_4_55pLEs', '2024-07-01 19:10:24.760985'),
+('rt0j39jmulyw9r3gfxr093y30ua92kmj', '.eJx9lMtqwzAQRX-laG0S6IOCVy1pFoUUQvrYlGIUSzFT9DCSnUVL_72yLdkTyclOOldzZ0Ya9Eu4bSjTJCePJCNGi26lqACHHQBW9Ow2IzU3Eqy2JP8km042V--2pQYcysjK8FOwZtDMkp0WM3TdlzEjbLk5gOj2AiSoU0tfh7PkUxFhN-XjaaKRBtcAvOU2dBsHIiEcNZq1ZYOuAZPQBkYhJ4be7A1qPeOYYG-b8uCdKD7BKzdHKPGjYeJtT1BwxBBXmzomGFc7650o4zMwYBi8gEXQX_e4H2cmAqdR0_3H7jtuXQ00yoeon7AJhCFLSBQ4zVmS4oOrBpmPW1RBdOTCcEaNr4_AuCqBzkhDyLnJCo5nlRVtqNBVNK1U7sGdeZa04uqSNDMe3jgoY4azJ-abmZy_MtIOn0UBjOQ3GVFa7g0vPHV_3RNVILS7YFNRQ682uuY_ZAwbDpSGHhoHS20M1yiY9cHHIfb67v6hkhTEotSy-zr7Pot6-L9yspTuBeiydc9f9JpdQqmVttyCVovvuiJ__1UP7Z0:1sUAIP:_kP4ZxVF4EWPMSZkUvdhmwMhzL_qRuEHHpPH8nd5v0k', '2024-07-31 19:26:37.048294'),
 ('wn8nx0gpuv3qoa3xsbiibud529zwvowc', '.eJxdjz0LwkAMhv9KyVwcHDsp0kGoImJdRMrZixK4ayTX6iD-d9P6dbrlffIE3twAQ2ssQwZTSEHY6TRzhE2LmslWAxqncEbxFDhAtoPcUmskWaEcyalWUOjzgoIyS1at9C39wshcY0C5mD81opG71T7K9il0oTNCXJEdWjXsD4LVi_bdi3m-3OTwMb__JOW1VF6zCHJ0Uj_Xk5M35EY1e7g_AGzQXfc:1sCPCa:29Sm9ReUdWQwQ4mKdJchGyttskUSkaDoEBQrShBY1HA', '2024-06-12 19:43:12.244106'),
 ('xfh7giiqv29zpzoqu7xn5ob1qbu75uqi', '.eJxdkMFKxEAMhl9lyXnYwooIPSnqbQXx4EVkiJ1syTIzKUm7B8V3N9uqVG-Tb74f_uQDyEZMAi3cQACV7K_bzFRH8plTnNEuwEBa2MSgfYH7xCPq5pH0wNm1Pdt5fmBzlji5FX6kv3BlPpGRnvCfuqIr99n7OHsNMNmEyhI5QXsRoEp5U4rf1LvfYeUsHtAeFTd7GegdfmOL0CkeRoedqJKswmkOn5bs7vLqui_IedtJOd-iYE81DsvSLTTFt8Jm8r5x_rOGO6liZCx1exx6-PwC-3Z5DQ:1sJKbN:Y1G3G8VIYBzzQYmG8ElIbFEqVpqfeDk_kc3D9U_mj_w', '2024-07-01 22:13:25.741545'),
 ('yihqhfmrqvbaajim8wkpf5slnh0wqzxh', '.eJxtk01vgzAMhv9K5TOqtGtPq9YeKq1bRcsu04QY8SpLQCoHusO0_77AkmAIt_px8_glHz-Api2Uhg1sIQHWVf9L1dTYilQ-gIcEbsg1GW1g8w7PZJfwKjNdwWRRAk-MU7BX1C6SVFcLdD9kWGickL-o6uuKbKap0uWwShxD-Gqch_GgQL3VA6c8-a-VQWbEqUTDL2aturIVGyOJ90nkU0joZBe66QVjhJ025t4dddyAM_KdSnmMkjjtBHmjhDJtbIywTLvojjrhYBQpCY5kBHTbHepweDMwXTXu_9yeorEZitk8Qd2dG4G_dhGZLRxvXjTiDZtWyEMpEjj2kUD3_xxyUsMzbXT9yZg72j_l3fHwcjhf0u3uNYXwf__IV9l3ZmmpmVGLZUXffLzWBVXrUtfw-we2-W1U:1sC2Su:gAs_UmOg_UM1p7fD1L0tpwlMCTb1urWkUkNH-34iJrU', '2024-06-11 19:26:32.160632'),
@@ -426,9 +430,10 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`idPedido`, `fechaCreacion_pedido`, `fecha_pedido`, `descripcion_pedido`, `subtotal`, `iva`, `total`, `evidencia_pago`, `estado_pedido`, `id_Usuario_id`) VALUES
-(8, '2024-06-17 22:13:25.716010', '2024-06-28 05:00:00.000000', 'Enumerar cada muñeco del 1 al 3', 300000.00, 57000.00, 357000.00, 'pedidos/comprobante_prueba.png', 'En proceso', 3),
+(8, '2024-06-17 22:13:25.716010', '2024-08-06 05:00:00.000000', 'Enumerar cada muñeco del 1 al 4', 300000.00, 57000.00, 357000.00, 'pedidos/comprobante_prueba.png', 'Por hacer', 3),
 (9, '2024-06-21 21:45:38.948645', '2024-07-03 05:00:00.000000', 'quiero que el moño sea morado', 30000.00, 5700.00, 35700.00, 'pedidos/74d25d5f-0b96-48cb-a1f8-55bfa66d2154', 'Entregado', 2),
-(10, '2024-06-23 18:33:51.043874', '2024-07-12 05:00:00.000000', 'quiero que el  muñeco de costura sea rojo', 560000.00, 106400.00, 666400.00, 'pedidos/images.jpeg', 'Por hacer', 6);
+(10, '2024-06-23 18:33:51.043874', '2024-07-12 05:00:00.000000', 'quiero que el  muñeco de costura sea azul', 560000.00, 106400.00, 666400.00, 'pedidos/images.jpeg', 'Por hacer', 6),
+(11, '2024-07-10 22:02:50.785832', '2024-07-31 05:00:00.000000', 'quiero que el mario sea verde', 60000.00, 11400.00, 71400.00, 'pedidos/Captura_de_pantalla_2024-02-04_224354.png', 'Entregado', 3);
 
 -- --------------------------------------------------------
 
@@ -503,7 +508,8 @@ INSERT INTO `permisos` (`id`, `nombre_permiso`, `estado_permiso`) VALUES
 (54, 'Cambiar Imagen Productos', 'A'),
 (55, 'Cambiar Imagen Servicios', 'A'),
 (56, 'Editar Estado Servicio Catalogo', 'A'),
-(57, 'Editar Estado Servicio', 'A');
+(57, 'Editar Estado Servicio', 'A'),
+(58, 'Editar Estado Tipo Servicios', 'A');
 
 -- --------------------------------------------------------
 
@@ -528,9 +534,9 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`idProducto`, `nombre`, `descripcion`, `imagen`, `precio`, `estado_producto`, `estado_catalogo`, `cantidad`, `id_TipoProducto_id`) VALUES
-(5, 'Muñeco Mario panadero', 'Muñeco de Mario versión panadero', 'producto_imgs/mario.png', 50000.00, 'A', 'A', 2, 1),
+(5, 'Muñeco Mario panadero', 'Muñeco de Mario versión panadero', 'producto_imgs/mario.png', 50000.00, 'A', 'A', 1, 1),
 (6, 'Muñeca vestido verde', 'Muñeca con vestido verde para niños pendejos', 'producto_imgs/muñecaverde.jpg', 25000.00, 'A', 'A', 0, 1),
-(7, 'Muñeco de costura', 'Muñeco con costura remarcada', 'producto_imgs/muñecocostura.jpg', 10000.00, 'A', 'A', 1, 1),
+(7, 'Muñeco de costura', 'Muñeco con costura remarcada', 'producto_imgs/muñecocostura.jpg', 10000.00, 'A', 'A', 0, 1),
 (8, 'Tendido crochet', 'Tendido tejido a mano con estilo crochet', 'producto_imgs/tendidocrochet.jpg', 60000.00, 'A', 'A', 10, 2),
 (9, 'Mantel Crochet', 'Mantel para mesa redonda tejido a mano tamaño 1m de diámetro', 'producto_imgs/mantelcrochet.jpg', 40000.00, 'A', 'A', 4, 2),
 (10, 'Individuales crochet', 'individuales para mesa familiar 20cm de diámetro 4 unidades', 'producto_imgs/individualescrochet.jpg', 20000.00, 'A', 'A', 10, 2),
@@ -570,7 +576,10 @@ CREATE TABLE `reservas` (
 
 INSERT INTO `reservas` (`id`, `fecha`, `fecha_cita`, `descripcion`, `estado`, `usuario_id`) VALUES
 (5, '2024-06-21 21:57:12.679182', '2024-06-22 23:00:00.000000', 'quiero arreglar el cierre de un pantalon', 'Cancelada', 2),
-(6, '2024-06-23 20:13:10.446564', '2024-06-29 22:30:00.000000', 'quiero reunirme con la dueña para cotizar un vestido de bodas', 'Pendiente', 6);
+(6, '2024-06-23 20:13:10.446564', '2024-06-29 22:30:00.000000', 'quiero reunirme con la dueña para cotizar un vestido de bodas', 'Pendiente', 6),
+(7, '2024-07-10 21:53:12.139201', '2024-07-19 21:53:00.000000', 'quiero ver a la linda de Erika', 'Pendiente', 3),
+(8, '2024-07-17 19:27:13.378365', '2024-07-20 19:30:00.000000', 'www', 'Pendiente', 3),
+(9, '2024-07-17 19:27:56.913528', '2024-07-22 19:30:00.000000', 'h', 'Pendiente', 4);
 
 -- --------------------------------------------------------
 
@@ -669,55 +678,62 @@ INSERT INTO `roles_permisos` (`id`, `rol_id`, `permiso_id`) VALUES
 (70, 2, 39),
 (71, 2, 42),
 (72, 2, 46),
-(75, 4, 1),
-(76, 4, 2),
-(77, 4, 3),
-(78, 4, 4),
-(79, 4, 5),
-(80, 4, 6),
+(151, 4, 1),
+(152, 4, 2),
+(153, 4, 3),
+(154, 4, 4),
+(155, 4, 5),
+(196, 4, 6),
+(156, 4, 7),
 (82, 4, 8),
 (85, 4, 9),
 (86, 4, 10),
-(87, 4, 11),
-(88, 4, 12),
-(84, 4, 13),
-(89, 4, 15),
-(108, 4, 16),
-(109, 4, 17),
-(112, 4, 18),
-(113, 4, 19),
-(103, 4, 20),
-(104, 4, 21),
-(105, 4, 22),
-(106, 4, 23),
-(115, 4, 24),
-(116, 4, 25),
-(117, 4, 26),
-(118, 4, 27),
-(120, 4, 28),
-(121, 4, 29),
-(122, 4, 30),
-(123, 4, 31),
-(91, 4, 32),
-(101, 4, 33),
-(97, 4, 34),
-(81, 4, 38),
-(127, 4, 39),
-(126, 4, 40),
-(128, 4, 41),
-(129, 4, 43),
-(83, 4, 44),
-(102, 4, 45),
-(90, 4, 47),
-(98, 4, 49),
-(99, 4, 50),
-(107, 4, 51),
-(110, 4, 52),
-(111, 4, 53),
-(114, 4, 54),
-(119, 4, 55),
-(124, 4, 56),
-(125, 4, 57);
+(200, 4, 11),
+(201, 4, 12),
+(183, 4, 13),
+(185, 4, 15),
+(157, 4, 16),
+(158, 4, 17),
+(159, 4, 18),
+(160, 4, 19),
+(164, 4, 20),
+(166, 4, 21),
+(167, 4, 22),
+(168, 4, 23),
+(169, 4, 24),
+(172, 4, 25),
+(173, 4, 26),
+(174, 4, 27),
+(176, 4, 28),
+(180, 4, 29),
+(181, 4, 30),
+(182, 4, 31),
+(187, 4, 32),
+(188, 4, 33),
+(189, 4, 34),
+(190, 4, 35),
+(191, 4, 36),
+(192, 4, 37),
+(195, 4, 38),
+(197, 4, 39),
+(198, 4, 40),
+(199, 4, 41),
+(202, 4, 42),
+(203, 4, 43),
+(204, 4, 44),
+(205, 4, 45),
+(206, 4, 46),
+(184, 4, 47),
+(193, 4, 49),
+(194, 4, 50),
+(165, 4, 51),
+(163, 4, 52),
+(161, 4, 53),
+(162, 4, 54),
+(170, 4, 55),
+(171, 4, 56),
+(175, 4, 57),
+(186, 4, 58);
 
 -- --------------------------------------------------------
 
@@ -823,7 +839,7 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`id`, `nombre`, `telefono`, `documento`, `correo`, `usuario`, `contraseña`, `estado`, `idRol_id`, `imagen`) VALUES
 (1, 'ADMINISTRADOR', '1234', '5678', 'admin@gmail.com', 'Admin muy serio', 'pbkdf2_sha256$720000$6Ss3QHdg69DbXGaFcM7VwZ$A6OVIj5bW3zYIHcNv3aRv7pvBPNwqJdrN7cOxUzDV/0=', 'A', 1, 'user_images/iconosesion.jpg'),
 (2, 'Nombre Prueba', '1234123412', '1254235132', 'cliente@gmail.com', 'Cliente Usuario', 'pbkdf2_sha256$720000$6Ss3QHdg69DbXGaFcM7VwZ$A6OVIj5bW3zYIHcNv3aRv7pvBPNwqJdrN7cOxUzDV/0=', 'A', 2, 'user_images/iconosesion.jpg'),
-(3, 'Danilo Vergara Lopez', '3177099118', '1025884970', 'danilovergara257@gmail.com', 'Dancraft', 'pbkdf2_sha256$720000$Zb8dKoUJWg74VSt7JmGNZw$7lWonzHtMmXRNECJykpGZtKTj9STpNZKPU7pLN6F448=', 'A', 2, 'user_images/iconosesion.jpg'),
+(3, 'Danilo Vergara Lopez', '3177099118', '1025884970', 'danilovergara257@gmail.com', 'Dancraft', 'pbkdf2_sha256$720000$Zb8dKoUJWg74VSt7JmGNZw$7lWonzHtMmXRNECJykpGZtKTj9STpNZKPU7pLN6F448=', 'A', 4, 'user_images/iconosesion.jpg'),
 (4, 'Nelson Valencia Álzate', '3146060549', '1000898565', 'valenciaalzatenelsondavid@gmail.com', 'MurciaFeroz<3', 'pbkdf2_sha256$720000$lWBEdbkgEXpGKXYszZPoMb$uId0QrK7rsRRyjrzu0HQrwZ5UOE5aO7P9ztlZIb/bdg=', 'A', 2, 'user_images/iconosesion.jpg'),
 (5, 'Emmanuel Sanchez Herrera', '3203097136', '1033487380', 'sanchez252901@gmail.com', 'ikaed', 'pbkdf2_sha256$720000$6IcaA4RSeFsVfCrvmdVmb6$U7Q2Qu4hcQYOBQgTjnbS3YtLHBjKfCD53a8OkOzwPeA=', 'A', 2, 'user_images/iconosesion.jpg'),
 (6, 'Jhon Michael Contreras', '3213309428', '1091163415', 'jhomai7020@gmail.com', 'DarkKing516', 'pbkdf2_sha256$720000$3Ttqx0o2jBfBwAZTlfSmxY$K7mUe1sJ2t/BzBuP/9QE0+vYwdOXMJt/Z/9MegRoVcM=', 'A', 4, 'user_images/iconosesion.jpg');
@@ -850,7 +866,8 @@ CREATE TABLE `ventas_venta` (
 --
 
 INSERT INTO `ventas_venta` (`idVenta`, `fecha`, `metodo_pago`, `subtotal`, `descuento`, `iva`, `total`, `idPedido_id`) VALUES
-(13, '2024-06-21 21:52:03.301319', 'efectivo', 30000.00, 5700.00, 5700.00, 30000.00, 9);
+(13, '2024-06-21 21:52:03.301319', 'efectivo', 30000.00, 5700.00, 5700.00, 30000.00, 9),
+(14, '2024-07-10 22:03:56.928559', 'nequi', 60000.00, 400.00, 11400.00, 71000.00, 11);
 
 --
 -- Índices para tablas volcadas
@@ -1064,7 +1081,7 @@ ALTER TABLE `auth_user_user_permissions`
 -- AUTO_INCREMENT de la tabla `detalle_pedido_productos`
 --
 ALTER TABLE `detalle_pedido_productos`
-  MODIFY `idDetalle_Pedido_Productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idDetalle_Pedido_Productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_pedido_servicios`
@@ -1094,13 +1111,13 @@ ALTER TABLE `django_migrations`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `idPedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `idPedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -1112,7 +1129,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `reservas`
 --
 ALTER TABLE `reservas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
@@ -1124,7 +1141,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `roles_permisos`
 --
 ALTER TABLE `roles_permisos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=207;
 
 --
 -- AUTO_INCREMENT de la tabla `servicios`
@@ -1154,7 +1171,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `ventas_venta`
 --
 ALTER TABLE `ventas_venta`
-  MODIFY `idVenta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `idVenta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Restricciones para tablas volcadas
