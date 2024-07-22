@@ -1,10 +1,7 @@
-
-
 <title>Listar Ventas</title>
 {% extends 'layouts/navbar.html' %}
 
 {% load humanize %}
-
 {% load static %}
 
 {% block content %}
@@ -26,7 +23,6 @@
                                 <th>Total Final</th>
                                 <th>Detalle compra</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
-
                             </tr>
                         </thead>
                         <tbody>
@@ -37,56 +33,12 @@
                                 <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.total|floatformat:0|intcomma }}</td>
                                 <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0|intcomma }}</td>
                                 <td>
-                                    <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#ventaModal{{ venta.id }}"><i class="mdi mdi-eye"></i></a>
+                                    <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal{{ venta.idPedido.idPedido }}"><i class="mdi mdi-eye"></i></a>
                                 </td>
                                 <td>
                                     <a href="{% url 'ventas:generar_factura' idVenta=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
                                 </td>
                             </tr>
-                            <!-- Modal para cada venta -->
-                            <div class="modal fade" id="ventaModal{{ venta.id }}" tabindex="-1" role="dialog" aria-labelledby="ventaModalLabel{{ venta.id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-xl" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="ventaModalLabel{{ venta.id }}">Detalles de la Venta</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row w-100">
-                                                <div class="col-md-5">
-                                                    <p><strong>Fecha de Venta:</strong> {{ venta.fecha|date:"d M Y H:i" }}</p>
-                                                    <p><strong>Metodo Pago:</strong> {{ venta.metodo_pago }}</p>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <p><strong>Subtotal:</strong> ${{ venta.idPedido.total|floatformat:"0"|intcomma }}</p>
-                                                    <p class="discount"><strong>Descuento:</strong> -${{ venta.descuento|floatformat:"0"|intcomma }}</p>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <p class="final-total"><strong>Total:</strong> ${{ venta.total|floatformat:"0"|intcomma }}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                {% if venta.idPedido.productos.count and venta.idPedido.servicios.count %}
-                                                <!-- <div>
-                                                <thead>
-                                                    <tr>
-                                                        <th><center>Img</center></th>
-                                                        <th>Nombre</th>
-                                                        <th>Cantidad</th>
-                                                        <th>Subtotal</th>
-                                                    </tr>
-                                                </thead>
-                                                </div> -->
-                                                {% endif %}
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -96,12 +48,146 @@
     </div>
 </div>
 
+<!-- Modales para cada venta -->
+{% for venta in ventas %}
+<div class="modal fade" id="modal{{ venta.idPedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ venta.idPedido.idPedido }}" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel{{ venta.idPedido.idPedido }}">Detalles del Pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row w-100">
+                            <div class="col-md-5">
+                                <p><strong>Fecha de Creación:</strong> {{ venta.idPedido.fechaCreacion_pedido|date:"d M Y H:i" }}</p>
+                                <p><strong>Posible Fecha Entrega:</strong> {{ venta.idPedido.fecha_pedido|date:"d M Y H:i" }}</p>
+                            </div>
+                            <div class="col-md-5">
+                                <p><strong>Descuento:</strong> ${{ venta.descuento|floatformat:0|intcomma }}</p>
+                                <p><strong>Total:</strong> ${{ venta.total|floatformat:0|intcomma }}</p>
+                            </div>
+                            <div class="col-md-2">
+                                <p><strong>Descripción:</strong><br>{{ venta.idPedido.descripcion_pedido }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    {% if venta.idPedido.detallepedidoproducto_set.count and venta.idPedido.detallepedidoservicio_set.count %}
+                        <div class="col-md-6">
+                            <h5>Productos</h5>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><center>Img</center></th>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in venta.idPedido.detallepedidoproducto_set.all %}
+                                    <tr>
+                                        <td><center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center></td>
+                                        <td>{{ detalle.nombre_productos }}</td>
+                                        <td>{{ detalle.cant_productos }}</td>
+                                        <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Servicios</h5>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><center>Img</center></th>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in venta.idPedido.detallepedidoservicio_set.all %}
+                                    <tr>
+                                        <td><center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center></td>
+                                        <td>{{ detalle.idServicio.nombre_servicio }}</td>
+                                        <td>{{ detalle.cantidad_servicios }}</td>
+                                        <td>${{ detalle.subtotal_servicios|floatformat:0|intcomma }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% elif venta.idPedido.detallepedidoproducto_set.count %}
+                        <div class="col-md-12">
+                            <h5>Productos</h5>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><center>Img</center></th>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in venta.idPedido.detallepedidoproducto_set.all %}
+                                    <tr>
+                                        <td><center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center></td>
+                                        <td>{{ detalle.nombre_productos }}</td>
+                                        <td>{{ detalle.cant_productos }}</td>
+                                        <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% elif venta.idPedido.detallepedidoservicio_set.count %}
+                        <div class="col-md-12">
+                            <h5>Servicios</h5>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th><center>Img</center></th>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in venta.idPedido.detallepedidoservicio_set.all %}
+                                    <tr>
+                                        <td><center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center></td>
+                                        <td>{{ detalle.idServicio.nombre_servicio }}</td>
+                                        <td>{{ detalle.cantidad_servicios }}</td>
+                                        <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 <!-- Scripts de Bootstrap y DataTables -->
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 <script>
@@ -140,20 +226,16 @@
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#ventasTable_filter input").addClass("form-control form-control-sm");
     });
-   
 </script>
-
 
 {% if not request.session.usuario_id %}
     <script>
         window.location.href = "{% url 'usuarios:requestLogin' %}";
     </script>
-    {% elif "Listar Mis Ventas" not in request.session.permisos %}
+{% elif "Listar Mis Ventas" not in request.session.permisos %}
     <script>
         window.location.href = "{% url 'usuarios:requestLogin' %}";
     </script>
 {% endif %}
-
-
 
 {% endblock %}

@@ -148,7 +148,10 @@ def crear_venta(request):
 def obtener_pedidos_usuario(request, usuario_id):
     pedidos_vendidos = Venta.objects.values_list('idPedido_id', flat=True)
     pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id).exclude(idPedido__in=pedidos_vendidos)
-    pedidos_list = [{'idPedido': pedido.idPedido, 'descripcion': pedido.descripcion_pedido} for pedido in pedidos]
+    pedidos_list = [{
+        'idPedido': pedido.idPedido,
+        'fechaCreacion_pedido': pedido.fechaCreacion_pedido.strftime('%Y-%m-%d')  # Ajusta el formato según sea necesario
+    } for pedido in pedidos]
     return JsonResponse({'pedidos': pedidos_list})
 
 def obtener_total_pedido(request, idPedido):

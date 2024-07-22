@@ -405,7 +405,7 @@
                         selectPedido.empty(); // Limpiar las opciones actuales
                         selectPedido.append('<option value="">Seleccione un pedido</option>');
                         data.pedidos.forEach(pedido => {
-                            var option = new Option(pedido.descripcion, pedido.idPedido);
+                            var option = new Option(pedido.fechaCreacion_pedido, pedido.idPedido);
                             selectPedido.append(option); // Agregar nuevas opciones
                         });
                     })
