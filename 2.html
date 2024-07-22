@@ -1,106 +1,967 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input con Select Combinado</title>
-    <style>
-        .input-group {
-            display: flex;
-            align-items: center;
-        }
+<title>Listar Pedidos</title>
+{% extends 'layouts/navbar.html' %}
 
-        .input-group select,
-        .input-group input {
-            height: 40px;
-            margin: 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 0 10px;
-        }
+{% load static %}
 
-        .input-group select {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
+{% block content %}
 
-        .input-group input {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            flex: 1;
-        }
+<!-- endinject -->
+<script src="{% static 'js/pedidos.js' %}"></script>
 
-        .button {
-            position: relative;
-            width: 120px;
-            height: 40px;
-            background-color: #000;
-            display: flex;
-            align-items: center;
-            color: white;
-            flex-direction: column;
-            justify-content: center;
-            border: none;
-            padding: 12px;
-            gap: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-          }
-          
-          .button::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            left: -4px;
-            top: -1px;
-            margin: auto;
-            width: 128px;
-            height: 48px;
-            border-radius: 10px;
-            background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100% );
-            z-index: -10;
-            pointer-events: none;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          }
-          
-          .button::after {
-            content: "";
-            z-index: -1;
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100% );
-            transform: translate3d(0, 0, 0) scale(0.95);
-            filter: blur(20px);
-          }
-          
-          .button:hover::after {
-            filter: blur(30px);
-          }
-          
-          .button:hover::before {
-            transform: rotate(-180deg);
-          }
-          
-          .button:active::before {
-            scale: 0.7;
-          }
-          
-          
-    </style>
-</head>
-<body>
-    <div class="input-group">
-        <select>
-            <option value="+1">+1</option>
-            <option value="+44">+44</option>
-            <option value="+52">+52</option>
-            <!-- Agrega más prefijos de países según sea necesario -->
-        </select>
-        <input type="tel" placeholder="Número de teléfono">
+
+<!-- Contenido principal -->
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Pedidos</h4>
+                <div class="table-responsive">
+                    <table id="pedidoTable" class="table table-hover row-border" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Fecha de Creación</th>
+                                <th>Fecha de Pedido</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Detalles</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pedido in pedidos %}
+                            <tr class="pedido-row">
+                                <td>{{ pedido.id_Usuario }}</td>
+                                <td>{{ pedido.fechaCreacion_pedido }}</td>
+                                <td>{{ pedido.fecha_pedido }}</td>
+                                <td>$ {{ pedido.total|floatformat:"0"  }}</td>
+                                {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
+                                <td>
+                                    <!-- Aquí puedes acceder al estado del pedido -->
+                                    {% if pedido.estado_pedido == 'Por hacer' %}
+                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
+                                    data-pedido-id="{{ pedido.idPedido }}">Por hacer</label>
+                                    {% elif pedido.estado_pedido == 'En proceso' %}
+                                    <label class="badge btn-inverse-warning hover-cursor change-status"
+                                    data-pedido-id="{{ pedido.idPedido }}">En proceso</label>
+                                    {% elif pedido.estado_pedido == 'Hecho' %}
+                                    <label class="badge btn-inverse-primary hover-cursor change-status"
+                                    data-pedido-id="{{ pedido.idPedido }}">Hecho</label>
+                                    {% elif pedido.estado_pedido == 'Entregado' %}
+                                    <label class="badge btn-inverse-success hover-cursor change-status"
+                                    data-pedido-id="{{ pedido.idPedido }}">Entregado</label>
+                                    {% else %}
+                                    <label class="badge btn-inverse-danger hover-cursor change-status"
+                                    data-pedido-id="{{ pedido.idPedido }}">Cancelado</label>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button type="button" class="badge btn-info hover-cursor" data-toggle="modal" data-target="#detallePedidoModal{{ pedido.idPedido }}">
+                                        <i class="mdi mdi-eye"></i>
+                                    </button>
+                                </td>                                
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        {% comment %} <button type="button" class="btn btn-inverse-warning edit-pedido"
+                                        data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
+                                        data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
+                                        data-fecha-pedido="{{ pedido.fecha_pedido }}"
+                                        data-descripcion="{{ pedido.descripcion_pedido }}"
+                                        data-estado="{{ pedido.estado_pedido }}" data-pedido-id="{{ pedido.idPedido }}" 
+                                        data-subtotal="{{ pedido.subtotal }} "
+                                        data-iva=" {{ pedido.iva }} "
+                                        data-total=" {{ pedido.total }} ">
+                                        <i class="mdi mdi-pencil"></i>
+                                        </button> {% endcomment %}
+                                        
+                                        <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
+                                            <i class="bi bi-file-earmark-image"></i>
+                                        </button> 
+                                        <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
+                                            <i class="mdi mdi-delete"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Modal Detalle del Pedido -->
+                            <div class="modal fade" id="detallePedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="detallePedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="detallePedidoModal{{ pedido.idPedido }}Label">Detalle del Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
+                                            <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
+                                            <p><strong>IVA:</strong> {{ pedido.iva }}</p>
+                                            <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+
+                                            <!-- Detalles de los productos -->
+                                            <h5>Productos</h5>
+                                            <ul>
+                                                {% for detalle in detalles_productos %}
+                                                    {% if detalle.idPedido == pedido %}
+                                                        <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos }}</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                            <!-- Detalles de los servicios -->
+                                            <h5>Servicios</h5>
+                                            <ul>
+                                                {% for detalle in detalles_servicios %}
+                                                    {% if detalle.idPedido == pedido %}
+                                                        <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios }}</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <!-- Modal para editar Pedido -->
+                            <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar
+                                                Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="usuario">Nombre</label>
+                                                            <input type="text" class="form-control" id="usuario"
+                                                                readonly value="{{ pedido.id_Usuario }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fecha">Fecha</label>
+                                                            <input type="datetime-local" class="form-control" id="fecha" readonly
+                                                                value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fecha_pedido">Fecha del pedido</label>
+                                                            <input type="datetime-local" class="form-control"
+                                                                id="fecha_pedido" name="fecha_pedido"
+                                                                value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="subtotal">Subtotal</label>
+                                                            <input type="number" class="form-control" id="subtotal"
+                                                                name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="iva">Iva</label>
+                                                            <input type="number" class="form-control" id="iva"
+                                                                name="iva" value="{{ pedido.iva|floatformat:"0" }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="total">Total</label>
+                                                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
+                                                        </div>
+                                                        {% comment %} <div class="form-group">
+                                                            <label for="evidencia_pago">Evidencia de Pago</label>
+                                                            <input type="file" name="evidencia_pago" class="form-control-file" accept="image/*" required="" id="evidencia_pago" value="{{ pedido.evidencia_pago.url }}">
+                                                        </div> {% endcomment %}
+
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col-md-12">
+                                                            <label for="descripcion_pedido">Descripción</label>
+                                                            <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="editevidenciapedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
+                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Evidecia
+                                                Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" onsubmit="EditarEvidenciaPedidoxd('{{ pedido.idPedido }}')" id="EditarEvidenciaForm{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
+                                                            <br>
+                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <!-- Botones -->
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
+                                                        <button type="button" class="btn btn-light"
+                                                            data-dismiss="modal">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+<!-- Fin del contenido principal -->
 
-    <button class="button">
-        Button
-      </button>
-</body>
-</html>
+
+<!-- Modal Crear Pedido -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro de Pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_usuario">Usuario</label>
+                                {{ formCreate.id_Usuario }}
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_pedido">Fecha de Pedido</label>
+                                {{ formCreate.fecha_pedido }}
+                            </div>
+                            <div class="form-group">
+                                <label for="descripcion_pedido">Descripción del Pedido</label>
+                                {{ formCreate.descripcion_pedido }}
+                            </div>
+                            <div class="form-group">
+                                <label for="subtotal">Subtotal</label>
+                                {{ formCreate.subtotal }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="iva">IVA</label>
+                                {{ formCreate.iva }}
+                            </div>
+                            <div class="form-group">
+                                <label for="total">Total</label>
+                                {{ formCreate.total }}
+                            </div>
+                            <div class="form-group">
+                                <label for="estado_pedido">Estado del Pedido</label>
+                                <select class="form-control" id="estado_pedido" name="estado_pedido">
+                                    <option value="Por hacer">Por hacer</option>
+                                    <option value="En proceso">En proceso</option>
+                                    <option value="Hecho">Hecho</option>
+                                    <option value="Entregado">Entregado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="evidencia_pago">Evidencia de pago</label>
+                                <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
+                                <br>
+                                <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Include SweetAlert Library -->
+
+                    <!-- Include SweetAlert Library -->
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                    <!-- Selects para productos y servicios -->
+                    <div class="form-group">
+                        <label for="productos">Productos</label><br>
+                        <select id="productos" name="productos" class="select2 form-control">
+                            {% for producto in productos %}
+                                <option value="{{ producto.idProducto }}" data-precio="{{ producto.precio }}">{{ producto.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('producto')">Agregar</button>
+                        <br>
+                        <ul id="lista_productos"></ul>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="servicios">Servicios</label><br>
+                        <select id="servicios" name="servicios" class="select2 form-control">
+                            {% for servicio in servicios %}
+                                <option value="{{ servicio.idServicio }}" data-precio="{{ servicio.precio_servicio }}">{{ servicio.nombre_servicio }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('servicio')">Agregar</button>
+                        <br>
+                        <ul id="lista_servicios"></ul>
+                    </div>
+                    
+                    <!-- Hidden input to store the selected items -->
+                    <input type="hidden" id="selectedItems" name="selectedItems" />
+                    
+                    <script>
+                        let selectedItems = [];
+                    
+                        function agregarItem(type) {
+                            let selectElement = type === 'producto' ? document.getElementById('productos') : document.getElementById('servicios');
+                            let selectedOption = selectElement.options[selectElement.selectedIndex];
+                            let listElement = type === 'producto' ? document.getElementById('lista_productos') : document.getElementById('lista_servicios');
+                    
+                            Swal.fire({
+                                title: 'Ingrese la cantidad',
+                                html: `
+                                    <div style="display: flex; align-items: center; justify-content: center;">
+                                        <button type="button" id="decrementar" class="btn btn-outline-secondary btn-sm">-</button>
+                                        <input type="number" id="cantidadInput" min="1" step="1" value="1" class="swal2-input no-spinner" style="width: 80px; margin: 0 10px; text-align: center;">
+                                        <button type="button" id="incrementar" class="btn btn-outline-secondary btn-sm">+</button>
+                                    </div>
+                                `,
+                                showCancelButton: true,
+                                confirmButtonText: 'Agregar',
+                                cancelButtonText: 'Cancelar',
+                                didOpen: () => {
+                                    const cantidadInput = document.getElementById('cantidadInput');
+                                    const decrementarButton = document.getElementById('decrementar');
+                                    const incrementarButton = document.getElementById('incrementar');
+                    
+                                    decrementarButton.addEventListener('click', () => {
+                                        if (cantidadInput.value > 1) {
+                                            cantidadInput.value = parseInt(cantidadInput.value) - 1;
+                                        }
+                                    });
+                    
+                                    incrementarButton.addEventListener('click', () => {
+                                        cantidadInput.value = parseInt(cantidadInput.value) + 1;
+                                    });
+                                },
+                                preConfirm: () => {
+                                    const cantidad = document.getElementById('cantidadInput').value;
+                                    if (!cantidad || cantidad <= 0) {
+                                        Swal.showValidationMessage('Por favor, ingrese una cantidad válida');
+                                        return false;
+                                    }
+                                    return cantidad;
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    let quantity = parseInt(result.value);
+                                    let itemId = selectedOption.value + '_' + type;
+                    
+                                    // Obtener el precio del producto o servicio seleccionado
+                                    let precio = parseFloat(selectedOption.getAttribute('data-precio'));
+                    
+                                    // Calcular el total por ítem
+                                    let totalItem = quantity * precio;
+                    
+                                    // Verificar si el elemento ya existe en el array selectedItems
+                                    let existingItem = selectedItems.find(item => item.id === selectedOption.value && item.type === type);
+                    
+                                    if (existingItem) {
+                                        // Actualizar la cantidad del elemento existente
+                                        existingItem.quantity += quantity;
+                                        existingItem.total += totalItem;
+                    
+                                        // Actualizar la cantidad, subtotal y el total mostrado en la lista
+                                        let listItem = document.getElementById(itemId);
+                                        listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Subtotal: ${existingItem.total.toFixed(2)} 
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                    } else {
+                                        // Agregar nuevo elemento al array selectedItems
+                                        selectedItems.push({
+                                            id: selectedOption.value,
+                                            name: selectedOption.text,
+                                            type: type,
+                                            quantity: quantity,
+                                            precio: precio,
+                                            total: totalItem
+                                        });
+                    
+                                        // Agregar elemento a la lista
+                                        let listItem = document.createElement('li');
+                                        listItem.id = itemId;
+                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Subtotal: ${totalItem.toFixed(2)} 
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                        listElement.appendChild(listItem);
+                                    }
+                    
+                                    // Calcular y actualizar el subtotal y total en el formulario principal
+                                    actualizarSubtotalYTotal();
+                                }
+                            });
+                        }
+                    
+                        function removeItem(itemId, type) {
+                            // Eliminar elemento de la lista
+                            let listItem = document.getElementById(itemId);
+                            listItem.remove();
+                    
+                            // Eliminar elemento del array selectedItems
+                            selectedItems = selectedItems.filter(item => !(item.id + '_' + item.type === itemId));
+                    
+                            // Calcular y actualizar el subtotal y total en el formulario principal
+                            actualizarSubtotalYTotal();
+                        }
+                    
+                        function actualizarSubtotalYTotal() {
+                            let subtotal = 0;
+                            selectedItems.forEach(item => {
+                                subtotal += item.total;
+                            });
+                    
+                            // Actualizar subtotal
+                            document.getElementById('subtotal').value = subtotal.toFixed(2);
+                    
+                            // Calcular IVA (asumiendo que es 19%)
+                            let iva = subtotal * 0.19;
+                    
+                            // Actualizar campo de IVA
+                            document.getElementById('iva').value = iva.toFixed(2);
+                    
+                            // Calcular total
+                            let total = subtotal + iva;
+                    
+                            // Actualizar campo de total
+                            document.getElementById('total').value = total.toFixed(2);
+                        }
+
+                        function actualizarSubtotalYTotal() {
+                            let subtotal = 0;
+                            selectedItems.forEach(item => {
+                                subtotal += item.total;
+                            });
+                        
+                            // Actualizar subtotal en el formulario principal
+                            document.getElementById('subtotal').value = subtotal.toFixed(2);
+                        
+                            // Actualizar campo de subtotal en el formulario Django
+                            document.getElementById('id_subtotal').value = subtotal.toFixed(2); // Reemplaza 'id_subtotal' con el ID correcto generado por Django
+                            
+                            // Calcular IVA (asumiendo que es 19%)
+                            let iva = subtotal * 0.19;
+
+                            // Actualizar campo de IVA en el formulario principal
+                            document.getElementById('iva').value = iva.toFixed(2);
+
+                            // Calcular total (subtotal + IVA)
+                            let total = subtotal + iva;
+
+                            // Actualizar campo de total en el formulario principal
+                            document.getElementById('total').value = total.toFixed(2);
+
+                            // Actualizar campos ocultos de Django si es necesario (opcional)
+                            document.getElementById('id_iva').value = iva.toFixed(2); // Reemplaza 'id_iva' con el ID correcto generado por Django
+                            document.getElementById('id_total').value = total.toFixed(2); // Reemplaza 'id_total' con el ID correcto generado por Django
+                        }
+
+                        
+                    </script>
+                    
+                    <style>
+                        /* Ocultar flechas del campo de entrada numérico */
+                        .no-spinner::-webkit-inner-spin-button,
+                        .no-spinner::-webkit-outer-spin-button {
+                            -webkit-appearance: none;
+                            margin: 0;
+                        }
+                    
+                        .no-spinner {
+                            -moz-appearance: textfield;
+                        }
+                    </style>
+
+                    <!-- Botones -->
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin del Modal Crear Pedido -->
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    $(document).ready(function() {
+        // Inicializar Select2 para productos y servicios
+        $('.select2').select2({
+            placeholder: 'Selecciona opciones',
+            theme: 'classic',
+            width: '50%',
+            closeOnSelect: false,
+        });
+    });
+</script>
+
+
+
+<script>
+    function submitForm(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        let form = document.getElementById('pedidoForm');
+        let hiddenInput = document.getElementById('selectedItems');
+        hiddenInput.value = JSON.stringify(selectedItems);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Pedido Creado!', 'Pedido Creado correctamente.', 'success').then(() => {
+                    location.reload();
+                });
+            } else if (data.errors) {
+                let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                for (const key in data.errors) {
+                    errorMessage += `${data.errors[key]}<br>`;
+                }
+                Swal.fire({
+                    title: 'Error',
+                    html: errorMessage,
+                    icon: 'error',
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                    icon: 'error'
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
+            });
+            console.error('Error:', error);
+        });
+    }
+    
+    
+    
+    
+    // Agregar evento clic para el botón edit-pedido
+    $('.edit-pedido').on('click', function () {
+        // Obtener la información del pedido
+        var pedidoInfo = {
+            Pedido: "Datos del pedido",
+            fechaCreacion_pedido: "Fecha del pedido",
+            fecha_pedido: "Fecha del pedido",
+            descripcion_pedido: "Descripción del pedido",
+            subtotal: "Subtotal del pedido",
+            iva: "IVA del pedido",
+            total: "Total del pedido",
+            evidencia_pago: "Evidencia de pago del pedido",
+        };
+
+        // Llenar la modal con la información del pedido
+        $('#editPedidoModal #Pedido').val(pedidoInfo.Pedido);
+        $('#editPedidoModal #fechaCreacion_pedido').val(pedidoInfo.fechaCreacion_pedido);
+        $('#editPedidoModal #fecha_pedido').val(pedidoInfo.fecha_pedido);
+        $('#editPedidoModal #descripcion_pedido').val(pedidoInfo.descripcion_pedido);
+        $('#editPedidoModal #subtotal').val(pedidoInfo.subtotal);
+        $('#editPedidoModal #iva').val(pedidoInfo.iva);
+        $('#editPedidoModal #total').val(pedidoInfo.total);
+        $('#editPedidoModal #evidencia_pago').val(pedidoInfo.evidencia_pago);
+
+        // Mostrar la modal
+        $('#editPedidoModal').modal('show');
+    });
+
+    // Función para manejar el cambio de estado del pedido
+    function handleChangeStatus(event) {
+        // Obtener el pedido ID
+        var pedido_id = $(this).data('pedido-id');
+
+        // Mostrar SweetAlert con el campo de selección y el token CSRF
+        Swal.fire({
+            title: 'Cambiar Estado',
+            html: '<select class="form-control" id="estado_pedido2" name="estado_pedido">' +
+                '<option value="Por hacer">Por hacer</option>' +
+                '<option value="En proceso">En proceso</option>' +
+                '<option value="Hecho">Hecho</option>' +
+                '<option value="Entregado">Entregado</option>' +
+                '<option value="Cancelado">Cancelado</option>' +
+                '</select>',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cambiar',
+            preConfirm: () => {
+                // Obtener el valor seleccionado del select
+                var nuevoPedido = $('#estado_pedido2').val();
+
+                // Enviar los datos a través de AJAX incluyendo el token CSRF
+                return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'pedido_id': pedido_id,
+                        'estado_pedido': nuevoPedido,
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar el Estado.');
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var nuevoRol = $('#estado_pedido2').val();
+                if (nuevoRol === 'Entregado') {
+                    Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                        // Redirigir a la vista de ventas con el pedido_id
+                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id + "&abrir_modal=true";
+                    });
+                } else {
+                    Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
+                }
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        // Destruir la instancia actual, si existe
+        if ($.fn.DataTable.isDataTable('#pedidoTable')) {
+            $('#pedidoTable').DataTable().destroy();
+        }
+
+        // Configuración personalizada para DataTables
+        var dataTableConfig = {
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
+        };
+
+        // Inicializar DataTable con la configuración personalizada
+        var table = $('#pedidoTable').DataTable(dataTableConfig);
+
+        // Mover el cuadro de búsqueda al lugar deseado
+        $("#pedidoTable_filter").detach().appendTo(".top");
+
+        // Agregar el botón "Agregar" al lado del cuadro de búsqueda
+        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal" style="margin: 5px">Agregar</button>');
+
+        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+        $("#pedidoTable_filter input").addClass("form-control form-control-sm");
+
+        // Manejar el evento de cambio de estado del pedido
+        $('#pedidoTable').on('click', 'td .change-status', handleChangeStatus);
+    });
+
+    
+    function EditarPedidoxd(pedidoId) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById(`editarPedidoform${pedidoId}`);
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_pedido' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El pedido se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+    function EditarEvidenciaPedidoxd(pedidoId) {
+        event.preventDefault();
+
+        // Obtener el formulario
+        const form = document.getElementById(`EditarEvidenciaForm${pedidoId}`);
+        // Crear un objeto FormData para enviar los datos del formulario
+        const formData = new FormData(form);
+
+        const formDataString = JSON.stringify(Object.fromEntries(formData));
+        const formString = form.outerHTML;
+
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:editar_evidencia_pedido' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Verificar si la solicitud fue exitosa
+                if (data.success) {
+                    // Mostrar SweetAlert de éxito
+                    Swal.fire({
+                        title: '¡Actualización exitosa!',
+                        text: 'El pedido se ha editado correctamente.',
+                        icon: 'success',
+                        onClose: () => {
+                            // Recargar la página   
+                            location.reload();
+                        }
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else if (data.errors) { // Verificar si hay errores de validación
+                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+                    for (const key in data.errors) {
+                        errorMessage += `${data.errors[key]}<br>`;
+                    }
+                    Swal.fire({
+                        title: 'Error',
+                        html: errorMessage,
+                        icon: 'error',
+                    });
+                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(errors => {
+                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error'
+                });
+                console.error('Error:', errors);
+            });
+    }
+
+
+
+    function eliminarPedido(pedido_id) {
+        // Realizar la solicitud POST utilizando fetch
+        fetch("{% url 'pedidos:eliminar_pedido' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({'pedido_id': pedido_id})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Pedido Eliminado!', 'Pedido Eliminado correctamente.', 'success').then(() => {
+                        location.reload();
+                    });
+            } else {
+                // Mostrar un mensaje de error si la eliminación falla
+                Swal.fire({
+                    title: 'Error',
+                    text: data.message,
+                    icon: 'error'
+                });
+            }
+        })
+        .catch(error => {
+            // Mostrar un mensaje de error en caso de un fallo en la solicitud
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al intentar eliminar el pedido. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error'
+            });
+        });
+    }
+
+
+    document.querySelectorAll('.delete-pedido').forEach(button => {
+        button.addEventListener('click', function() {
+            const pedidoId = this.getAttribute('data-pedido-id');
+            var pedido_id = $(this).data('pedido-id');
+            // Confirmar antes de eliminar
+            Swal.fire({
+                title: '¿Estás seguro?',
+                // text: `Esta acción no se puede deshacer para el pedido con ID ${pedidoId}.`,
+                text: `Esta acción no se puede deshacer`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarPedido(pedidoId);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    // Función para mostrar la vista previa de la imagen al seleccionar un archivo
+    function mostrarVistaPrevia(input, elementoVistaPrevia) {
+        var archivo = input.files[0];
+        var imagenVistaPrevia = document.getElementById(elementoVistaPrevia);
+
+        // Verificar si se seleccionó un archivo
+        if (archivo) {
+            // Crear un objeto URL para el archivo seleccionado
+            var objetoURL = URL.createObjectURL(archivo);
+
+            // Mostrar la vista previa de la imagen
+            imagenVistaPrevia.style.display = 'block';
+            imagenVistaPrevia.src = objetoURL;
+        } else {
+            // Ocultar la vista previa si no se seleccionó ningún archivo
+            imagenVistaPrevia.style.display = 'none';
+        }
+    }
+
+    // Agregar un evento change a cada input de tipo file para mostrar la vista previa
+    var inputsEvidenciaPago = document.querySelectorAll('.evidencia_pago_input');
+    inputsEvidenciaPago.forEach(function(input) {
+        input.addEventListener('change', function(event) {
+            var elementoVistaPrevia = this.dataset.vistaPrevia;
+            mostrarVistaPrevia(this, elementoVistaPrevia);
+        });
+    });
+</script>
+
+{% endblock %}
