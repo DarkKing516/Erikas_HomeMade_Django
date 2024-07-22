@@ -6,6 +6,7 @@ set -o errexit
 pip install -r requirements.txt
 
 # Convert static asset files
+apt-get install -y wkhtmltopdf
 python manage.py collectstatic --no-input || true
 
 # Apply any outstanding database migrations
