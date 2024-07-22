@@ -80,6 +80,7 @@ class Pedido(models.Model):
     
     class Meta:
         db_table = 'pedidos'  # Personalizando el nombre de la tabla
+        
 
 
 class DetallePedidoProducto(models.Model):
