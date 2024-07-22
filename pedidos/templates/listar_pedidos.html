@@ -770,7 +770,7 @@
     /* Asegúrate de que la tabla no tenga scroll horizontal */
     .dataTables_wrapper {
         width: 100%;
-        /* overflow-x: hidden; */
+        overflow-x: hidden;
     }
 
     /* table.dataTable {
@@ -1200,29 +1200,26 @@
     });
     
     $(document).ready(function () {
-        $('.table').each(function () {
-            $(this).DataTable({
-                "lengthChange": false,
-                "pageLength": 5,
-                "searching": true,
-                "language": {
-                    "search": "Buscar:",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "infoFiltered": "(filtrados de _MAX_ registros en total)",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
-                "dom": '<"top"lf>rt<"bottom"ip>',
-            });
+        $('#detallesTable').DataTable({
+            "lengthChange": false,
+            "pageLength": 5,
+            "searching": true,
+            "language": {
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrados de _MAX_ registros en total)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip>',
         });
     });
-    
     
 </script>
 
