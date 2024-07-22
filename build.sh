@@ -3,9 +3,9 @@
 set -o errexit
 
 # Update package list and install dependencies
-apt-get update
-apt-get install -y software-properties-common
-apt-get install -y wkhtmltopdf
+# apt-get update
+# apt-get install -y software-properties-common
+# apt-get install -y wkhtmltopdf
 
 # Install Python dependencies
 pip install -r requirements.txt
