@@ -12,6 +12,7 @@ from reportlab.lib.pagesizes import letter
 from django.utils.text import slugify
 from django.utils.html import strip_tags
 import pdfkit
+import os
 
 def generar_factura_pdf(request, idVenta):
     # Obtiene la venta a partir del idVenta
