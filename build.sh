@@ -10,6 +10,11 @@ set -o errexit
 # Install Python dependencies
 pip install -r requirements.txt
 
+# Download and install wkhtmltopdf
+curl -o wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
+dpkg -x wkhtmltopdf.deb /tmp/wkhtmltopdf
+mv /tmp/wkhtmltopdf/usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
+
 # Collect static files
 python manage.py collectstatic --no-input || true
 
