@@ -41,4 +41,4 @@ python manage.py collectstatic --no-input || true
 python manage.py migrate
 
 # Start the server
-gunicorn erikas_homemade.wsgi:application --bind 0.0.0.0:$PORT
+gunicorn erikas_homemade.wsgi --bind 0.0.0.0:$PORT
