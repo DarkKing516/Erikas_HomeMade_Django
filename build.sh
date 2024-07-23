@@ -23,6 +23,21 @@ cp wkhtmltopdf/usr/local/bin/wkhtmltopdf $HOME/bin/wkhtmltopdf
 # Clean up
 rm -rf wkhtmltopdf.deb wkhtmltopdf
 
+# Update package list and install dependencies
+apt-get update
+apt-get install -y software-properties-common
+apt-get install -y wkhtmltopdf
+
+# Check if wkhtmltopdf is installed and accessible
+if ! command -v wkhtmltopdf &> /dev/null
+then
+    echo "wkhtmltopdf could not be found"
+    exit
+fi
+
+# Print the path to wkhtmltopdf
+which wkhtmltopdf
+
 # Collect static files
 python manage.py collectstatic --no-input || true
 
