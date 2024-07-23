@@ -11,14 +11,14 @@ set -o errexit
 pip install -r requirements.txt
 
 # Download and extract portable wkhtmltopdf
-curl -L -o wkhtmltopdf.tar.xz https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.bionic_amd64.tar.xz
-tar -xf wkhtmltopdf.tar.xz
+curl -L -o wkhtmltopdf.tar.xz https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
+dpkg -x wkhtmltopdf.tar.xz wkhtmltopdf
 
 # Move the binaries to a directory included in PATH
-mv wkhtmltox/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
+cp wkhtmltopdf/usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 
 # Clean up
-rm -rf wkhtmltopdf.tar.xz wkhtmltox
+rm -rf wkhtmltopdf.tar.xz wkhtmltopdf
 
 # Collect static files
 python manage.py collectstatic --no-input || true
