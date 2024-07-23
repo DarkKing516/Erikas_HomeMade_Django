@@ -39,7 +39,7 @@ def generar_factura_pdf(request, idVenta):
         'pedido': pedido,
         'detalles_productos': detalles_productos,
         'detalles_servicios': detalles_servicios,
-        'subtotal_productos': subtotal_productos,
+        'subtotal_productos': subtotal_productos, 
         'descuento_aumento': descuento_aumento,
     })
 
