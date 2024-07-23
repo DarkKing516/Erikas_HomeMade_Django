@@ -31,6 +31,11 @@ def generar_factura_pdf(request, idVenta):
 
     # Define la ruta al ejecutable de wkhtmltopdf
     wkhtmltopdf_path = os.path.join(os.getenv('HOME'), 'bin', 'wkhtmltopdf')
+
+    # Verificar si el ejecutable existe en la ruta esperada
+    if not os.path.isfile(wkhtmltopdf_path):
+        raise FileNotFoundError(f"No se encontró el ejecutable wkhtmltopdf en la ruta: {wkhtmltopdf_path}")
+
     config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
 
     # Genera el contenido HTML de la factura
