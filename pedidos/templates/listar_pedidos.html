@@ -1,6 +1,5 @@
 <title>Listar Pedidos</title>
 {% extends 'layouts/navbar.html' %}
-{% load humanize %}
 
 {% load static %}
 
@@ -8,6 +7,12 @@
 
 <!-- endinject -->
 <script src="{% static 'js/pedidos.js' %}"></script>
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <!-- Contenido principal -->
@@ -35,24 +40,24 @@
                                 <td>{{ pedido.id_Usuario }}</td>
                                 <td>{{ pedido.fechaCreacion_pedido }}</td>
                                 <td>{{ pedido.fecha_pedido }}</td>
-                                <td>$ {{ pedido.total|floatformat:0|intcomma  }}</td>
+                                <td>$ {{ pedido.total|floatformat:"0"  }}</td>
                                 {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
                                 <td>
                                     <!-- Aquí puedes acceder al estado del pedido -->
                                     {% if pedido.estado_pedido == 'Por hacer' %}
-                                    <label class="badge btn-inverse-secondary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-secondary hover-cursor change-status"
                                     data-pedido-id="{{ pedido.idPedido }}">Por hacer</label>
                                     {% elif pedido.estado_pedido == 'En proceso' %}
-                                    <label class="badge btn-inverse-warning hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-warning hover-cursor change-status"
                                     data-pedido-id="{{ pedido.idPedido }}">En proceso</label>
                                     {% elif pedido.estado_pedido == 'Hecho' %}
-                                    <label class="badge btn-inverse-primary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-primary hover-cursor change-status"
                                     data-pedido-id="{{ pedido.idPedido }}">Hecho</label>
                                     {% elif pedido.estado_pedido == 'Entregado' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-success hover-cursor change-status"
                                     data-pedido-id="{{ pedido.idPedido }}">Entregado</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-danger hover-cursor change-status"
                                     data-pedido-id="{{ pedido.idPedido }}">Cancelado</label>
                                     {% endif %}
                                 </td>
@@ -63,7 +68,6 @@
                                 </td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        {% if 'Editar Pedidos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-warning edit-pedido"
                                         data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
                                         data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
@@ -75,28 +79,266 @@
                                         data-total=" {{ pedido.total }} ">
                                         <i class="mdi mdi-pencil"></i>
                                         </button>
-                                        {% endif %}
-                                        {% if 'Editar Evidencia Pedidos' in request.session.permisos %}
+                                        
                                         <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
                                             <i class="bi bi-file-earmark-image"></i>
-                                        </button>
-                                        {% endif %}
-                                        {% if 'Eliminar Pedidos' in request.session.permisos %}
+                                        </button> 
                                         <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
-                                        {% endif %}
-                                        {% if 'Eliminar Pedidos' not in request.session.permisos and 'Editar Pedidos' not in request.session.permisos and 'Editar Evidencia Pedidos' not in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-primary">
-                                            <i class="bi bi-exclamation-circle"></i>
-                                        </button>
-                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
 
-                            
-                    
+                            <!-- Modal Crear Pedido -->
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Registro de Pedido</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                                                {% csrf_token %}
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="id_usuario">Usuario</label>
+                                                            {{ formCreate.id_Usuario }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="fecha_pedido">Fecha de Pedido</label>
+                                                            {{ formCreate.fecha_pedido }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="descripcion_pedido">Descripción del Pedido</label>
+                                                            {{ formCreate.descripcion_pedido }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="subtotal">Subtotal</label>
+                                                            {{ formCreate.subtotal }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="iva">IVA</label>
+                                                            {{ formCreate.iva }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="total">Total</label>
+                                                            {{ formCreate.total }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="estado_pedido">Estado del Pedido</label>
+                                                            <select class="form-control" id="estado_pedido" name="estado_pedido">
+                                                                <option value="Por hacer">Por hacer</option>
+                                                                <option value="En proceso">En proceso</option>
+                                                                <option value="Hecho">Hecho</option>
+                                                                <option value="Entregado">Entregado</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="evidencia_pago">Evidencia de pago</label>
+                                                            <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
+                                                            <br>
+                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Selects para productos y servicios -->
+                                                <div class="form-group">
+                                                    <label for="productos">Productos</label><br>
+                                                    <select id="productos" name="productos" class="select2 form-control">
+                                                        {% for producto in productos %}
+                                                            <option value="{{ producto.idProducto }}" data-precio="{{ producto.precio }}">{{ producto.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('producto')">Agregar</button>
+                                                    <br>
+                                                    <ul id="lista_productos"></ul>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="servicios">Servicios</label><br>
+                                                    <select id="servicios" name="servicios" class="select2 form-control">
+                                                        {% for servicio in servicios %}
+                                                            <option value="{{ servicio.idServicio }}" data-precio="{{ servicio.precio_servicio }}">{{ servicio.nombre_servicio }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('servicio')">Agregar</button>
+                                                    <br>
+                                                    <ul id="lista_servicios"></ul>
+                                                </div>
+                                                
+                                                <!-- Hidden input to store the selected items -->
+                                                <input type="hidden" id="selectedItems" name="selectedItems" />
+                                                
+                                                <script>
+                                                    let selectedItems = [];
+                                                
+                                                    function agregarItem(type) {
+                                                        let selectElement = type === 'producto' ? document.getElementById('productos') : document.getElementById('servicios');
+                                                        let selectedOption = selectElement.options[selectElement.selectedIndex];
+                                                        let listElement = type === 'producto' ? document.getElementById('lista_productos') : document.getElementById('lista_servicios');
+                                                
+                                                        Swal.fire({
+                                                            title: 'Ingrese la cantidad',
+                                                            html: `
+                                                                <div style="display: flex; align-items: center; justify-content: center;">
+                                                                    <button type="button" id="decrementar" class="btn btn-outline-secondary btn-sm">-</button>
+                                                                    <input type="number" id="cantidadInput" min="1" step="1" value="1" class="swal2-input no-spinner" style="width: 80px; margin: 0 10px; text-align: center;">
+                                                                    <button type="button" id="incrementar" class="btn btn-outline-secondary btn-sm">+</button>
+                                                                </div>
+                                                            `,
+                                                            showCancelButton: true,
+                                                            confirmButtonText: 'Agregar',
+                                                            cancelButtonText: 'Cancelar',
+                                                            didOpen: () => {
+                                                                const cantidadInput = document.getElementById('cantidadInput');
+                                                                const decrementarButton = document.getElementById('decrementar');
+                                                                const incrementarButton = document.getElementById('incrementar');
+                                                
+                                                                decrementarButton.addEventListener('click', () => {
+                                                                    if (cantidadInput.value > 1) {
+                                                                        cantidadInput.value = parseInt(cantidadInput.value) - 1;
+                                                                    }
+                                                                });
+                                                
+                                                                incrementarButton.addEventListener('click', () => {
+                                                                    cantidadInput.value = parseInt(cantidadInput.value) + 1;
+                                                                });
+                                                            },
+                                                            preConfirm: () => {
+                                                                const cantidad = document.getElementById('cantidadInput').value;
+                                                                if (!cantidad || cantidad <= 0) {
+                                                                    Swal.showValidationMessage('Por favor, ingrese una cantidad válida');
+                                                                    return false;
+                                                                }
+                                                                return cantidad;
+                                                            }
+                                                        }).then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                let quantity = parseInt(result.value);
+                                                                let itemId = selectedOption.value + '_' + type;
+                                                
+                                                                // Obtener el precio del producto o servicio seleccionado
+                                                                let precio = parseFloat(selectedOption.getAttribute('data-precio'));
+                                                
+                                                                // Calcular el total por ítem
+                                                                let totalItem = quantity * precio;
+                                                
+                                                                // Verificar si el elemento ya existe en el array selectedItems
+                                                                let existingItem = selectedItems.find(item => item.id === selectedOption.value && item.type === type);
+                                                
+                                                                if (existingItem) {
+                                                                    // Actualizar la cantidad del elemento existente
+                                                                    existingItem.quantity += quantity;
+                                                                    existingItem.total += totalItem;
+                                                
+                                                                    // Actualizar la cantidad, subtotal y el total mostrado en la lista
+                                                                    let listItem = document.getElementById(itemId);
+                                                                    listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Subtotal: ${existingItem.total.toFixed(2)} 
+                                                                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                                                } else {
+                                                                    // Agregar nuevo elemento al array selectedItems
+                                                                    selectedItems.push({
+                                                                        id: selectedOption.value,
+                                                                        name: selectedOption.text,
+                                                                        type: type,
+                                                                        quantity: quantity,
+                                                                        precio: precio,
+                                                                        total: totalItem
+                                                                    });
+                                                
+                                                                    // Agregar elemento a la lista
+                                                                    let listItem = document.createElement('li');
+                                                                    listItem.id = itemId;
+                                                                    listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Subtotal: ${totalItem.toFixed(2)} 
+                                                                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
+                                                                    listElement.appendChild(listItem);
+                                                                }
+                                                
+                                                                // Actualizar el campo hidden con los datos de los ítems seleccionados
+                                                                document.getElementById('selectedItems').value = JSON.stringify(selectedItems);
+                                                
+                                                                // Recalcular los totales
+                                                                recalculateTotals();
+                                                            }
+                                                        });
+                                                    }
+                                                
+                                                    function removeItem(itemId, type) {
+                                                        // Encontrar el ítem a eliminar
+                                                        selectedItems = selectedItems.filter(item => item.id + '_' + item.type !== itemId);
+                                                
+                                                        // Eliminar el ítem de la lista
+                                                        let listElement = type === 'producto' ? document.getElementById('lista_productos') : document.getElementById('lista_servicios');
+                                                        let itemElement = document.getElementById(itemId);
+                                                        listElement.removeChild(itemElement);
+                                                
+                                                        // Actualizar el campo hidden con los datos de los ítems seleccionados
+                                                        document.getElementById('selectedItems').value = JSON.stringify(selectedItems);
+                                                
+                                                        // Recalcular los totales
+                                                        recalculateTotals();
+                                                    }
+                                                
+                                                    function recalculateTotals() {
+                                                        let subtotal = 0;
+                                                        let iva = 0;
+                                                        let total = 0;
+                                                
+                                                        selectedItems.forEach(item => {
+                                                            subtotal += item.total;
+                                                        });
+                                                
+                                                        iva = subtotal * 0.16; // Suponiendo un IVA del 16%
+                                                        total = subtotal + iva;
+                                                
+                                                        // Actualizar los campos de subtotal, IVA y total
+                                                        document.getElementById('subtotal').value = subtotal.toFixed(2);
+                                                        document.getElementById('iva').value = iva.toFixed(2);
+                                                        document.getElementById('total').value = total.toFixed(2);
+                                                    }
+                                                
+                                                    function submitForm(event) {
+                                                        // Lógica para enviar el formulario, si es necesario
+                                                        console.log('Formulario enviado con los datos:', document.getElementById('selectedItems').value);
+                                                    }
+                                                
+                                                    document.getElementById('evidencia_pago').addEventListener('change', function () {
+                                                        let input = this;
+                                                        let vistaPreviaId = this.getAttribute('data-vista-previa');
+                                                        let vistaPrevia = document.getElementById(vistaPreviaId);
+                                                
+                                                        if (input.files && input.files[0]) {
+                                                            let reader = new FileReader();
+                                                            reader.onload = function (e) {
+                                                                vistaPrevia.src = e.target.result;
+                                                                vistaPrevia.style.display = 'block';
+                                                            };
+                                                            reader.readAsDataURL(input.files[0]);
+                                                        } else {
+                                                            vistaPrevia.src = '';
+                                                            vistaPrevia.style.display = 'none';
+                                                        }
+                                                    });
+                                                </script>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="btn btn-primary" form="pedidoForm">Guardar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+ 
                             <div class="modal fade" id="editevidenciapedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -132,7 +374,7 @@
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar</button>
+                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Cancelar</button>
                                                     </div>
@@ -153,27 +395,28 @@
     </div>
 </div>
 <!-- Fin del contenido principal -->
+
 {% for pedido in pedidos %}
-<div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
-    aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+
+<!-- Modal Editar Pedido -->
+<div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar
-                    Pedido</h5>
+                <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar Pedido</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
+                <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ pedido.idPedido }}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
                     <div class="form-row">
                         <div class="col">
                             <div class="col-md-12">
                                 <label for="descripcion_pedido">Descripción</label>
-                                <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" maxlength="255" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
+                                <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" maxlength="255" rows="5">{{ pedido.descripcion_pedido }}</textarea><br>
                             </div>
                         </div>
                     </div>
@@ -199,9 +442,7 @@
                                     {% for detalle in pedido.detallepedidoproducto_set.all %}
                                     <tr>
                                         <td>
-                                            <center><img src="{{ detalle.idProducto.imagen.url }}"
-                                                    alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50">
-                                            </center>
+                                            <center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center>
                                         </td>
                                         <td>{{ detalle.nombre_productos }}</td>
                                         <td>{{ detalle.cant_productos }}</td>
@@ -228,9 +469,7 @@
                                     {% for detalle in pedido.detallepedidoservicio_set.all %}
                                     <tr>
                                         <td>
-                                            <center><img src="{{ detalle.idServicio.img.url }}"
-                                                    alt="{{ detalle.idServicio.img.url }}" width="50" height="50">
-                                            </center>
+                                            <center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center>
                                         </td>
                                         <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                         <td>{{ detalle.cantidad_servicios }}</td>
@@ -258,9 +497,7 @@
                                     {% for detalle in pedido.detallepedidoproducto_set.all %}
                                     <tr>
                                         <td>
-                                            <center><img src="{{ detalle.idProducto.imagen.url }}"
-                                                    alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50">
-                                            </center>
+                                            <center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center>
                                         </td>
                                         <td>{{ detalle.nombre_productos }}</td>
                                         <td>{{ detalle.cant_productos }}</td>
@@ -288,9 +525,7 @@
                                     {% for detalle in pedido.detallepedidoservicio_set.all %}
                                     <tr>
                                         <td>
-                                            <center><img src="{{ detalle.idServicio.img.url }}"
-                                                    alt="{{ detalle.idServicio.img.url }}" width="50" height="50">
-                                            </center>
+                                            <center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center>
                                         </td>
                                         <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                         <td>{{ detalle.cantidad_servicios }}</td>
@@ -303,7 +538,6 @@
                         {% endif %}
                     </div>
                     <br>
-                    <!-- Botones -->
                     <div class="form-row">
                         <div class="col-md-12">
                             <button class="btn btn-primary mr-2">Editar</button>
@@ -316,9 +550,11 @@
     </div>
 </div>
 
+
+
 <!-- Modal Detalle del Pedido -->
 <div class="modal fade" id="detallePedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="detallePedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="detallePedidoModal{{ pedido.idPedido }}Label">Detalle del Pedido</h5>
@@ -327,430 +563,36 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="d-flex align-items-center">
-                    <div class="w-50">
-                        <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
-                        <p><strong>Subtotal:</strong> {{ pedido.subtotal|floatformat:0|intcomma }}</p>
-                        <p><strong>IVA:</strong> {{ pedido.iva|floatformat:0|intcomma }}</p>
-                    </div>
-                    <div class="w-50 text-center">
-                        <p><strong>Evidencia de Pago:</strong></br></p>
-                        <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;">
-                    </div>
-                </div>
+                <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
+                <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
+                <p><strong>IVA:</strong> {{ pedido.iva }}</p>
+                <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
 
-                <hr>
-
-                    <div class="row">
-                        {% if pedido.productos.count and pedido.servicios.count %}
-                        <div class="col-md-6">
-                            <h5>Productos</h5>
-                            <table id="detallesTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <center>Img</center>
-                                        </th>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detalle in pedido.detallepedidoproducto_set.all %}
-                                    <tr>
-                                        <td>
-                                            <center><img src="{{ detalle.idProducto.imagen.url }}"
-                                                    alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50">
-                                            </center>
-                                        </td>
-                                        <td>{{ detalle.nombre_productos }}</td>
-                                        <td>{{ detalle.cant_productos }}</td>
-                                        <td>${{ detalle.subtotal_productos|floatformat:"0" }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Servicios</h5>
-                            <table id="detallesTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <center>Img</center>
-                                        </th>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detalle in pedido.detallepedidoservicio_set.all %}
-                                    <tr>
-                                        <td>
-                                            <center><img src="{{ detalle.idServicio.img.url }}"
-                                                    alt="{{ detalle.idServicio.img.url }}" width="50" height="50">
-                                            </center>
-                                        </td>
-                                        <td>{{ detalle.idServicio.nombre_servicio }}</td>
-                                        <td>{{ detalle.cantidad_servicios }}</td>
-                                        <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% elif pedido.productos.count %}
-                        <div class="col-md-12">
-                            <h5>Productos</h5>
-                            <table id="detallesTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <center>Img</center>
-                                        </th>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detalle in pedido.detallepedidoproducto_set.all %}
-                                    <tr>
-                                        <td>
-                                            <center><img src="{{ detalle.idProducto.imagen.url }}"
-                                                    alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50">
-                                            </center>
-                                        </td>
-                                        <td>{{ detalle.nombre_productos }}</td>
-                                        <td>{{ detalle.cant_productos }}</td>
-                                        <td>${{ detalle.subtotal_productos|floatformat:"0" }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% elif pedido.servicios.count %}
-                        <div class="col-md-12">
-                            <h5>Servicios</h5>
-                            <table id="detallesTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <center>Img</center>
-                                        </th>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for detalle in pedido.detallepedidoservicio_set.all %}
-                                    <tr>
-                                        <td>
-                                            <center><img src="{{ detalle.idServicio.img.url }}"
-                                                    alt="{{ detalle.idServicio.img.url }}" width="50" height="50">
-                                            </center>
-                                        </td>
-                                        <td>{{ detalle.idServicio.nombre_servicio }}</td>
-                                        <td>{{ detalle.cantidad_servicios }}</td>
-                                        <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- Detalles de los productos -->
+                <h5>Productos</h5>
+                <ul>
+                    {% for detalle in detalles_productos %}
+                        {% if detalle.idPedido == pedido %}
+                            <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos }}</li>
                         {% endif %}
-                    </div>
-                    <br>
+                    {% endfor %}
+                </ul>
+                <!-- Detalles de los servicios -->
+                <h5>Servicios</h5>
+                <ul>
+                    {% for detalle in detalles_servicios %}
+                        {% if detalle.idPedido == pedido %}
+                            <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
 </div>
+
 {% endfor %}
 
-<!-- Modal Crear Pedido -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Registro de Pedido</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" id="pedidoForm" class="forms-sample" enctype="multipart/form-data" onsubmit="submitForm(event)">
-                    {% csrf_token %}
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="id_usuario">Usuario</label>
-                                {{ formCreate.id_Usuario }}
-                            </div>
-                            <div class="form-group">
-                                <label for="fecha_pedido">Fecha de Pedido</label>
-                                {{ formCreate.fecha_pedido }}
-                            </div>
-                            <div class="form-group">
-                                <label for="descripcion_pedido">Descripción del Pedido</label>
-                                {{ formCreate.descripcion_pedido }}
-                            </div>
-                            <div class="form-group">
-                                <label for="subtotal">Subtotal</label>
-                                {{ formCreate.subtotal }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="iva">IVA</label>
-                                {{ formCreate.iva }}
-                            </div>
-                            <div class="form-group">
-                                <label for="total">Total</label>
-                                {{ formCreate.total }}
-                            </div>
-                            <div class="form-group">
-                                <label for="estado_pedido">Estado del Pedido</label>
-                                <select class="form-control" id="estado_pedido" name="estado_pedido">
-                                    <option value="Por hacer">Por hacer</option>
-                                    <option value="En proceso">En proceso</option>
-                                    <option value="Hecho">Hecho</option>
-                                    <option value="Entregado">Entregado</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="evidencia_pago">Evidencia de pago</label>
-                                <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
-                                <br>
-                                <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Include SweetAlert Library -->
-
-                    <!-- Include SweetAlert Library -->
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-                    <!-- Selects para productos y servicios -->
-                    <div class="form-group">
-                        <label for="productos">Productos</label><br>
-                        <select id="productos" name="productos" class="select2 form-control">
-                            {% for producto in productos %}
-                                <option value="{{ producto.idProducto }}" data-precio="{{ producto.precio }}">{{ producto.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('producto')">Agregar</button>
-                        <br>
-                        <ul id="lista_productos"></ul>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="servicios">Servicios</label><br>
-                        <select id="servicios" name="servicios" class="select2 form-control">
-                            {% for servicio in servicios %}
-                                <option value="{{ servicio.idServicio }}" data-precio="{{ servicio.precio_servicio }}">{{ servicio.nombre_servicio }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" class="btn btn-inverse-primary" onclick="agregarItem('servicio')">Agregar</button>
-                        <br>
-                        <ul id="lista_servicios"></ul>
-                    </div>
-                    
-                    <!-- Hidden input to store the selected items -->
-                    <input type="hidden" id="selectedItems" name="selectedItems" />
-                    
-                    <script>
-                        let selectedItems = [];
-                    
-                        function agregarItem(type) {
-                            let selectElement = type === 'producto' ? document.getElementById('productos') : document.getElementById('servicios');
-                            let selectedOption = selectElement.options[selectElement.selectedIndex];
-                            let listElement = type === 'producto' ? document.getElementById('lista_productos') : document.getElementById('lista_servicios');
-                    
-                            Swal.fire({
-                                title: 'Ingrese la cantidad',
-                                html: `
-                                    <div style="display: flex; align-items: center; justify-content: center;">
-                                        <button type="button" id="decrementar" class="btn btn-outline-secondary btn-sm">-</button>
-                                        <input type="number" id="cantidadInput" min="1" step="1" value="1" class="swal2-input no-spinner" style="width: 80px; margin: 0 10px; text-align: center;">
-                                        <button type="button" id="incrementar" class="btn btn-outline-secondary btn-sm">+</button>
-                                    </div>
-                                `,
-                                showCancelButton: true,
-                                confirmButtonText: 'Agregar',
-                                cancelButtonText: 'Cancelar',
-                                didOpen: () => {
-                                    const cantidadInput = document.getElementById('cantidadInput');
-                                    const decrementarButton = document.getElementById('decrementar');
-                                    const incrementarButton = document.getElementById('incrementar');
-                    
-                                    decrementarButton.addEventListener('click', () => {
-                                        if (cantidadInput.value > 1) {
-                                            cantidadInput.value = parseInt(cantidadInput.value) - 1;
-                                        }
-                                    });
-                    
-                                    incrementarButton.addEventListener('click', () => {
-                                        cantidadInput.value = parseInt(cantidadInput.value) + 1;
-                                    });
-                                },
-                                preConfirm: () => {
-                                    const cantidad = document.getElementById('cantidadInput').value;
-                                    if (!cantidad || cantidad <= 0) {
-                                        Swal.showValidationMessage('Por favor, ingrese una cantidad válida');
-                                        return false;
-                                    }
-                                    return cantidad;
-                                }
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    let quantity = parseInt(result.value);
-                                    let itemId = selectedOption.value + '_' + type;
-                    
-                                    // Obtener el precio del producto o servicio seleccionado
-                                    let precio = parseFloat(selectedOption.getAttribute('data-precio'));
-                    
-                                    // Calcular el total por ítem
-                                    let totalItem = quantity * precio;
-                    
-                                    // Verificar si el elemento ya existe en el array selectedItems
-                                    let existingItem = selectedItems.find(item => item.id === selectedOption.value && item.type === type);
-                    
-                                    if (existingItem) {
-                                        // Actualizar la cantidad del elemento existente
-                                        existingItem.quantity += quantity;
-                                        existingItem.total += totalItem;
-                    
-                                        // Actualizar la cantidad, subtotal y el total mostrado en la lista
-                                        let listItem = document.getElementById(itemId);
-                                        listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Subtotal: ${existingItem.total.toFixed(2)} 
-                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
-                                    } else {
-                                        // Agregar nuevo elemento al array selectedItems
-                                        selectedItems.push({
-                                            id: selectedOption.value,
-                                            name: selectedOption.text,
-                                            type: type,
-                                            quantity: quantity,
-                                            precio: precio,
-                                            total: totalItem
-                                        });
-                    
-                                        // Agregar elemento a la lista
-                                        let listItem = document.createElement('li');
-                                        listItem.id = itemId;
-                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Subtotal: ${totalItem.toFixed(2)} 
-                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
-                                        listElement.appendChild(listItem);
-                                    }
-                    
-                                    // Calcular y actualizar el subtotal y total en el formulario principal
-                                    actualizarSubtotalYTotal();
-                                }
-                            });
-                        }
-                    
-                        function removeItem(itemId, type) {
-                            // Eliminar elemento de la lista
-                            let listItem = document.getElementById(itemId);
-                            listItem.remove();
-                    
-                            // Eliminar elemento del array selectedItems
-                            selectedItems = selectedItems.filter(item => !(item.id + '_' + item.type === itemId));
-                    
-                            // Calcular y actualizar el subtotal y total en el formulario principal
-                            actualizarSubtotalYTotal();
-                        }
-                    
-                        function actualizarSubtotalYTotal() {
-                            let subtotal = 0;
-                            selectedItems.forEach(item => {
-                                subtotal += item.total;
-                            });
-                    
-                            // Actualizar subtotal
-                            document.getElementById('subtotal').value = subtotal.toFixed(2);
-                    
-                            // Calcular IVA (asumiendo que es 19%)
-                            let iva = subtotal * 0.19;
-                    
-                            // Actualizar campo de IVA
-                            document.getElementById('iva').value = iva.toFixed(2);
-                    
-                            // Calcular total
-                            let total = subtotal + iva;
-                    
-                            // Actualizar campo de total
-                            document.getElementById('total').value = total.toFixed(2);
-                        }
-
-                        function actualizarSubtotalYTotal() {
-                            let subtotal = 0;
-                            selectedItems.forEach(item => {
-                                subtotal += item.total;
-                            });
-                        
-                            // Actualizar subtotal en el formulario principal
-                            document.getElementById('subtotal').value = subtotal.toFixed(2);
-                        
-                            // Actualizar campo de subtotal en el formulario Django
-                            document.getElementById('id_subtotal').value = subtotal.toFixed(2); // Reemplaza 'id_subtotal' con el ID correcto generado por Django
-                            
-                            // Calcular IVA (asumiendo que es 19%)
-                            let iva = subtotal * 0.19;
-
-                            // Actualizar campo de IVA en el formulario principal
-                            document.getElementById('iva').value = iva.toFixed(2);
-
-                            // Calcular total (subtotal + IVA)
-                            let total = subtotal + iva;
-
-                            // Actualizar campo de total en el formulario principal
-                            document.getElementById('total').value = total.toFixed(2);
-
-                            // Actualizar campos ocultos de Django si es necesario (opcional)
-                            document.getElementById('id_iva').value = iva.toFixed(2); // Reemplaza 'id_iva' con el ID correcto generado por Django
-                            document.getElementById('id_total').value = total.toFixed(2); // Reemplaza 'id_total' con el ID correcto generado por Django
-                        }
-
-                        
-                    </script>
-                    
-                    <style>
-                        /* Ocultar flechas del campo de entrada numérico */
-                        .no-spinner::-webkit-inner-spin-button,
-                        .no-spinner::-webkit-outer-spin-button {
-                            -webkit-appearance: none;
-                            margin: 0;
-                        }
-                    
-                        .no-spinner {
-                            -moz-appearance: textfield;
-                        }
-                    </style>
-
-                    <!-- Botones -->
-                    <div class="form-row">
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary mr-2">Registrar</button>
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Fin del Modal Crear Pedido -->
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2-theme-classic.min.css" rel="stylesheet" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
@@ -766,30 +608,7 @@
     });
 </script>
 
-<style>
-    /* Asegúrate de que la tabla no tenga scroll horizontal */
-    .dataTables_wrapper {
-        width: 100%;
-        overflow-x: hidden;
-    }
 
-    /* table.dataTable {
-        width: 100% !important;
-        table-layout: fixed;
-        word-wrap: break-word;
-    } */
-
-    /* table.dataTable th, table.dataTable td {
-        white-space: normal;
-    } */
-
-    /* Ajustar el contenedor superior */
-    /* .top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    } */
-</style>
 
 <script>
     function submitForm(event) {
@@ -968,10 +787,9 @@
         // Mover el cuadro de búsqueda al lugar deseado
         $("#pedidoTable_filter").detach().appendTo(".top");
 
-        {% if "Crear Pedidos" in request.session.permisos %}
         // Agregar el botón "Agregar" al lado del cuadro de búsqueda
         $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal" style="margin: 5px">Agregar</button>');
-        {% endif %}
+
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#pedidoTable_filter input").addClass("form-control form-control-sm");
 
@@ -1198,41 +1016,6 @@
             mostrarVistaPrevia(this, elementoVistaPrevia);
         });
     });
-    
-    $(document).ready(function () {
-        $('#detallesTable').DataTable({
-            "lengthChange": false,
-            "pageLength": 5,
-            "searching": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrados de _MAX_ registros en total)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            },
-            "dom": '<"top"lf>rt<"bottom"ip>',
-        });
-    });
-    
 </script>
 
-{% if not request.session.usuario_id %}
-<script>
-    window.location.href = "{% url 'usuarios:requestLogin' %}";
-
-</script>
-{% elif "Listar Pedidos" not in request.session.permisos %}
-<script>
-    window.location.href = "{% url 'usuarios:requestLogin' %}";
-
-</script>
-
-{% endif %}
 {% endblock %}
