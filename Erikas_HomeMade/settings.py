@@ -166,7 +166,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'home', 'static'),
 ]
 
-os.environ["PATH"] += os.pathsep + os.path.expanduser("~/bin")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
