@@ -9,14 +9,17 @@ pip install -r requirements.txt
 mkdir -p $HOME/bin
 
 # Download and extract portable wkhtmltopdf
-curl -L -o wkhtmltopdf.tar.gz https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.focal_amd64.tar.gz
-tar -xvzf wkhtmltopdf.tar.gz -C $HOME/bin --strip-components=2 wkhtmltox/bin/wkhtmltopdf
+curl -L -o wkhtmltopdf.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
+dpkg -x wkhtmltopdf.deb wkhtmltopdf
+
+# Move the binaries to a directory included in PATH
+cp wkhtmltopdf/usr/local/bin/wkhtmltopdf $HOME/bin/wkhtmltopdf
 
 # Ensure the binaries are executable
 chmod +x $HOME/bin/wkhtmltopdf
 
 # Clean up
-rm wkhtmltopdf.tar.gz
+rm -rf wkhtmltopdf.deb wkhtmltopdf
 
 # Export the path
 export PATH=$HOME/bin:$PATH
