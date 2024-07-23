@@ -23,7 +23,6 @@ def generar_factura_pdf(request, idVenta):
 
     # Obtener los detalles de pedido de productos asociados a este pedido
     detalles_productos = DetallePedidoProducto.objects.filter(idPedido=pedido)
-    
     detalles_servicios = DetallePedidoServicio.objects.filter(idPedido=pedido)
 
     descuento_aumento = venta.total - venta.idPedido.total
@@ -31,7 +30,8 @@ def generar_factura_pdf(request, idVenta):
     subtotal_productos = sum(detalle.subtotal_productos for detalle in detalles_productos)
 
     # Define la ruta al ejecutable de wkhtmltopdf
-    config = pdfkit.configuration(wkhtmltopdf=os.path.join(os.getenv('HOME'), 'bin', 'wkhtmltopdf'))
+    wkhtmltopdf_path = os.path.join(os.getenv('HOME'), 'bin', 'wkhtmltopdf')
+    config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
 
     # Genera el contenido HTML de la factura
     contenido_html = render_to_string('ventas/factura_template.html', {
@@ -39,7 +39,7 @@ def generar_factura_pdf(request, idVenta):
         'pedido': pedido,
         'detalles_productos': detalles_productos,
         'detalles_servicios': detalles_servicios,
-        'subtotal_productos': subtotal_productos, 
+        'subtotal_productos': subtotal_productos,
         'descuento_aumento': descuento_aumento,
     })
 
