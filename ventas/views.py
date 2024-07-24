@@ -12,36 +12,40 @@ from reportlab.lib.pagesizes import letter
 from django.utils.text import slugify
 from django.utils.html import strip_tags
 import pdfkit
+import os
 
 def generar_factura_pdf(request, idVenta):
     # Obtiene la venta a partir del idVenta
     venta = get_object_or_404(Venta, idVenta=idVenta)
 
-        # Obtener el pedido asociado a la venta
+    # Obtener el pedido asociado a la venta
     pedido = venta.idPedido
 
     # Obtener los detalles de pedido de productos asociados a este pedido
     detalles_productos = DetallePedidoProducto.objects.filter(idPedido=pedido)
-    
     detalles_servicios = DetallePedidoServicio.objects.filter(idPedido=pedido)
 
-    descuento_aumento =  venta.total - venta.idPedido.total
-
+    descuento_aumento = venta.total - venta.idPedido.total
 
     subtotal_productos = sum(detalle.subtotal_productos for detalle in detalles_productos)
 
-    # Define la ruta al ejecutable de wkhtmltopdf (adaptar según tu instalación)
-    config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+    # Define la ruta al ejecutable de wkhtmltopdf
+    wkhtmltopdf_path = os.path.join(os.getenv('HOME'), 'bin', 'wkhtmltopdf')
 
-        # Aquí genera el contenido HTML de la factura
+    # Verificar si el ejecutable existe en la ruta esperada
+    if not os.path.isfile(wkhtmltopdf_path):
+        raise FileNotFoundError(f"No se encontró el ejecutable wkhtmltopdf en la ruta: {wkhtmltopdf_path}")
+
+    config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+
+    # Genera el contenido HTML de la factura
     contenido_html = render_to_string('ventas/factura_template.html', {
         'venta': venta,
         'pedido': pedido,
         'detalles_productos': detalles_productos,
         'detalles_servicios': detalles_servicios,
         'subtotal_productos': subtotal_productos,
-        'descuento_aumento': descuento_aumento,  # Variable calculada
-
+        'descuento_aumento': descuento_aumento,
     })
 
     # Define las opciones para pdfkit
