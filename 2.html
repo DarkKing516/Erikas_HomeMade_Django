@@ -62,7 +62,7 @@
                                 </td>                                
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        {% comment %} <button type="button" class="btn btn-inverse-warning edit-pedido"
+                                        <button type="button" class="btn btn-inverse-warning edit-pedido"
                                         data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
                                         data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
                                         data-fecha-pedido="{{ pedido.fecha_pedido }}"
@@ -72,7 +72,7 @@
                                         data-iva=" {{ pedido.iva }} "
                                         data-total=" {{ pedido.total }} ">
                                         <i class="mdi mdi-pencil"></i>
-                                        </button> {% endcomment %}
+                                        </button>
                                         
                                         <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
                                             <i class="bi bi-file-earmark-image"></i>
@@ -84,123 +84,7 @@
                                 </td>
                             </tr>
 
-                            <!-- Modal Detalle del Pedido -->
-                            <div class="modal fade" id="detallePedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="detallePedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="detallePedidoModal{{ pedido.idPedido }}Label">Detalle del Pedido</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
-                                            <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
-                                            <p><strong>IVA:</strong> {{ pedido.iva }}</p>
-                                            <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
-
-                                            <!-- Detalles de los productos -->
-                                            <h5>Productos</h5>
-                                            <ul>
-                                                {% for detalle in detalles_productos %}
-                                                    {% if detalle.idPedido == pedido %}
-                                                        <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos }}</li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </ul>
-                                            <!-- Detalles de los servicios -->
-                                            <h5>Servicios</h5>
-                                            <ul>
-                                                {% for detalle in detalles_servicios %}
-                                                    {% if detalle.idPedido == pedido %}
-                                                        <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios }}</li>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    
-                            <!-- Modal para editar Pedido -->
-                            <div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar
-                                                Pedido</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
-                                                <div class="form-row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="usuario">Nombre</label>
-                                                            <input type="text" class="form-control" id="usuario"
-                                                                readonly value="{{ pedido.id_Usuario }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha">Fecha</label>
-                                                            <input type="datetime-local" class="form-control" id="fecha" readonly
-                                                                value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha_pedido">Fecha del pedido</label>
-                                                            <input type="datetime-local" class="form-control"
-                                                                id="fecha_pedido" name="fecha_pedido"
-                                                                value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
-                                                        </div>
-                                                        
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="subtotal">Subtotal</label>
-                                                            <input type="number" class="form-control" id="subtotal"
-                                                                name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="iva">Iva</label>
-                                                            <input type="number" class="form-control" id="iva"
-                                                                name="iva" value="{{ pedido.iva|floatformat:"0" }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="total">Total</label>
-                                                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
-                                                        </div>
-                                                        {% comment %} <div class="form-group">
-                                                            <label for="evidencia_pago">Evidencia de Pago</label>
-                                                            <input type="file" name="evidencia_pago" class="form-control-file" accept="image/*" required="" id="evidencia_pago" value="{{ pedido.evidencia_pago.url }}">
-                                                        </div> {% endcomment %}
-
-                                                    </div>
-                                                    <div class="form-row">
-                                                        <div class="col-md-12">
-                                                            <label for="descripcion_pedido">Descripción</label>
-                                                            <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Botones -->
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
                             <div class="modal fade" id="editevidenciapedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
                                 aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -257,6 +141,129 @@
     </div>
 </div>
 <!-- Fin del contenido principal -->
+
+{% for pedido in pedidos %}
+
+<!-- Modal para editar Pedido -->
+<div class="modal fade" id="editPedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog"
+aria-labelledby="editPedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editPedidoModal{{ pedido.idPedido }}Label">Editar
+                Pedido</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" onsubmit="EditarPedidoxd('{{ pedido.idPedido }}')" id="editarPedidoform{{ pedido.idPedido }}" class="forms-sample" data-Pedido-id="{{ Pedido.idPedido }}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="usuario">Nombre</label>
+                            <input type="text" class="form-control" id="usuario"
+                                readonly value="{{ pedido.id_Usuario }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="datetime-local" class="form-control" id="fecha" readonly
+                                value="{{ pedido.fechaCreacion_pedido|date:'Y-m-d\TH:i' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_pedido">Fecha del pedido</label>
+                            <input type="datetime-local" class="form-control"
+                                id="fecha_pedido" name="fecha_pedido"
+                                value="{{ pedido.fecha_pedido|date:'Y-m-d\TH:i' }}">
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="subtotal">Subtotal</label>
+                            <input type="number" class="form-control" id="subtotal"
+                                name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="iva">Iva</label>
+                            <input type="number" class="form-control" id="iva"
+                                name="iva" value="{{ pedido.iva|floatformat:"0" }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="total">Total</label>
+                            <input type="number" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
+                        </div>
+                        {% comment %} <div class="form-group">
+                            <label for="evidencia_pago">Evidencia de Pago</label>
+                            <input type="file" name="evidencia_pago" class="form-control-file" accept="image/*" required="" id="evidencia_pago" value="{{ pedido.evidencia_pago.url }}">
+                        </div> {% endcomment %}
+
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="descripcion_pedido">Descripción</label>
+                            <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary mr-2">Editar {{ pedido.idPedido }}</button>
+                        <button type="button" class="btn btn-light"
+                            data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- Modal Detalle del Pedido -->
+
+<div class="modal fade" id="detallePedidoModal{{ pedido.idPedido }}" tabindex="-1" role="dialog" aria-labelledby="detallePedidoModal{{ pedido.idPedido }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detallePedidoModal{{ pedido.idPedido }}Label">Detalle del Pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
+                <p><strong>Subtotal:</strong> {{ pedido.subtotal }}</p>
+                <p><strong>IVA:</strong> {{ pedido.iva }}</p>
+                <p><strong>Evidencia de Pago:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>
+
+                <!-- Detalles de los productos -->
+                <h5>Productos</h5>
+                <ul>
+                    {% for detalle in detalles_productos %}
+                        {% if detalle.idPedido == pedido %}
+                            <li>{{ detalle.nombre_productos }} - Cantidad: {{ detalle.cant_productos }} - Subtotal: {{ detalle.subtotal_productos }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <!-- Detalles de los servicios -->
+                <h5>Servicios</h5>
+                <ul>
+                    {% for detalle in detalles_servicios %}
+                        {% if detalle.idPedido == pedido %}
+                            <li>{{ detalle.descripcion }} - Cantidad: {{ detalle.cantidad_servicios }} - Subtotal: {{ detalle.subtotal_servicios }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 
 <!-- Modal Crear Pedido -->
