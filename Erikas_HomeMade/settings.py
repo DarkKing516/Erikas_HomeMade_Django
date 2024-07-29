@@ -101,18 +101,18 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'erikas_homemade',
-    #     'USER': 'root',
-    #     'PASSWORD': '',
-    #     'HOST': 'localhost',  # O la dirección IP de tu servidor MySQL
-    #     'PORT': '3306',  # El puerto por defecto de MySQL
-    # }
-    'default': dj_database_url.config(
-        default = 'postgresql://erikas_homemade_user:lIeZ1ziweMomss2zJr0Mj5A8JcuUB2jz@dpg-cqen9d8gph6c73atg2l0-a.oregon-postgres.render.com/erikas_homemade',
-        conn_max_age = 600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'erikas_homemade',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',  # O la dirección IP de tu servidor MySQL
+        'PORT': '3306',  # El puerto por defecto de MySQL
+    }
+    # 'default': dj_database_url.config(
+    #     default = 'postgresql://erikas_homemade_user:lIeZ1ziweMomss2zJr0Mj5A8JcuUB2jz@dpg-cqen9d8gph6c73atg2l0-a.oregon-postgres.render.com/erikas_homemade',
+    #     conn_max_age = 600
+    # )
 }
 
 

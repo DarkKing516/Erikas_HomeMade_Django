@@ -74,6 +74,9 @@ class Pedido(models.Model):
 
     productos = models.ManyToManyField(Producto, through='DetallePedidoProducto')
     servicios = models.ManyToManyField(Servicio, through='DetallePedidoServicio')
+    
+    def is_cancelado(self):
+        return self.estado_pedido == 'Cancelado'
 
     def __str__(self):
         return f"Pedido {self.idPedido}"

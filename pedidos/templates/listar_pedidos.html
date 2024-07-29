@@ -39,8 +39,8 @@
                             {% for pedido in pedidos %}
                             <tr class="pedido-row">
                                 <td>{{ pedido.id_Usuario }}</td>
-                                <td>{{ pedido.fechaCreacion_pedido }}</td>
-                                <td>{{ pedido.fecha_pedido }}</td>
+                                <td>{{ pedido.fechaCreacion_pedido|date:"d M Y H:i" }}</td>
+                                <td>{{ pedido.fecha_pedido|date:"d M Y" }}</td>
                                 <td>$ {{ pedido.total|floatformat:0|intcomma  }}</td>
                                 {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
                                 <td>
@@ -87,11 +87,11 @@
                                             <i class="bi bi-file-earmark-image"></i>
                                         </button>
                                         {% endif %}
-                                        {% if 'Eliminar Pedidos' in request.session.permisos %}
+                                        {% comment %} {% if 'Eliminar Pedidos' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
                                             <i class="mdi mdi-delete"></i>
                                         </button>
-                                        {% endif %}
+                                        {% endif %} {% endcomment %}
                                         {% if 'Eliminar Pedidos' not in request.session.permisos and 'Editar Pedidos' not in request.session.permisos and 'Editar Evidencia Pedidos' not in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-primary">
                                             <i class="bi bi-exclamation-circle"></i>
@@ -885,7 +885,7 @@
     function handleChangeStatus(event) {
         // Obtener el pedido ID
         var pedido_id = $(this).data('pedido-id');
-
+    
         // Mostrar SweetAlert con el campo de selección y el token CSRF
         Swal.fire({
             title: 'Cambiar Estado',
@@ -904,7 +904,7 @@
             preConfirm: () => {
                 // Obtener el valor seleccionado del select
                 var nuevoPedido = $('#estado_pedido2').val();
-
+    
                 // Enviar los datos a través de AJAX incluyendo el token CSRF
                 return fetch("{% url 'pedidos:cambiar_estado' %}", {
                     method: 'POST',
@@ -918,10 +918,13 @@
                     }),
                 })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Hubo un problema al cambiar el Estado.');
-                    }
                     return response.json();
+                })
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.message || 'Hubo un problema al cambiar el Estado.');
+                    }
+                    return data;
                 })
                 .catch(error => {
                     Swal.showValidationMessage(`Request failed: ${error}`);
@@ -943,6 +946,7 @@
             }
         });
     }
+    
 
 
     $(document).ready(function () {
