@@ -131,8 +131,8 @@ class RegistroForm(forms.ModelForm):
             raise forms.ValidationError("La contraseña debe contener al menos una letra mayúscula.")
         if not any(char.islower() for char in contraseña):
             raise forms.ValidationError("La contraseña debe contener al menos una letra minúscula.")
-        if not any(char in "!@#$%^&*()-_+=<>?{}[]|\/:;\"'`~" for char in contraseña):
-            raise forms.ValidationError("La contraseña debe contener al menos un carácter especial.")
+        # if not any(char in "!@#$%^&*()-_+=<>?{}[]|\/:;\"'`~" for char in contraseña):
+        #     raise forms.ValidationError("La contraseña debe contener al menos un carácter especial.")
         return contraseña
 
     def clean_correo(self):
