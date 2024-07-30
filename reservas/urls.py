@@ -1,10 +1,16 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from . import views as viewsReservas
+from rest_framework.routers import DefaultRouter
+
 app_name = 'reservas'
+
+router = DefaultRouter()
+router.register(r'reservasAPI', viewsReservas.ReservaViewSet)
 
 urlpatterns = [
     path('hello/', viewsReservas.hello),
+    path('', include(router.urls)), # Incluye las rutas de la API
     path('listar_reservas/', viewsReservas.listar_reservas, name='listar_reserva'),
     path('crear_reserva/', viewsReservas.crear_reserva, name='crear_reserva'),
     # path('editar/<int:id_reserva>/', viewsReservas.editar_reserva, name='editar_reserva'),

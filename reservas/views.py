@@ -15,6 +15,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import login as auth_login
 from datetime import timedelta, datetime
+from rest_framework import viewsets
+from .serializers import *
 
 # Create your views here.
 def hello(request):
@@ -173,3 +175,7 @@ def cambiar_fecha_reserva(request):
 
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
+
+class ReservaViewSet(viewsets.ModelViewSet):
+    queryset = Reserva.objects.all()
+    serializer_class = ReservaSerializer
