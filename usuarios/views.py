@@ -36,6 +36,9 @@ from .decorators import login_required
 from .backends import *
 from .models import *
 from .forms import *
+from rest_framework import viewsets
+from .serializers import UsuarioSerializer, RolSerializer, PermisoSerializer
+
 
 # Create your views here.
 def hello(request):
@@ -687,3 +690,16 @@ def editar_foto_perfil(request):
     else:
         # Devolver un mensaje de error si no se proporciona ninguna imagen
         return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna imagen.'})
+
+
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
+
+class RolViewSet(viewsets.ModelViewSet):
+    queryset = Rol.objects.all()
+    serializer_class = RolSerializer
+
+class PermisoViewSet(viewsets.ModelViewSet):
+    queryset = Permiso.objects.all()
+    serializer_class = PermisoSerializer
