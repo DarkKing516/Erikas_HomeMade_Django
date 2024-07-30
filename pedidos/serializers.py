@@ -43,8 +43,3 @@ class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
         fields = '__all__'
-        
-class PedidoEstadoUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Pedido
-        fields = ['estado_pedido']
