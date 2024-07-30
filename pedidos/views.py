@@ -445,6 +445,10 @@ def cambiar_estado(request):
         # Recupera la instancia del pedido de la base de datos utilizando el ID del pedido
         pedido = Pedido.objects.get(pk=pedido_id)
         
+        # Verifica si el pedido ya está cancelado
+        if pedido.estado_pedido == 'Cancelado':
+            return JsonResponse({'success': False, 'message': 'No se puede cambiar el estado de un pedido cancelado.'})
+        
         # Actualiza el estado del pedido
         pedido.estado_pedido = nuevo_estado_pedido
         
@@ -455,8 +459,7 @@ def cambiar_estado(request):
         return JsonResponse({'success': True})
     else:
         # Si la solicitud no es POST, devuelve una respuesta JSON indicando que la operación falló
-        return JsonResponse({'success': False})
-    
+        return JsonResponse({'success': False, 'message': 'Solicitud no válida.'})
 
 # ----------------------------------------------------------PRODUCTOS--------------------------------------------------------------------------
 
