@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from django.templatetags.static import static
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import *
@@ -10,6 +11,9 @@ import os
 from django.urls import reverse
 from django.shortcuts import redirect
 from collections import defaultdict
+from .serializers import *
+from rest_framework.response import Response
+from rest_framework import viewsets
 
 
 def crear_pedido_carrito(request):
@@ -900,3 +904,39 @@ def cambiar_estado_servicio_catalogo(request):
 
 def listar_detalle_producto(request):
         return render(request, 'ver_carrito.html')
+
+class TipoServicioViewSet(viewsets.ModelViewSet):
+    queryset = TipoServicio.objects.all()
+    serializer_class = TipoServicioSerializer
+
+class ServicioViewSet(viewsets.ModelViewSet):
+    queryset = Servicio.objects.all()
+    serializer_class = ServicioSerializer
+
+class TipoProductoViewSet(viewsets.ModelViewSet):
+    queryset = TipoProducto.objects.all()
+    serializer_class = TipoProductoSerializer
+
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+
+class DetallePedidoProductoViewSet(viewsets.ModelViewSet):
+    queryset = DetallePedidoProducto.objects.all()
+    serializer_class = DetallePedidoProductoSerializer
+
+class DetallePedidoServicioViewSet(viewsets.ModelViewSet):
+    queryset = DetallePedidoServicio.objects.all()
+    serializer_class = DetallePedidoServicioSerializer
+
+class PedidoViewSet(viewsets.ModelViewSet):
+    queryset = Pedido.objects.all()
+    serializer_class = PedidoSerializer
+    @action(detail=True, methods=['patch'])
+    def update_estado(self, request, pk=None):
+        pedido = self.get_object()
+        serializer = PedidoEstadoUpdateSerializer(pedido, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

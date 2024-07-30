@@ -1,12 +1,24 @@
+# pedidos/urls.py
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
 from . import views
 
 app_name = 'pedidos'
 
+router = DefaultRouter()
+router.register(r'tipo_serviciosAPI', views.TipoServicioViewSet)
+router.register(r'serviciosAPI', views.ServicioViewSet)
+router.register(r'tipo_productosAPI', views.TipoProductoViewSet)
+router.register(r'productosAPI', views.ProductoViewSet)
+router.register(r'pedidosAPI', views.PedidoViewSet)
+router.register(r'detalle_pedido_productosAPI', views.DetallePedidoProductoViewSet)
+router.register(r'detalle_pedido_serviciosAPI', views.DetallePedidoServicioViewSet)
+
 urlpatterns = [
+    path('', include(router.urls)),
     path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
     path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
     path('listar_pedidos/', views.listar_pedidos, name='listar_pedidos'),
