@@ -932,3 +932,12 @@ class DetallePedidoServicioViewSet(viewsets.ModelViewSet):
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+
+    @action(detail=True, methods=['patch'], url_path='update_estado')
+    def update_estado(self, request, pk=None):
+        pedido = self.get_object()
+        serializer = self.get_serializer(pedido, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
