@@ -43,9 +43,3 @@ class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido
         fields = '__all__'
-
-    def update(self, instance, validated_data):
-        estado_pedido = validated_data.pop('estado_pedido', None)
-        if estado_pedido is not None:
-            instance.estado_pedido = estado_pedido
-        return super().update(instance, validated_data)
