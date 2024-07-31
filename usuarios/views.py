@@ -703,3 +703,26 @@ class RolViewSet(viewsets.ModelViewSet):
 class PermisoViewSet(viewsets.ModelViewSet):
     queryset = Permiso.objects.all()
     serializer_class = PermisoSerializer
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.hashers import check_password
+from .models import Usuario
+from .serializers import UsuarioSerializer
+
+@api_view(['POST'])
+def login_view(request):
+    correo = request.data.get('correo')
+    contraseña = request.data.get('contraseña')
+
+    try:
+        usuario = Usuario.objects.get(correo=correo)
+    except Usuario.DoesNotExist:
+        return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    if check_password(contraseña, usuario.contraseña):
+        serializer = UsuarioSerializer(usuario)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)
