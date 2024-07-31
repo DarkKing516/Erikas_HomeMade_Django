@@ -19,6 +19,7 @@ router.register(r'detalle_pedido_serviciosAPI', views.DetallePedidoServicioViewS
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('pedidosAPI/<int:pk>/update_estado/', views.PedidoViewSet.as_view({'patch': 'update_estado'}), name='pedido-update-estado'),
     path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
     path('remove_cart_item/', views.remove_cart_item, name='remove_cart_item'),
     path('listar_pedidos/', views.listar_pedidos, name='listar_pedidos'),
