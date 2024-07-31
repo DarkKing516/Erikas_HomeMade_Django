@@ -122,6 +122,9 @@
                                                                 <option value="Completada" {% if
                                                                     reserva.estado|lower=="completada" %} selected {%
                                                                     endif %}>Completada</option>
+                                                                <option value="Cancelada" {% if
+                                                                    reserva.estado|lower=="Cancelada" %} selected {%
+                                                                    endif %}>Cancelada</option>
                                                             </select>
                                                         </div>
 
@@ -131,7 +134,7 @@
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ reserva.id }}</button>
+                                                        <button class="btn btn-primary mr-2">Editar</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Cancelar</button>
                                                     </div>
