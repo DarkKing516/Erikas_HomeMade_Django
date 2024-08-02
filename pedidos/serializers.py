@@ -23,11 +23,14 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DetallePedidoProductoSerializer(serializers.ModelSerializer):
+    imagen = serializers.SerializerMethodField()
     producto = ProductoSerializer(read_only=True)
 
     class Meta:
         model = DetallePedidoProducto
         fields = '__all__'
+    def get_imagen(self, obj):
+            return obj.idProducto.imagen.url if obj.idProducto.imagen else "https://raw.githubusercontent.com/DarkKing516/Erikas_HomeMade_Django/main/media/user_images/imagendefectoNoBorrar.gif"
 
 class DetallePedidoServicioSerializer(serializers.ModelSerializer):
     servicio = ServicioSerializer(read_only=True)
