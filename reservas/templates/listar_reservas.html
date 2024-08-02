@@ -18,6 +18,9 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
 <script src="{% static 'js/reservas.js' %}"></script>
+<!-- Fechas y horas-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <!-- Contenido principal -->
 <div class="row">
@@ -175,7 +178,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="fecha_cita">Fecha de Cita</label>
-                                {{ form.fecha_cita }}
+                                <input type="text" id="fecha_cita" name="fecha_cita" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="hora_cita">Hora de Cita</label>
+                                <select id="hora_cita" name="hora_cita" class="form-control">
+                                    <!-- Opciones se añadirán mediante JavaScript -->
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="descripcion">Descripción</label>
@@ -196,27 +205,39 @@
 </div>
 
 
-
-
-
-
-
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#fecha_cita", {
+        minDate: "today"
+    });
+
+    const horaCitaSelect = document.getElementById('hora_cita');
+
+    // Generar las opciones de hora permitidas
+    const horasPermitidas = [
+        '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+        '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
+        '16:00', '16:30'
+    ];
+
+    horasPermitidas.forEach(hora => {
+        const option = document.createElement('option');
+        option.value = hora;
+        option.textContent = hora;
+        horaCitaSelect.appendChild(option);
+    });
+});
+
 function validateForm() {
-    // Evitar que el formulario se envíe automáticamente
     event.preventDefault();
 
-    // Obtener el formulario de la modal
     const form = document.getElementById('myForm');
-
-    // Obtener el valor de la fecha y hora de la reserva dentro del formulario específico
     const fechaCitaInput = form.querySelector('input[name="fecha_cita"]');
-    console.log("Valor del input fecha_cita:", fechaCitaInput.value);
+    const horaCitaInput = form.querySelector('select[name="hora_cita"]');
 
-    const fechaCita = new Date(fechaCitaInput.value);
-    console.log("Objeto Date creado a partir del input:", fechaCita);
+    // Combinamos la fecha y la hora en un formato ISO
+    const fechaCita = new Date(`${fechaCitaInput.value}T${horaCitaInput.value}:00`);
 
-    // Comprobar si la fecha y hora se ha obtenido correctamente
     if (isNaN(fechaCita.getTime())) {
         Swal.fire({
             title: 'Error',
@@ -226,32 +247,18 @@ function validateForm() {
         return;
     }
 
-    // Definir las horas límites
-    const horaInicio = 8; // 8:00 AM
-    const horaFin = 17; // 5:00 PM
+    // Asegúrate de que el formato sea correcto
+    const fechaCitaISO = fechaCita.toISOString();
 
-    // Validar la hora de la reserva
-    const horaReserva = fechaCita.getHours();
-    const minutoReserva = fechaCita.getMinutes();
+    // Establece el valor del campo oculto con la fecha en formato ISO
+    const fechaCitaHiddenInput = document.createElement('input');
+    fechaCitaHiddenInput.type = 'hidden';
+    fechaCitaHiddenInput.name = 'fecha_cita_iso';
+    fechaCitaHiddenInput.value = fechaCitaISO;
+    form.appendChild(fechaCitaHiddenInput);
 
-    // Mostrar los valores de hora y minuto para depuración
-    console.log("Hora de la reserva:", horaReserva);
-    console.log("Minuto de la reserva:", minutoReserva);
-
-    if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
-        // Mostrar SweetAlert de error
-        Swal.fire({
-            title: 'Error',
-            text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).',
-            icon: 'error'
-        });
-        return;
-    }
-
-    // Crear un objeto FormData para enviar los datos del formulario
     const formData = new FormData(form);
 
-    // Realizar la solicitud POST utilizando fetch
     fetch("{% url 'reservas:crear_reserva' %}", {
         method: 'POST',
         body: formData,
@@ -261,40 +268,34 @@ function validateForm() {
     })
     .then(response => response.json())
     .then(data => {
-        // Verificar si la solicitud fue exitosa
         if (data.success) {
-            // Mostrar SweetAlert de éxito
             Swal.fire({
                 title: '¡Registro exitoso!',
                 text: 'La reserva se ha registrado correctamente.',
                 icon: 'success',
                 onClose: () => {
-                    // Recargar la página o realizar alguna otra acción
                     window.location.href = "{% url 'reservas:listar_reserva' %}";
                 }
             }).then(() => {
                 window.location.href = "{% url 'reservas:listar_reserva' %}";
             });
-        } else if (data.message) { // Check if a message is provided in the response
-            // Mostrar SweetAlert de error con el mensaje recibido
+        } else if (data.message) {
             Swal.fire({
                 title: 'Error',
                 text: data.message,
                 icon: 'error',
             });
-        } else if (data.errors) { // Verificar si hay errores de validación
+        } else if (data.errors) {
             let errorMessage = "Hubo un error al procesar su solicitud:<br>";
             for (const key in data.errors) {
                 errorMessage += `${data.errors[key]}<br>`;
             }
-            // Mostrar SweetAlert de error con los errores de validación
             Swal.fire({
                 title: 'Error',
                 html: errorMessage,
                 icon: 'error',
             });
-        } else { // If no message is provided, show a generic error message
-            // Mostrar SweetAlert de error genérico
+        } else {
             Swal.fire({
                 title: 'Error',
                 text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
@@ -303,7 +304,6 @@ function validateForm() {
         }
     })
     .catch(errors => {
-        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
         Swal.fire({
             title: 'Error',
             text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
