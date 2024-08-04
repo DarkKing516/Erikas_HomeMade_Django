@@ -162,79 +162,105 @@
 </script>
 <script>
     $(document).ready(function () {
-        $('#reservaTable').on('click', 'td .editarfechacita', function () {
-            var reserva_id = $(this).data('reserva-id');
-            var fecha_cita = $(this).text().trim();
+    $('#reservaTable').on('click', 'td .editarfechacita', function () {
+        var reserva_id = $(this).data('reserva-id');
+        var fecha_cita = $(this).text().trim();
 
-            // Crear el campo de fecha y hora con Flatpickr
-            var flatpickrInput = $('<input>').attr({
-                type: 'text',
-                id: 'swal-input1',
-                class: 'swal2-input',
-            });
+        // Crear el campo de fecha y hora con Flatpickr
+        var flatpickrInput = $('<input>').attr({
+            type: 'text',
+            id: 'swal-input1',
+            class: 'swal2-input',
+        });
 
-            // Mostrar la alerta de SweetAlert para editar la fecha y hora
-            Swal.fire({
-                title: 'Editar Fecha y Hora de Cita',
-                html: flatpickrInput[0],
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
-                allowOutsideClick: false,
-                preConfirm: () => {
-                    return flatpickrInput.val();
-                },
-                didOpen: () => {
-                    // Inicializar Flatpickr en el campo de entrada
-                    flatpickr(flatpickrInput[0], {
-                        enableTime: true,
-                        dateFormat: 'Y-m-d H:i', // Formato de fecha y hora
-                    });
+        // Mostrar la alerta de SweetAlert para editar la fecha y hora
+        Swal.fire({
+            title: 'Editar Fecha y Hora de Cita',
+            html: flatpickrInput[0],
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+            allowOutsideClick: false,
+            preConfirm: () => {
+                // Validar la fecha y hora seleccionada
+                var nuevaFecha = flatpickrInput.val();
+                var fechaCita = new Date(nuevaFecha);
+
+                // Definir las horas límites
+                const horaInicio = 8; // 8:00 AM
+                const horaFin = 17; // 5:00 PM
+                const horaReserva = fechaCita.getHours();
+                const minutoReserva = fechaCita.getMinutes();
+
+                if (isNaN(fechaCita.getTime())) {
+                    Swal.showValidationMessage('Fecha y hora no válidas. Por favor, ingrese una fecha y hora correctas.');
+                    return false;
                 }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Obtener la nueva fecha y hora ingresada por el usuario
-                    var nueva_fecha = flatpickrInput.val();
 
-                    // Realizar la petición para actualizar la fecha y hora de la reserva
-                    fetch("{% url 'reservas:cambiar_fecha_reserva' %}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({
-                            'fecha_cita': nueva_fecha,
-                            'reserva_id': reserva_id
-                        }),
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Hubo un problema al cambiar la fecha de la reserva.');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Mostrar una alerta de éxito
-                            Swal.fire('¡Fecha y Hora cambiadas!', 'La fecha y hora de la reserva se han cambiado correctamente.', 'success').then(() => {
-                                // Recargar la página o realizar alguna otra acción
-                                location.reload();
-                            });
-                        } else {
-                            // Mostrar una alerta de error si no se pudo cambiar la fecha y hora
-                            Swal.fire('Error', 'Hubo un problema al cambiar la fecha y hora de la reserva. Por favor, inténtelo de nuevo más tarde.', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        // Mostrar una alerta de error si hubo un problema con la petición
-                        Swal.fire('Error', 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.', 'error');
-                        console.error('Error:', error);
-                    });
+                if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
+                    Swal.showValidationMessage('La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).');
+                    return false;
                 }
-            });
+
+                return nuevaFecha;
+            },
+            didOpen: () => {
+                // Inicializar Flatpickr en el campo de entrada
+                flatpickr(flatpickrInput[0], {
+                    enableTime: true,
+                    dateFormat: 'Y-m-d H:i', // Formato de fecha y hora
+                    minDate: "today",
+                    minTime: "08:00",
+                    maxTime: "17:00",
+                    time_24hr: true,
+                    minuteIncrement: 30,
+                    defaultDate: fecha_cita
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Obtener la nueva fecha y hora ingresada por el usuario
+                var nueva_fecha = result.value;
+
+                // Realizar la petición para actualizar la fecha y hora de la reserva
+                fetch("{% url 'reservas:cambiar_fecha_reserva' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'fecha_cita': nueva_fecha,
+                        'reserva_id': reserva_id
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar la fecha de la reserva.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar una alerta de éxito
+                        Swal.fire('¡Fecha y Hora cambiadas!', 'La fecha y hora de la reserva se han cambiado correctamente.', 'success').then(() => {
+                            // Recargar la página o realizar alguna otra acción
+                            location.reload();
+                        });
+                    } else {
+                        // Mostrar una alerta de error si no se pudo cambiar la fecha y hora
+                        Swal.fire('Error', 'Hubo un problema al cambiar la fecha y hora de la reserva. Por favor, inténtelo de nuevo más tarde.', 'error');
+                    }
+                })
+                .catch(error => {
+                    // Mostrar una alerta de error si hubo un problema con la petición
+                    Swal.fire('Error', 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.', 'error');
+                    console.error('Error:', error);
+                });
+            }
         });
     });
+});
 </script>
 
 

@@ -1,10 +1,17 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from . import views
+
+from rest_framework.routers import DefaultRouter
+from .views import VentaViewSet
+
+router = DefaultRouter()
+router.register(r'ventasAPI', VentaViewSet)
 
 app_name = 'ventas'
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('listar_ventas/', views.listar_ventas, name='listar_ventas'),
     path('listar_mis_ventas/', views.listar_mis_ventas, name='listar_mis_ventas'),
     path('crear_venta/', views.crear_venta, name='crear_venta'),

@@ -14,6 +14,9 @@ from django.utils.html import strip_tags
 import pdfkit
 import os
 
+from rest_framework import viewsets
+from .serializers import *
+
 def generar_factura_pdf(request, idVenta):
     # Obtiene la venta a partir del idVenta
     venta = get_object_or_404(Venta, idVenta=idVenta)
@@ -159,3 +162,7 @@ def obtener_total_pedido(request, idPedido):
     pedido = Pedido.objects.get(idPedido=idPedido)
     total_pedido = pedido.total
     return JsonResponse({'total_pedido': total_pedido})
+
+class VentaViewSet(viewsets.ModelViewSet):
+    queryset = Venta.objects.all()
+    serializer_class = VentaSerializer

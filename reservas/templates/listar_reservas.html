@@ -18,6 +18,9 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
 <script src="{% static 'js/reservas.js' %}"></script>
+<!-- Fechas y horas-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <!-- Contenido principal -->
 <div class="row">
@@ -122,6 +125,9 @@
                                                                 <option value="Completada" {% if
                                                                     reserva.estado|lower=="completada" %} selected {%
                                                                     endif %}>Completada</option>
+                                                                <option value="Cancelada" {% if
+                                                                    reserva.estado|lower=="Cancelada" %} selected {%
+                                                                    endif %}>Cancelada</option>
                                                             </select>
                                                         </div>
 
@@ -131,7 +137,7 @@
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar {{ reserva.id }}</button>
+                                                        <button class="btn btn-primary mr-2">Editar</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Cancelar</button>
                                                     </div>
@@ -161,7 +167,6 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Contenido del formulario con Bootstrap grid system -->
                 <form id="myForm" class="forms-sample" method="post" onsubmit="validateForm(event)">
                     {% csrf_token %}
                     <div class="form-row">
@@ -171,8 +176,8 @@
                                 {{ form.usuario }}
                             </div>
                             <div class="form-group">
-                                <label for="fecha_cita">Fecha de Cita</label>
-                                {{ form.fecha_cita }}
+                                <label for="fecha_cita">Fecha y Hora de Cita</label>
+                                <input type="text" id="fecha_cita" name="fecha_cita" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="descripcion">Descripción</label>
@@ -194,61 +199,31 @@
 
 
 
-
-
-
-
 <script>
-function validateForm() {
-    // Evitar que el formulario se envíe automáticamente
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Flatpickr en el campo de entrada
+    flatpickr("#fecha_cita", {
+        enableTime: true,
+        dateFormat: 'Y-m-d H:i',
+        minDate: "today",
+        minTime: "08:00",
+        maxTime: "17:00",
+        time_24hr: true,
+        minuteIncrement: 30
+    });
+});
+
+function validateForm(event) {
     event.preventDefault();
 
-    // Obtener el formulario de la modal
     const form = document.getElementById('myForm');
-
-    // Obtener el valor de la fecha y hora de la reserva dentro del formulario específico
     const fechaCitaInput = form.querySelector('input[name="fecha_cita"]');
-    console.log("Valor del input fecha_cita:", fechaCitaInput.value);
 
-    const fechaCita = new Date(fechaCitaInput.value);
-    console.log("Objeto Date creado a partir del input:", fechaCita);
+    // Asegúrate de que la fecha y la hora se han combinado correctamente
+    console.log("Fecha y hora combinadas:", fechaCitaInput.value);
 
-    // Comprobar si la fecha y hora se ha obtenido correctamente
-    if (isNaN(fechaCita.getTime())) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Fecha y hora no válidas. Por favor, ingrese una fecha y hora correctas.',
-            icon: 'error'
-        });
-        return;
-    }
-
-    // Definir las horas límites
-    const horaInicio = 8; // 8:00 AM
-    const horaFin = 17; // 5:00 PM
-
-    // Validar la hora de la reserva
-    const horaReserva = fechaCita.getHours();
-    const minutoReserva = fechaCita.getMinutes();
-
-    // Mostrar los valores de hora y minuto para depuración
-    console.log("Hora de la reserva:", horaReserva);
-    console.log("Minuto de la reserva:", minutoReserva);
-
-    if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
-        // Mostrar SweetAlert de error
-        Swal.fire({
-            title: 'Error',
-            text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).',
-            icon: 'error'
-        });
-        return;
-    }
-
-    // Crear un objeto FormData para enviar los datos del formulario
     const formData = new FormData(form);
 
-    // Realizar la solicitud POST utilizando fetch
     fetch("{% url 'reservas:crear_reserva' %}", {
         method: 'POST',
         body: formData,
@@ -258,40 +233,34 @@ function validateForm() {
     })
     .then(response => response.json())
     .then(data => {
-        // Verificar si la solicitud fue exitosa
         if (data.success) {
-            // Mostrar SweetAlert de éxito
             Swal.fire({
                 title: '¡Registro exitoso!',
                 text: 'La reserva se ha registrado correctamente.',
                 icon: 'success',
                 onClose: () => {
-                    // Recargar la página o realizar alguna otra acción
                     window.location.href = "{% url 'reservas:listar_reserva' %}";
                 }
             }).then(() => {
                 window.location.href = "{% url 'reservas:listar_reserva' %}";
             });
-        } else if (data.message) { // Check if a message is provided in the response
-            // Mostrar SweetAlert de error con el mensaje recibido
+        } else if (data.message) {
             Swal.fire({
                 title: 'Error',
                 text: data.message,
                 icon: 'error',
             });
-        } else if (data.errors) { // Verificar si hay errores de validación
+        } else if (data.errors) {
             let errorMessage = "Hubo un error al procesar su solicitud:<br>";
             for (const key in data.errors) {
                 errorMessage += `${data.errors[key]}<br>`;
             }
-            // Mostrar SweetAlert de error con los errores de validación
             Swal.fire({
                 title: 'Error',
                 html: errorMessage,
                 icon: 'error',
             });
-        } else { // If no message is provided, show a generic error message
-            // Mostrar SweetAlert de error genérico
+        } else {
             Swal.fire({
                 title: 'Error',
                 text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
@@ -300,7 +269,6 @@ function validateForm() {
         }
     })
     .catch(errors => {
-        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
         Swal.fire({
             title: 'Error',
             text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
@@ -381,116 +349,141 @@ function validateForm() {
 
     });
     $(document).ready(function () {
-        // Destruir la instancia actual, si existe
-        if ($.fn.DataTable.isDataTable('#reservaTable')) {
-            $('#reservaTable').DataTable().destroy();
-        }
-
-        // Configuración personalizada para DataTables
-        var dataTableConfig = {
-            // "pagingType": "full_numbers",
-            "lengthChange": false,
-            "pageLength": 5,
-            "searching": true,
-            "language": {
-                "search": "Buscar:",
-                "zeroRecords": "No se encontraron resultados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "infoFiltered": "(filtrados de _MAX_ registros en total)",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            },
-            "dom": '<"top"lf>rt<"bottom"ip>',
-        };
-
-        // Inicializar DataTable con la configuración personalizada
-        var table = $('#reservaTable').DataTable(dataTableConfig);
-
-        // Mover el cuadro de búsqueda al lugar deseado
-        $("#reservaTable_filter").detach().appendTo(".top");
-
-        {% if 'Crear Reservas' in request.session.permisos %}
-        // Mover el botón "Agregar" al lado del cuadro de búsqueda
-        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
-        {% endif %}
-
-        // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
-        $("#reservaTable_filter input").addClass("form-control form-control-sm");
-
-        // Puedes agregar más personalizaciones según tus necesidades
-
-
-
-    });
-
-    function EditarReservaxd(reservaId) {
-        event.preventDefault();
-
-        // Obtener el formulario
-        const form = document.getElementById(`editarReservaform${reservaId}`);
-        // Crear un objeto FormData para enviar los datos del formulario
-        const formData = new FormData(form);
-
-        const formDataString = JSON.stringify(Object.fromEntries(formData));
-        const formString = form.outerHTML;
-
-        // Realizar la solicitud POST utilizando fetch
-        fetch("{% url 'reservas:editar_reserva' %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Verificar si la solicitud fue exitosa
-                if (data.success) {
-                    // Mostrar SweetAlert de éxito
-                    Swal.fire({
-                        title: '¡Actualización exitosa!',
-                        text: 'La reserva se ha editado correctamente.',
-                        icon: 'success',
-                        onClose: () => {
-                            // Recargar la página   
-                            location.reload();
-                        }
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else if (data.errors) { // Verificar si hay errores de validación
-                    let errorMessage = "Hubo un error al procesar su solicitud:<br>";
-                    for (const key in data.errors) {
-                        errorMessage += `${data.errors[key]}<br>`;
-                    }
-                    Swal.fire({
-                        title: 'Error',
-                        html: errorMessage,
-                        icon: 'error',
-                    });
-                } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
-                        icon: 'error'
-                    });
-                }
-            })
-            .catch(errors => {
-                // Mostrar SweetAlert de error en caso de un fallo en la solicitud
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
-                    icon: 'error'
-                });
-                console.error('Error:', errors);
-            });
+    // Destruir la instancia actual, si existe
+    if ($.fn.DataTable.isDataTable('#reservaTable')) {
+        $('#reservaTable').DataTable().destroy();
     }
+
+    // Configuración personalizada para DataTables
+    var dataTableConfig = {
+        // "pagingType": "full_numbers",
+        "lengthChange": false,
+        "pageLength": 5,
+        "searching": true,
+        "language": {
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrados de _MAX_ registros en total)",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        },
+        "dom": '<"top"lf>rt<"bottom"ip>',
+    };
+
+    // Inicializar DataTable con la configuración personalizada
+    var table = $('#reservaTable').DataTable(dataTableConfig);
+
+    // Mover el cuadro de búsqueda al lugar deseado
+    $("#reservaTable_filter").detach().appendTo(".top");
+
+    {% if 'Crear Reservas' in request.session.permisos %}
+    // Mover el botón "Agregar" al lado del cuadro de búsqueda
+    $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#myModal"  style="margin: 5px">Agregar</button>');
+    {% endif %}
+
+    // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
+    $("#reservaTable_filter input").addClass("form-control form-control-sm");
+
+    // Puedes agregar más personalizaciones según tus necesidades
+});
+
+function EditarReservaxd(reservaId) {
+    event.preventDefault();
+
+    // Obtener el formulario
+    const form = document.getElementById(`editarReservaform${reservaId}`);
+    // Crear un objeto FormData para enviar los datos del formulario
+    const formData = new FormData(form);
+
+    // Obtener el valor del input de fecha y hora de la reserva
+    const fechaCitaInput = form.querySelector('input[name="fecha_cita"]');
+    console.log("Valor del input fecha_cita:", fechaCitaInput.value);
+
+    const fechaCita = new Date(fechaCitaInput.value);
+    console.log("Objeto Date creado a partir del input:", fechaCita);
+
+    // Validar la fecha y hora seleccionada
+    const horaInicio = 8; // 8:00 AM
+    const horaFin = 17; // 5:00 PM
+    const horaReserva = fechaCita.getHours();
+    const minutoReserva = fechaCita.getMinutes();
+
+    if (isNaN(fechaCita.getTime())) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Fecha y hora no válidas. Por favor, ingrese una fecha y hora correctas.',
+            icon: 'error'
+        });
+        return;
+    }
+
+    if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
+        Swal.fire({
+            title: 'Error',
+            text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).',
+            icon: 'error'
+        });
+        return;
+    }
+
+    // Realizar la solicitud POST utilizando fetch
+    fetch("{% url 'reservas:editar_reserva' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Verificar si la solicitud fue exitosa
+        if (data.success) {
+            // Mostrar SweetAlert de éxito
+            Swal.fire({
+                title: '¡Actualización exitosa!',
+                text: 'La reserva se ha editado correctamente.',
+                icon: 'success',
+                onClose: () => {
+                    // Recargar la página   
+                    location.reload();
+                }
+            }).then(() => {
+                location.reload();
+            });
+        } else if (data.errors) { // Verificar si hay errores de validación
+            let errorMessage = "Hubo un error al procesar su solicitud:<br>";
+            for (const key in data.errors) {
+                errorMessage += `${data.errors[key]}<br>`;
+            }
+            Swal.fire({
+                title: 'Error',
+                html: errorMessage,
+                icon: 'error',
+            });
+        } else { // Si no hay errores específicos de validación, mostrar un mensaje genérico de error
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al procesar su solicitud. Por favor, revise los campos e inténtelo de nuevo.',
+                icon: 'error'
+            });
+        }
+    })
+    .catch(errors => {
+        // Mostrar SweetAlert de error en caso de un fallo en la solicitud
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error'
+        });
+        console.error('Error:', errors);
+    });
+}
 
 
 

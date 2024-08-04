@@ -15,6 +15,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import login as auth_login
 from datetime import timedelta, datetime
+from rest_framework import viewsets
+from .serializers import *
 
 # Create your views here.
 def hello(request):
@@ -43,27 +45,38 @@ def crear_reserva(request):
         form = ReservaForm(request.POST)
         if form.is_valid():
             reserva = form.save(commit=False)
-            fecha_cita = reserva.fecha_cita
+            fecha_cita_str = request.POST.get('fecha_cita')
 
-            # Redondear la hora al intervalo de media hora más cercano
-            minuto = fecha_cita.minute
-            if minuto >= 30:
-                fecha_cita = fecha_cita.replace(minute=30, second=0, microsecond=0)
-            else:
-                fecha_cita = fecha_cita.replace(minute=0, second=0, microsecond=0)
+            try:
+                # Parsear la fecha y hora del string recibido
+                fecha_cita = datetime.strptime(fecha_cita_str, '%Y-%m-%d %H:%M')
+                
+                # Redondear la hora al intervalo de media hora más cercano
+                minuto = fecha_cita.minute
+                if minuto >= 30:
+                    fecha_cita = fecha_cita.replace(minute=30, second=0, microsecond=0)
+                else:
+                    fecha_cita = fecha_cita.replace(minute=0, second=0, microsecond=0)
 
-            # Verificar si ya existe una reserva en el mismo día y hora
-            reservas_existentes = Reserva.objects.filter(fecha_cita=fecha_cita)
-            if reservas_existentes.exists():
+                # Verificar si ya existe una reserva en el mismo día y hora
+                reservas_existentes = Reserva.objects.filter(fecha_cita=fecha_cita)
+                if reservas_existentes.exists():
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Ya existe una reserva para esa fecha y hora.'
+                    })
+
+                # Guardar la reserva si no hay conflicto
+                reserva.fecha_cita = fecha_cita
+                reserva.save()
+                return JsonResponse({'success': True})
+
+            except ValueError:
                 return JsonResponse({
                     'success': False,
-                    'message': 'Ya existe una reserva para esa fecha y hora.'
+                    'message': 'Por favor ingrese una fecha válida (que sea dos días a partir de hoy)'
                 })
 
-            # Guardar la reserva si no hay conflicto
-            reserva.fecha_cita = fecha_cita
-            reserva.save()
-            return JsonResponse({'success': True})
         else:
             # Si el formulario no es válido, se envían los errores de validación
             errors = dict(form.errors.items())
@@ -173,3 +186,7 @@ def cambiar_fecha_reserva(request):
 
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
+
+class ReservaViewSet(viewsets.ModelViewSet):
+    queryset = Reserva.objects.all()
+    serializer_class = ReservaSerializer

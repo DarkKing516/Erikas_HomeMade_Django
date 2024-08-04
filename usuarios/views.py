@@ -36,6 +36,9 @@ from .decorators import login_required
 from .backends import *
 from .models import *
 from .forms import *
+from rest_framework import viewsets
+from .serializers import UsuarioSerializer, RolSerializer, PermisoSerializer
+
 
 # Create your views here.
 def hello(request):
@@ -687,3 +690,39 @@ def editar_foto_perfil(request):
     else:
         # Devolver un mensaje de error si no se proporciona ninguna imagen
         return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna imagen.'})
+
+
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
+
+class RolViewSet(viewsets.ModelViewSet):
+    queryset = Rol.objects.all()
+    serializer_class = RolSerializer
+
+class PermisoViewSet(viewsets.ModelViewSet):
+    queryset = Permiso.objects.all()
+    serializer_class = PermisoSerializer
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.hashers import check_password
+from .models import Usuario
+from .serializers import UsuarioSerializer
+
+@api_view(['POST'])
+def login_view(request):
+    correo = request.data.get('correo')
+    contraseña = request.data.get('contraseña')
+
+    try:
+        usuario = Usuario.objects.get(correo=correo)
+    except Usuario.DoesNotExist:
+        return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    if check_password(contraseña, usuario.contraseña):
+        serializer = UsuarioSerializer(usuario)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)

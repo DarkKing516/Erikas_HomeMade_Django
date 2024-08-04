@@ -1,12 +1,21 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views as viewsUsuarios
 app_name = 'usuarios'
 
+router = DefaultRouter()
+router.register(r'usuariosAPI', viewsUsuarios.UsuarioViewSet)
+router.register(r'rolesAPI', viewsUsuarios.RolViewSet)
+router.register(r'permisosAPI', viewsUsuarios.PermisoViewSet)
+
 urlpatterns = [
-    path('hello/', viewsUsuarios.hello),
+    path('hello/', viewsUsuarios.hello, name='hello'),  # Añadir un nombre a esta ruta
+    path('', include(router.urls)), # Incluye las rutas de la API
+    path('loginAPI/', viewsUsuarios.login_view, name='loginAPI'),
     # PERMISOS
     path('listar_permisos/', viewsUsuarios.listar_permisos, name='listar_permisos'),
     path('crear_permiso/', viewsUsuarios.crear_permiso, name='crear_permiso'),
