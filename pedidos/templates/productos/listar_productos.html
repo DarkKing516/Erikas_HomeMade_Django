@@ -41,10 +41,10 @@
                             <tr>
                                 <th>Tipo Producto</th>
                                 <th>Nombre</th>
-                                <th>Descripcion</th>
+                                <th>Descripción</th>
                                 <th>Precio</th>
                                 <th>Estado producto</th>
-                                <th>Estado catalogo</th>
+                                <th>Estado catálogo</th>
                                 <th>Cantidad</th>
                                 <th>Acciones</th>
 
@@ -203,6 +203,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                                            <img src="{{ producto.imagen.url }}" alt="{{ producto.descripcion }}" class="container">
                                         </div>
                                     </div>
                                 </div>
