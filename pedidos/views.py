@@ -453,6 +453,9 @@ def cambiar_estado(request):
         if pedido.estado_pedido == 'Cancelado':
             return JsonResponse({'success': False, 'message': 'No se puede cambiar el estado de un pedido cancelado.'})
         
+        if pedido.estado_pedido == 'Entregado':
+            return JsonResponse({'success': False, 'message': 'No se puede cambiar el estado de un pedido entregado.'})
+        
         # Actualiza el estado del pedido
         pedido.estado_pedido = nuevo_estado_pedido
         

@@ -344,8 +344,8 @@
                 <div class="d-flex align-items-center">
                     <div class="w-50">
                         <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
-                        <p><strong>Subtotal:</strong> {{ pedido.subtotal|floatformat:0|intcomma }}</p>
-                        <p><strong>IVA:</strong> {{ pedido.iva|floatformat:0|intcomma }}</p>
+                        <p><strong>Subtotal:</strong> ${{ pedido.subtotal|floatformat:0|intcomma }}</p>
+                        <p><strong>IVA:</strong> ${{ pedido.iva|floatformat:0|intcomma }}</p>
                     </div>
                     <div class="w-50 text-center">
                         <p><strong>Evidencia de Pago:</strong></br></p>
@@ -381,7 +381,7 @@
                                     </td>
                                     <td>{{ detalle.nombre_productos }}</td>
                                     <td>{{ detalle.cant_productos }}</td>
-                                    <td>${{ detalle.subtotal_productos|floatformat:"0" }}</td>
+                                    <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -410,7 +410,7 @@
                                     </td>
                                     <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                     <td>{{ detalle.cantidad_servicios }}</td>
-                                    <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
+                                    <td>${{ detalle.subtotal_servicios|floatformat:0|intcomma }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -440,7 +440,7 @@
                                     </td>
                                     <td>{{ detalle.nombre_productos }}</td>
                                     <td>{{ detalle.cant_productos }}</td>
-                                    <td>${{ detalle.subtotal_productos|floatformat:"0" }}</td>
+                                    <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -470,7 +470,7 @@
                                     </td>
                                     <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                     <td>{{ detalle.cantidad_servicios }}</td>
-                                    <td>${{ detalle.subtotal_servicios|floatformat:"0" }}</td>
+                                    <td>${{ detalle.subtotal_servicios|floatformat:0|intcomma }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
