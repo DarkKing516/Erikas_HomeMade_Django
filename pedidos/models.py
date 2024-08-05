@@ -69,7 +69,7 @@ class Pedido(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
-    evidencia_pago = models.ImageField(upload_to='pedidos/')
+    evidencia_pago = models.ImageField(upload_to='pedidos/', blank=True, null=True)
     estado_pedido = models.CharField(max_length=80, default="Por hacer")
 
     productos = models.ManyToManyField(Producto, through='DetallePedidoProducto')
