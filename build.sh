@@ -38,12 +38,7 @@ which wkhtmltopdf
 python manage.py collectstatic --no-input || true
 
 # Apply any outstanding database migrations
-python manage.py migrate
+# python manage.py migrate
 
-<<<<<<< HEAD
-# Start the server
-gunicorn Erikas_HomeMade.wsgi:application --bind 0.0.0.0:$PORT
-=======
 # Start the server 
 # gunicorn Erikas_HomeMade.wsgi:application --bind 0.0.0.0:$PORT
->>>>>>> 9a6151597fc85d8f55f94ca61a5bd22547b01eb2
