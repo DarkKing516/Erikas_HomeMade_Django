@@ -48,10 +48,10 @@
                                 <td>{{ rol.nombre_rol }}</td>
                                 <td>
                                     {% if rol.estado_rol == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Roles' in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Roles' in request.session.permisos and rol.id not in [1, 2] %}change-status{% endif %}"
                                     data-rol-id="{{ rol.id }}">Activo</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Roles' in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Roles' in request.session.permisos and rol.id not in [1, 2] %}change-status{% endif %}"
                                     data-rol-id="{{ rol.id }}">Inactivo</label>
                                     {% endif %}
                                 </td>
@@ -100,7 +100,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="estado_rol">Rol</label>
-                                                            <select name="estado_rol" class="form-control">
+                                                            <select name="estado_rol" class="form-control" {% if rol.id in [1, 2] %}disabled{% endif %}>
                                                                 <option value="A" {% if rol.estado_rol == 'A' %}selected{% endif %}>Activo</option>
                                                                 <option value="I" {% if rol.estado_rol == 'I' %}selected{% endif %}>Inactivo</option>
                                                             </select>
