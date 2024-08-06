@@ -247,6 +247,7 @@ def listar_pedidos(request):
         form = CreatePedidoForm(request.POST, request.FILES)
         if form.is_valid():
             pedido = form.save()
+            print(f"pedido {form}")
 
             # Obtener los productos y servicios seleccionados
             selected_items = json.loads(request.POST.get('selectedItems', '[]'))
