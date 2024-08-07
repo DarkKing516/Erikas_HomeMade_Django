@@ -48,7 +48,7 @@
                                 <td>{{ rol.nombre_rol }}</td>
                                 <td>
                                     {% if rol.estado_rol == 'A' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Roles' in request.session.permisos %}change-status{% endif %}"
+                                    <label class="badge btn-inverse-success hover-cursor {% if 'Editar Estado Roles' in request.session.permisos and rol.id != 1 and rol.id != 2 %}change-status{% endif %}"
                                     data-rol-id="{{ rol.id }}"> Activo</label>
                                     {% else %}
                                     <label class="badge btn-inverse-danger hover-cursor {% if 'Editar Estado Roles' in request.session.permisos %}change-status{% endif %}"
