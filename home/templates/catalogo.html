@@ -93,7 +93,8 @@
                   <p style="color: #504cac;" class="custom-card-price">${{ servicio.precio_servicio|floatformat:"0"|intcomma }}</p>
                   <!-- Botón de añadir para servicios -->
                   <div class="botnGod" data-tooltip="${{ servicio.precio_servicio|floatformat:"0"|intcomma }}">
-                      <div class="botnGod-wrapper" onclick="event.stopPropagation(); addToCart('{{ servicio.idServicio }}', 'servicio', '{{ servicio.nombre_servicio }}')">
+                    <a href="{% url 'home:index' %}?servicioEnviado={{ servicio.nombre_servicio }}&#CrearReserva">
+                      <div class="botnGod-wrapper">
                           <div class="textbotnGod">Añadir</div>
                           <span class="iconbotnGod">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart2" viewBox="0 0 16 16">
@@ -101,6 +102,7 @@
                               </svg>
                           </span>
                       </div>
+                    </a>  
                   </div>
               </div>
           </div>

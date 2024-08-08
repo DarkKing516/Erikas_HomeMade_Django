@@ -166,7 +166,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 <!-- <link rel="stylesheet" href="{% static 'css/fonts.css' %}"> -->
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -551,11 +551,21 @@ body {
             <label class="form-label" for="contact-email-6"></label>
           </div>
         </div>
-        <div class="col-12">
-          <div class="form-wrap wow fadeIn">
-            {{ form.descripcion }}
+        <div class="col-md-6 col-lg-4 oh-desktop">
+          <div class="form-wrap wow slideInUp"> 
+            <select id="servicios" class="form-input" name="servicio">
+              {% for servicio in servicios %}
+                <option value="{{ servicio.idServicio }}">{{ servicio.nombre_servicio }}</option>
+              {% endfor %}
+            </select> 
           </div>
         </div>
+        <div class="col-12">
+          <div class="form-wrap wow fadeIn">
+            <textarea id="id_descripcion" name="descripcion" class="form-input">{{ form.descripcion }}</textarea>
+          </div>
+        </div>
+
       </div>
       <div class="group-custom-1 group-middle oh-desktop">
         {% if not request.session.usuario_id %}
@@ -573,6 +583,22 @@ body {
   </div>
 </section>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Extrae los parámetros de la URL
+    const params = new URLSearchParams(window.location.search);
+    const servicioEnviado = params.get('servicioEnviado');
+  
+    // Si existe el parámetro, rellena el campo de descripción
+    if (servicioEnviado) {
+      const descripcionField = document.getElementById('id_descripcion');
+      if (descripcionField) {
+        descripcionField.value = servicioEnviado;
+      }
+    }
+  });
+  </script>
+  
 <!-- Incluye Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <!-- Incluye SweetAlert2 JS -->
@@ -580,6 +606,7 @@ body {
 
 <script src="{% static 'js/core.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
 .thumbnail-size-1 {
@@ -631,8 +658,58 @@ body {
     object-position: center;
 }
 </style>
-
 <script>
+  
+
+  document.addEventListener('DOMContentLoaded', function() {
+      fetch("{% url 'pedidos:listar_servicios' %}")
+          .then(response => response.json())
+          .then(data => {
+              const selectElement = document.getElementById('servicios');
+              data.forEach(servicio => {
+                  const option = document.createElement('option');
+                  option.value = servicio.id;
+                  option.text = servicio.nombre;
+                  selectElement.appendChild(option);
+              });
+          })
+          .catch(error => console.error('Error al cargar los servicios:', error));
+  
+      // Añadir el servicio seleccionado a la descripción
+      document.getElementById('servicios').addEventListener('change', function() {
+          var selectedServiceText = this.options[this.selectedIndex].text;
+          var descripcionField = document.getElementById('id_descripcion');
+          var currentDescription = descripcionField.value;
+  
+          if (currentDescription) {
+              currentDescription += ', ' + selectedServiceText;
+          } else {
+              currentDescription = selectedServiceText;
+          }
+  
+          descripcionField.value = currentDescription;
+      });
+  });
+
+  $(document).ready(function() {
+    $('#servicios').select2();
+
+    // Añadir el servicio seleccionado a la descripción
+    $('#servicios').on('change', function() {
+      var selectedServiceText = $(this).find('option:selected').text();
+      var descripcionField = $('#id_descripcion');
+      var currentDescription = descripcionField.val();
+
+      if (currentDescription) {
+        currentDescription += ', ' + selectedServiceText;
+      } else {
+        currentDescription = selectedServiceText;
+      }
+
+      descripcionField.val(currentDescription);
+    });
+  });
+
    document.addEventListener('DOMContentLoaded', function() {
     flatpickr("#id_fecha_cita", {
       enableTime: true,

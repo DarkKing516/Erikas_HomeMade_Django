@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
+from pedidos.models import Servicio
 from django.contrib.auth.hashers import make_password  # Importa make_password
 from django.views.decorators.http import require_http_methods
 import requests

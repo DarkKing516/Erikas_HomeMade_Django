@@ -58,7 +58,8 @@ def index(request):
     else:
         productos_aleatorios = productos
     productos_tamanos = zip(productos_aleatorios, tamanos_imagenes, clase_tamanos_imagenes)
-    return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios, 'tamanos_imagenes': tamanos_imagenes, 'form': form, 'productos_tamanos': productos_tamanos})
+    servicios = list(Servicio.objects.filter(estado_servicio='A', estado_catalogo='A'))
+    return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios, 'tamanos_imagenes': tamanos_imagenes, 'form': form, 'productos_tamanos': productos_tamanos, 'servicios': servicios})
 
 
 
