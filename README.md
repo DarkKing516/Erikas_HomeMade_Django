@@ -8,7 +8,6 @@ Puedes descargar la aplicación móvil desde el siguiente enlace:
 
 [Repo](https://github.com/DarkKing516/Erikas_HomeMade_Flutter)
 
-
 ## Configuración del Entorno Virtual y Reinstalación de Dependencias
 
 Para configurar correctamente el entorno virtual y reinstalar las dependencias del proyecto después de clonar el repositorio desde GitHub, sigue estos pasos:
