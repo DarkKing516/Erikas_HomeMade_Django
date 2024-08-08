@@ -2,6 +2,12 @@
 
 # Erikas Home Made
 
+Puedes descargar la aplicación móvil desde el siguiente enlace:
+
+[Descargar Aplicación Móvil](https://drive.google.com/file/d/1pJW2wZ1Mt1dEa3bIGWKED3d9OPfENEiA/view?usp=sharing).
+
+[Repo](https://github.com/DarkKing516/Erikas_HomeMade_Flutter).
+
 Este proyecto se trata de [Breve descripción o introducción del proyecto].
 
 ## Configuración del Entorno Virtual y Reinstalación de Dependencias
