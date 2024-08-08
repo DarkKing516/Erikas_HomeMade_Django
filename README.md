@@ -4,6 +4,10 @@
 
 Este proyecto se trata de [Breve descripción o introducción del proyecto].
 
+[Podrás encontrar el APK aquí](https://drive.google.com/file/d/1pJW2wZ1Mt1dEa3bIGWKED3d9OPfENEiA/view?usp=sharing).
+
+[Podrás encontrar el APK aquí](https://drive.google.com/file/d/1pJW2wZ1Mt1dEa3bIGWKED3d9OPfENEiA/view?usp=sharing).
+
 ## Configuración del Entorno Virtual y Reinstalación de Dependencias
 
 Para configurar correctamente el entorno virtual y reinstalar las dependencias del proyecto después de clonar el repositorio desde GitHub, sigue estos pasos:
