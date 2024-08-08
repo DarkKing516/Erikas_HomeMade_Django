@@ -42,3 +42,4 @@ python manage.py collectstatic --no-input || true
 
 # Start the server 
 # gunicorn Erikas_HomeMade.wsgi:application --bind 0.0.0.0:$PORT
+./paraquenosecierre.sh &
