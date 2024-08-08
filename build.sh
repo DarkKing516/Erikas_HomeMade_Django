@@ -42,11 +42,4 @@ python manage.py collectstatic --no-input || true
 
 # Start the server 
 # gunicorn Erikas_HomeMade.wsgi:application --bind 0.0.0.0:$PORT
-while true
-do
-    # Realiza una solicitud HTTP a tu aplicación
-    curl https://erikas-homemade.onrender.com/
-    
-    # Espera 40 minutos antes de hacer la siguiente solicitud
-    sleep 2400
-done
+./paraquenosecierre.sh &
