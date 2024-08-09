@@ -291,6 +291,7 @@ body {
 .hero-title {
   font-size: 2rem;
   font-weight: bold;
+  text-transform: capitalize;
   margin: 0 0 1rem 0;
 }
 
@@ -568,13 +569,13 @@ body {
       </div>
       <div class="group-custom-1 group-middle oh-desktop">
         {% if not request.session.usuario_id %}
-        <button class="button button-lg button-primary button-winona wow fadeInRight" onclick="window.location.href = '{% url 'usuarios:login' %}';">Primero inicia sesión!!!!!!!</button>
+        <button class="button button-lg button-primary button-winona wow fadeInRight" onclick="window.location.href = '{% url 'usuarios:login' %}';" style="text-transform: capitalize;">Primero inicia sesión!</button>
         {% else %}
         <button class="button button-lg button-primary button-winona wow fadeInRight" type="submit">Realizar reserva</button>
         {% endif %}
         <article class="quote-classic quote-classic-3 wow slideInDown">
           <div class="quote-classic-text">
-            <p class="q">Por favor realizar la reserva dos dias despues de la fecha actual hasta dos semanas despues de la misma.</p>
+            <p class="q">Por favor realizar la reserva dos días después de la fecha actual hasta dos semanas después de la misma.</p>
           </div>
         </article>
       </div>
