@@ -1,5 +1,7 @@
 {% load static %}
 
+{% load humanize %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -592,7 +594,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Img</th>
+                            <th scope="col">Imagen</th>
                             <th scope="col">Producto/Servicio</th>
                             <th scope="col">Precio</th>
                             <th scope="col">Acciones</th>
@@ -603,7 +605,7 @@
                         <tr id="cartItem-{{ item.id }}">
                             <td><img src="{{ item.imagen }}" alt="{{ item.imagen }}"></td>
                             <td>{{ item.nombre }}</td>
-                            <td>${{ item.precio }}</td>
+                            <td>${{ item.precio|floatformat:"0"|intcomma }}</td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="removeCartItem('{{ item.id }}')">Eliminar</button>
                             </td>
