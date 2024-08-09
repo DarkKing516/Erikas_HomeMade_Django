@@ -250,7 +250,7 @@ def listar_pedidos(request):
             print(f"pedido {form}")
             # Imprimir la información del campo evidencia_pago
             print(pedido.evidencia_pago)
-            print(pedido.evidencia_pago.name)
+            print(pedido.evidencia_pago.name, "uwu")
             print(pedido.evidencia_pago.path)
 
             # Obtener los productos y servicios seleccionados
