@@ -35,7 +35,7 @@ fi
 which wkhtmltopdf
 
 # Collect static files
-# python manage.py collectstatic --no-input || true
+python manage.py collectstatic --no-input || true
 
 # Apply any outstanding database migrations
 python manage.py migrate
