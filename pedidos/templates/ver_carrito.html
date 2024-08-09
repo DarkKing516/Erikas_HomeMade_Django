@@ -151,7 +151,7 @@
             <div class="cart-item">
               <img src="{{ item.imagen }}" alt="Product Image" />
               <h4>{{ item.nombre }}</h4>
-              <p class="price" data-price="{{ item.precio|floatformat:" 0" }}">{{ item.precio|floatformat:0|intcomma }}</p>
+              <p class="price" data-price="{{ item.precio|floatformat:" 0" }}">${{ item.precio|floatformat:0|intcomma }}</p>
               {% comment %} <p class="quantity">1</p> {% endcomment %}
               <span class="remove"><i class="bi bi-trash" onclick="removeCartItem2('{{ item.id }}')"></i></span>
             </div>
