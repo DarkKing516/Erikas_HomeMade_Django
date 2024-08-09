@@ -248,6 +248,10 @@ def listar_pedidos(request):
         if form.is_valid():
             pedido = form.save()
             print(f"pedido {form}")
+            # Imprimir la información del campo evidencia_pago
+            print(pedido.evidencia_pago)
+            print(pedido.evidencia_pago.name)
+            print(pedido.evidencia_pago.path)
 
             # Obtener los productos y servicios seleccionados
             selected_items = json.loads(request.POST.get('selectedItems', '[]'))
