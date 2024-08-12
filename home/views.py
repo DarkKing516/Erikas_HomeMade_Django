@@ -6,7 +6,44 @@ from pedidos.models import Producto, TipoProducto, Servicio, TipoServicio
 import random
 import os
 from django.conf import settings
+from ventas.models import Venta
+from pedidos.models import Pedido, DetallePedidoProducto
+from django.db.models import Sum, Count
+from django.utils.dateparse import parse_datetime
+import json
+from datetime import datetime
 
+
+
+def dashboard(request):
+    current_path = request.path
+    print(current_path)
+
+    # Obtener las fechas y totales de ventas
+    ventas = Venta.objects.all()
+    ventas_fechas = list(ventas.values_list('fecha', flat=True))
+    ventas_totales = list(ventas.values_list('total', flat=True))
+
+    # Obtener los nombres de productos y la cantidad total vendida de cada producto
+    productos = Producto.objects.annotate(total_vendido=Sum('detallepedidoproducto__cant_productos'))
+    productos_nombres = list(productos.values_list('nombre', flat=True))
+    productos_totales = list(productos.values_list('total_vendido', flat=True))
+
+    # Obtener los estados de pedidos y contar la cantidad de pedidos en cada estado
+    pedidos_estados_y_totales = Pedido.objects.values('estado_pedido').annotate(total=Count('idPedido'))
+    pedidos_estados = [item['estado_pedido'] for item in pedidos_estados_y_totales]
+    pedidos_totales = [item['total'] for item in pedidos_estados_y_totales]
+
+    context = {
+        'ventas_fechas_json': json.dumps(ventas_fechas, default=str),
+        'ventas_totales_json': json.dumps(ventas_totales, default=str),
+        'productos_nombres_json': json.dumps(productos_nombres, default=str),
+        'productos_totales_json': json.dumps(productos_totales, default=str),
+        'pedidos_estados_json': json.dumps(pedidos_estados, default=str),
+        'pedidos_totales_json': json.dumps(pedidos_totales, default=str),
+    }
+
+    return render(request, 'dashboard.html', context)
 # Create your views here.
 # def index(request):
 #     return HttpResponse("Pagina principal")
