@@ -42,22 +42,14 @@ class ReservaFormIndex(forms.ModelForm):
         return fecha_cita
 
 
+
 class ReservaFormEditar(forms.ModelForm):
     class Meta:
         model = Reserva
-        fields = ['fecha_cita', 'descripcion', 'estado']
+        fields = ['descripcion']  # Solo editará la descripción
         widgets = {
-            'estado': forms.Select(choices=[('Pendiente', 'Pendiente'), ('En Proceso', 'En Proceso'), ('Completada', 'Completada')])
+            'descripcion': forms.Textarea(attrs={'rows': 10, 'cols': 40}),
         }
-
-
-        def clean_fecha_cita(self):
-            fecha_cita = self.cleaned_data.get('fecha_cita')
-            if fecha_cita < datetime.now().date():
-                raise forms.ValidationError("La fecha de la cita no puede ser anterior a la fecha actual.")
-            elif fecha_cita < self.instance.fecha.date():
-                raise forms.ValidationError("La fecha de la cita no puede ser anterior a la fecha de la reserva actual.")
-            return fecha_cita
 
         
 

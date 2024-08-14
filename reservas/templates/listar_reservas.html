@@ -29,23 +29,31 @@
             <div class="card-body">
                 <h4 class="card-title">Reservas</h4>
                 <div class="table-responsive">
-                    <table id="reservaTable" class="table table hover row-border" style="width:100%">
+                    <table id="reservaTable" class="table table-hover row-border" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Usuario</th>
                                 <th>Fecha Reserva</th>
-                                <th>Descripción</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
+                                <th>Descripcion</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for reserva in reservas %}
                             <tr>
                                 <td>{{ reserva.usuario.nombre }}</td>
-                                <td>{{ reserva.fecha_cita }}</td>
-                                <td>{{ reserva.descripcion }}</td>
-                                <td>{{ reserva.estado }}</td>
+                                <td>
+                                    <label class="badge badge-primary hover-cursor {% if 'Editar Mis Reservas' in request.session.permisos %}badge-info editarfechacita{% endif %}" data-reserva-id="{{ reserva.id }}">{{ reserva.fecha_cita }}</label>
+                                </td>
+                                <td>
+                                    <label 
+                                        class="badge badge-outline-primary hover-cursor {% if 'Editar Mis Reservas' in request.session.permisos %}badge-outline-info change-estado{% endif %}" 
+                                        data-reserva-id="{{ reserva.id }}"
+                                        {% if reserva.estado == 'Completada' or reserva.estado == 'Cancelada' %}style="pointer-events: none; color: grey;"{% endif %}
+                                    >
+                                        {{ reserva.estado }}
+                                    </label>
+                                </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         {% if 'Editar Reservas' in request.session.permisos %}
@@ -78,8 +86,7 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editReservaModal{{ reserva.id }}Label">Editar
-                                                Reserva</h5>
+                                            <h5 class="modal-title" id="editReservaModal{{ reserva.id }}Label">Editar Reserva</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -88,52 +95,10 @@
                                             <form method="post" onsubmit="EditarReservaxd('{{ reserva.id }}')" id="editarReservaform{{ reserva.id }}" class="forms-sample" data-Reserva-id="{{ Reserva.id }}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="Reserva_id" value="{{ reserva.id }}">
-                                                <div class="form-row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="usuario">Nombre</label>
-                                                            <input type="text" class="form-control" id="usuario"
-                                                                readonly value="{{ reserva.usuario }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="fecha">Fecha</label>
-                                                            <input type="text" class="form-control" id="fecha" readonly
-                                                                value="{{ reserva.fecha }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="fecha_cita">Fecha de la Cita</label>
-                                                            <input type="datetime-local" class="form-control"
-                                                                id="fecha_cita" name="fecha_cita"
-                                                                value="{{ reserva.fecha_cita|date:'Y-m-d\TH:i' }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="descripcion">Descripción</label>
-                                                            <input type="textarea" class="form-control" id="descripcion"
-                                                                name="descripcion" value="{{ reserva.descripcion }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="estado">Estado</label>
-                                                            <select class="form-control" id="estado" name="estado">
-                                                                <option value="Pendiente" {% if
-                                                                    reserva.estado|lower=="pendiente" %} selected {%
-                                                                    endif %}>Pendiente</option>
-                                                                <option value="En Proceso" {% if
-                                                                    reserva.estado|lower=="en proceso" %} selected {%
-                                                                    endif %}>En Proceso</option>
-                                                                <option value="Completada" {% if
-                                                                    reserva.estado|lower=="completada" %} selected {%
-                                                                    endif %}>Completada</option>
-                                                                <option value="Cancelada" {% if
-                                                                    reserva.estado|lower=="Cancelada" %} selected {%
-                                                                    endif %}>Cancelada</option>
-                                                            </select>
-                                                        </div>
-
-                                                    </div>
+                                                <div class="form-group">
+                                                    <label for="descripcion">Descripción</label>
+                                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" cols="40">{{ reserva.descripcion }}</textarea>
                                                 </div>
-
                                                 <!-- Botones -->
                                                 <div class="form-row">
                                                     <div class="col-md-12">
@@ -155,6 +120,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Modal Crear reserva -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -207,6 +173,169 @@
 
 
 <script>
+    $(document).ready(function () {
+    $('#reservaTable').on('click', 'td .editarfechacita', function () {
+        var reserva_id = $(this).data('reserva-id');
+        var fecha_cita = $(this).text().trim();
+
+        // Crear el campo de fecha y hora con Flatpickr
+        var flatpickrInput = $('<input>').attr({
+            type: 'text',
+            id: 'swal-input1',
+            class: 'swal2-input',
+        });
+
+        // Mostrar la alerta de SweetAlert para editar la fecha y hora
+        Swal.fire({
+            title: 'Editar Fecha y Hora de Cita',
+            html: flatpickrInput[0],
+            showCancelButton: true,
+            confirmButtonText: 'Guardar',
+            cancelButtonText: 'Cancelar',
+            allowOutsideClick: false,
+            preConfirm: () => {
+                // Validar la fecha y hora seleccionada
+                var nuevaFecha = flatpickrInput.val();
+                var fechaCita = new Date(nuevaFecha);
+
+                // Definir las horas límites
+                const horaInicio = 8; // 8:00 AM
+                const horaFin = 17; // 5:00 PM
+                const horaReserva = fechaCita.getHours();
+                const minutoReserva = fechaCita.getMinutes();
+
+                if (isNaN(fechaCita.getTime())) {
+                    Swal.showValidationMessage('Fecha y hora no válidas. Por favor, ingrese una fecha y hora correctas.');
+                    return false;
+                }
+
+                if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
+                    Swal.showValidationMessage('La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).');
+                    return false;
+                }
+
+                return nuevaFecha;
+            },
+            didOpen: () => {
+                // Inicializar Flatpickr en el campo de entrada
+                flatpickr(flatpickrInput[0], {
+                    enableTime: true,
+                    dateFormat: 'Y-m-d H:i', // Formato de fecha y hora
+                    minDate: "today",
+                    minTime: "08:00",
+                    maxTime: "17:00",
+                    time_24hr: true,
+                    minuteIncrement: 30,
+                    defaultDate: fecha_cita
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Obtener la nueva fecha y hora ingresada por el usuario
+                var nueva_fecha = result.value;
+
+                // Realizar la petición para actualizar la fecha y hora de la reserva
+                fetch("{% url 'reservas:cambiar_fecha_reserva' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'fecha_cita': nueva_fecha,
+                        'reserva_id': reserva_id
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Hubo un problema al cambiar la fecha de la reserva.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar una alerta de éxito
+                        Swal.fire('¡Fecha y Hora cambiadas!', 'La fecha y hora de la reserva se han cambiado correctamente.', 'success').then(() => {
+                            // Recargar la página o realizar alguna otra acción
+                            location.reload();
+                        });
+                    } else {
+                        // Mostrar una alerta de error si no se pudo cambiar la fecha y hora
+                        Swal.fire('Error', 'Hubo un problema al cambiar la fecha y hora de la reserva. Por favor, inténtelo de nuevo más tarde.', 'error');
+                    }
+                })
+                .catch(error => {
+                    // Mostrar una alerta de error si hubo un problema con la petición
+                    Swal.fire('Error', 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.', 'error');
+                    console.error('Error:', error);
+                });
+            }
+        });
+    });
+
+    $('#reservaTable').on('click', 'td .change-estado', function () {
+    var reserva_id = $(this).data('reserva-id');
+    var estado_actual = $(this).text().trim();
+
+    // Verificar si el estado es "Completada" o "Cancelada"
+    if (estado_actual === 'Completada' || estado_actual === 'Cancelada') {
+        return;  // Salir de la función si no se permite la edición
+    }
+
+    console.log("ID de la reserva:", reserva_id);  // Imprime el ID de la reserva en la consola
+
+    Swal.fire({
+        title: '¿Estás seguro de cambiar el estado?',
+        html: `
+            <h3>Esta opción no es reversible</h3>
+            <select id="estadoSelect" class="swal2-select">
+                <option value="Pendiente" ${estado_actual === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                <option value="En proceso" ${estado_actual === 'En proceso' ? 'selected' : ''}>En proceso</option>
+                <option value="Completada" ${estado_actual === 'Completada' ? 'selected' : ''}>Completada</option>
+                <option value="Cancelada" ${estado_actual === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
+            </select>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Cambiar',
+        preConfirm: () => {
+            var nuevoEstado = $('#estadoSelect').val();
+
+            return fetch("{% url 'reservas:cambiar_estado_reserva' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'estado': nuevoEstado,
+                    'reserva_id': reserva_id  // Añadir el ID de la reserva al cuerpo de la petición
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Hubo un problema al cambiar el estado.');
+                }
+                return response.json();
+            })
+            .catch(error => {
+                Swal.showValidationMessage(`Request failed: ${error}`);
+            });
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('¡Estado cambiado!', 'El estado de la reserva se ha cambiado correctamente.', 'success').then(() => {
+                location.reload();
+            });
+        }
+    });
+});
+
+
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar Flatpickr en el campo de entrada
     flatpickr("#fecha_cita", {
@@ -408,37 +537,6 @@ function EditarReservaxd(reservaId) {
     // Crear un objeto FormData para enviar los datos del formulario
     const formData = new FormData(form);
 
-    // Obtener el valor del input de fecha y hora de la reserva
-    const fechaCitaInput = form.querySelector('input[name="fecha_cita"]');
-    console.log("Valor del input fecha_cita:", fechaCitaInput.value);
-
-    const fechaCita = new Date(fechaCitaInput.value);
-    console.log("Objeto Date creado a partir del input:", fechaCita);
-
-    // Validar la fecha y hora seleccionada
-    const horaInicio = 8; // 8:00 AM
-    const horaFin = 17; // 5:00 PM
-    const horaReserva = fechaCita.getHours();
-    const minutoReserva = fechaCita.getMinutes();
-
-    if (isNaN(fechaCita.getTime())) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Fecha y hora no válidas. Por favor, ingrese una fecha y hora correctas.',
-            icon: 'error'
-        });
-        return;
-    }
-
-    if (horaReserva < horaInicio || horaReserva >= horaFin || (minutoReserva !== 0 && minutoReserva !== 30)) {
-        Swal.fire({
-            title: 'Error',
-            text: 'La hora debe estar entre las 8:00 AM y las 5:00 PM, y debe ser en intervalos de media hora (por ejemplo, 8:00, 8:30).',
-            icon: 'error'
-        });
-        return;
-    }
-
     // Realizar la solicitud POST utilizando fetch
     fetch("{% url 'reservas:editar_reserva' %}", {
         method: 'POST',
@@ -454,7 +552,7 @@ function EditarReservaxd(reservaId) {
             // Mostrar SweetAlert de éxito
             Swal.fire({
                 title: '¡Actualización exitosa!',
-                text: 'La reserva se ha editado correctamente.',
+                text: 'La descripción de la reserva se ha editado correctamente.',
                 icon: 'success',
                 onClose: () => {
                     // Recargar la página   
