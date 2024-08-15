@@ -17,6 +17,6 @@ urlpatterns = [
     path('crear_venta/', views.crear_venta, name='crear_venta'),
     path('obtener-total-pedido/<int:idPedido>/', views.obtener_total_pedido, name='obtener_total_pedido'),
     path('obtener-pedidos-usuario/<int:usuario_id>/', views.obtener_pedidos_usuario, name='obtener_pedidos_usuario'),
-    path('generar_factura/<int:idVenta>/', views.generar_factura_pdf, name='generar_factura'),
+    path('factura/<int:venta_id>/', views.generate_invoice, name='generate_invoice'),
 
 ]

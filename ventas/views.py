@@ -1,72 +1,126 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from .models import Venta
 from usuarios.models import *
 from .forms import VentaForm
 from pedidos.models import DetallePedidoProducto, Pedido, DetallePedidoServicio
-from django.conf import settings
 from django.template.loader import render_to_string
-from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from django.utils.text import slugify
 from django.utils.html import strip_tags
-import pdfkit
-import os
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from io import BytesIO  # Asegúrate de que esta línea esté incluida
+
 
 from rest_framework import viewsets
 from .serializers import *
 
-def generar_factura_pdf(request, idVenta):
-    # Obtiene la venta a partir del idVenta
-    venta = get_object_or_404(Venta, idVenta=idVenta)
+def generate_invoice(request, venta_id):
+    # Obtener los datos de la venta
+    venta = get_object_or_404(Venta, idVenta=venta_id)
+    detalles_productos = DetallePedidoProducto.objects.filter(idPedido=venta.idPedido)
+    detalles_servicios = DetallePedidoServicio.objects.filter(idPedido=venta.idPedido)
 
-        # Obtener el pedido asociado a la venta
-    pedido = venta.idPedido
+    # Crear un buffer para el PDF
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=50, leftMargin=50, topMargin=50, bottomMargin=50)
 
-    # Obtener los detalles de pedido de productos asociados a este pedido
-    detalles_productos = DetallePedidoProducto.objects.filter(idPedido=pedido)
-    
-    detalles_servicios = DetallePedidoServicio.objects.filter(idPedido=pedido)
+    # Estilos
+    styles = getSampleStyleSheet()
+    style_title = ParagraphStyle(name='Title', parent=styles['Title'], fontName='Helvetica-Bold', fontSize=18, alignment=1, spaceAfter=20)
+    style_heading = ParagraphStyle(name='Heading', fontName='Helvetica-Bold', fontSize=14, alignment=1, spaceAfter=12)
+    style_normal = ParagraphStyle(name='Normal', fontName='Helvetica', fontSize=12, spaceAfter=6)
+    style_table_header = ParagraphStyle(name='TableHeader', fontName='Helvetica-Bold', fontSize=10, alignment=1, spaceAfter=6)
+    style_table_data = ParagraphStyle(name='TableData', fontName='Helvetica', fontSize=10, alignment=1)
 
-    descuento_aumento =  venta.total - venta.idPedido.total
+    # Elementos del PDF
+    elements = []
 
+    # Título de la factura
+    elements.append(Paragraph("FACTURA DE VENTA", style_title))
+    elements.append(Spacer(1, 20))
 
-    subtotal_productos = sum(detalle.subtotal_productos for detalle in detalles_productos)
+    # Información del cliente
+    elements.append(Paragraph("Información del Cliente", style_heading))
+    elements.append(Paragraph(f"Nombre: {venta.idPedido.id_Usuario.nombre}", style_normal))
+    elements.append(Paragraph(f"Documento: {venta.idPedido.id_Usuario.documento}", style_normal))
+    elements.append(Spacer(1, 10))
 
-    # Define la ruta al ejecutable de wkhtmltopdf (adaptar según tu instalación)
-    config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+    # Información de la venta
+    elements.append(Paragraph("Detalles de la Venta", style_heading))
+    elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
+    elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
+    elements.append(Paragraph(f"Subtotal: ${venta.subtotal:,.2f}", style_normal))
+    elements.append(Paragraph(f"IVA: ${venta.iva:,.2f}", style_normal))
+    elements.append(Paragraph(f"Total Pedido: ${venta.idPedido.total:,.2f}", style_normal))
+    elements.append(Paragraph(f"Descuento: ${venta.descuento:,.2f}", style_normal))
+    elements.append(Paragraph(f"Total Final: ${venta.total:,.2f}", style_heading))
+    elements.append(Spacer(1, 20))
 
-        # Aquí genera el contenido HTML de la factura
-    contenido_html = render_to_string('ventas/factura_template.html', {
-        'venta': venta,
-        'pedido': pedido,
-        'detalles_productos': detalles_productos,
-        'detalles_servicios': detalles_servicios,
-        'subtotal_productos': subtotal_productos,
-        'descuento_aumento': descuento_aumento,  # Variable calculada
+    # Tabla de productos
+    if detalles_productos.exists():
+        elements.append(Paragraph("Productos Vendidos", style_heading))
+        product_data = [["Producto", "Cantidad", "Precio Unitario", "Subtotal"]]
+        for detalle in detalles_productos:
+            product_data.append([
+                detalle.nombre_productos,
+                str(detalle.cant_productos),
+                f"${detalle.precio_inicial_producto:,.2f}",
+                f"${detalle.subtotal_productos:,.2f}"
+            ])
+        table = Table(product_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+        ]))
+        elements.append(table)
+        elements.append(Spacer(1, 20))
 
-    })
+    # Tabla de servicios
+    if detalles_servicios.exists():
+        elements.append(Paragraph("Servicios Vendidos", style_heading))
+        service_data = [["Servicio", "Cantidad", "Precio Unitario", "Subtotal"]]
+        for detalleS in detalles_servicios:
+            service_data.append([
+                detalleS.idServicio.nombre_servicio,
+                str(detalleS.cantidad_servicios),
+                f"${detalleS.precio_inicial_servicio:,.2f}",
+                f"${detalleS.subtotal_servicios:,.2f}"
+            ])
+        table = Table(service_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+        ]))
+        elements.append(table)
+        elements.append(Spacer(1, 20))
 
-    # Define las opciones para pdfkit
-    options = {
-        'page-size': 'Letter',
-        'margin-top': '0.75in',
-        'margin-right': '0.75in',
-        'margin-bottom': '0.75in',
-        'margin-left': '0.75in',
-        'encoding': "UTF-8",
-        'no-outline': None
-    }
+    # Construir el PDF
+    doc.build(elements)
+    buffer.seek(0)
 
-    # Genera el PDF usando pdfkit
-    pdf = pdfkit.from_string(contenido_html, False, configuration=config, options=options)
+    # Devolver el archivo como respuesta
+    return FileResponse(buffer, as_attachment=True, filename=f'factura_{venta_id}.pdf')
 
-    # Configura la respuesta HTTP para descargar el PDF
-    response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="factura-{idVenta}.pdf"'
-
-    return response
 
 def listar_ventas(request):
     ventas = Venta.objects.all()

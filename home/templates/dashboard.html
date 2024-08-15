@@ -1,0 +1,90 @@
+{% extends 'layouts/navbar.html' %}
+{% load humanize %}
+{% load i18n %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<!-- Incluir Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Contenedor de las gráficas -->
+<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+    <!-- Gráficas de la primera fila -->
+    <div style="flex: 1; max-width: 600px;">
+        <h3>Total de Ventas</h3>
+        <canvas id="ventasChart" style="max-width: 100%; max-height: 400px;"></canvas>
+    </div>
+    <div style="flex: 1; max-width: 600px;">
+        <h3>Productos más Vendidos</h3>
+        <canvas id="productosChart" style="max-width: 100%; max-height: 400px;"></canvas>
+    </div>
+</div>
+
+<!-- Gráfica de la segunda fila -->
+<div style="display: flex; justify-content: center; margin-top: 20px;">
+    <div style="max-width: 600px; width: 100%;">
+        <h3>Pedidos por Estado</h3>
+        <canvas id="pedidosChart" style="max-width: 100%; max-height: 400px;"></canvas>
+    </div>
+</div>
+
+<script>
+    // Convertir las variables de Django en objetos JSON válidos en JavaScript
+    var ventasFechas = JSON.parse('{{ ventas_fechas_json|escapejs }}');
+    var ventasTotales = JSON.parse('{{ ventas_totales_json|escapejs }}');
+    var productosNombres = JSON.parse('{{ productos_nombres_json|escapejs }}');
+    var productosTotales = JSON.parse('{{ productos_totales_json|escapejs }}');
+    var pedidosEstados = JSON.parse('{{ pedidos_estados_json|escapejs }}');
+    var pedidosTotales = JSON.parse('{{ pedidos_totales_json|escapejs }}');
+
+    // Gráfico de Ventas en el Rango de Fechas
+    var ctx1 = document.getElementById('ventasChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ventasFechas,
+            datasets: [{
+                label: 'Total de Ventas',
+                data: ventasTotales,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false
+            }]
+        }
+    });
+
+    // Gráfico de Productos más Vendidos
+    var ctx2 = document.getElementById('productosChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: productosNombres,
+            datasets: [{
+                label: 'Cantidad Vendida',
+                data: productosTotales,
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+            }]
+        }
+    });
+
+    // Gráfico de Pedidos por Estado
+    var ctx3 = document.getElementById('pedidosChart').getContext('2d');
+    new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: pedidosEstados,
+            datasets: [{
+                label: 'Pedidos',
+                data: pedidosTotales,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)'
+                ]
+            }]
+        }
+    });
+</script>
+
+{% endblock %}

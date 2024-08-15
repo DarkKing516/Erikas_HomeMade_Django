@@ -1,90 +1,129 @@
-{% load humanize %}
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factura de Venta</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.2;
-            background-color: #fff;
-            padding: 10px;
-            margin: auto;
-            width: 60mm; /* Ancho típico de un recibo de tirilla */
-            max-width: 60mm;
-        }
-        h2, h3, h4 {
-            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
             color: #333;
-            margin: 5px 0;
         }
-        table {
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .invoice-info,
+        .customer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .invoice-info div,
+        .customer-info div {
+            width: 48%;
+        }
+
+        .invoice-info p,
+        .customer-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
+            margin-bottom: 20px;
         }
-        th, td {
-            border: 1px solid #000; /* Borde negro */
-            padding: 5px; /* Relleno interno */
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
-            font-size: 12px; /* Tamaño de fuente reducido */
+            font-size: 14px;
         }
-        th {
-            background-color: #f2f2f2; /* Fondo gris claro para las cabeceras */
+
+        .table th {
+            background-color: #f2f2f2;
         }
+
         .total {
-            margin-top: 10px;
             text-align: right;
-            font-weight: bold;
             font-size: 18px;
-        }
-        .cliente-info, .venta-info, .productos, .servicios {
+            font-weight: bold;
             margin-top: 10px;
-            border-top: 1px solid #333;
-            padding-top: 5px;
         }
-        .info-item {
-            margin: 3px 0;
+
+        .note {
+            font-size: 12px;
+            color: #777;
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
 
-    <h2>Factura de Venta</h2>
+    <div class="container">
+        <div class="header">
+            <h1>Factura de Venta</h1>
+            <p>{{ venta.idPedido.id_Usuario.nombre }}</p>
+            <p>Documento: {{ venta.idPedido.id_Usuario.documento }}</p>
+        </div>
 
-    <!-- Información del Cliente -->
-    <div class="cliente-info">
-        <h3>Información del Cliente</h3>
-        <p class="info-item"><strong>Nombre:</strong> {{ venta.idPedido.id_Usuario.nombre }}</p>
-        <p class="info-item"><strong>Documento:</strong> {{ venta.idPedido.id_Usuario.documento }}</p>
-    </div>
+        <div class="customer-info">
+            <div>
+                <h3>Información del Cliente</h3>
+                <p><strong>Nombre:</strong> {{ venta.idPedido.id_Usuario.nombre }}</p>
+                <p><strong>Documento:</strong> {{ venta.idPedido.id_Usuario.documento }}</p>
+                <p><strong>Dirección:</strong> {{ venta.idPedido.id_Usuario.direccion }}</p>
+            </div>
+            <div>
+                <h3>Detalles de la Venta</h3>
+                <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+                <p><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
+                <p><strong>Subtotal:</strong> ${{ venta.idPedido.subtotal|floatformat:0|intcomma }}</p>
+                <p><strong>IVA:</strong> ${{ venta.idPedido.iva|floatformat:0|intcomma }}</p>
+                <p><strong>Total Pedido:</strong> ${{ venta.idPedido.total|floatformat:0|intcomma }}</p>
+                <p><strong>Descuento/Aumento:</strong> ${{ descuento_aumento|floatformat:0|intcomma }}</p>
+                <p class="total"><strong>Total Final:</strong> ${{ venta.total|floatformat:0|intcomma }}</p>
+            </div>
+        </div>
 
-    <!-- Información de la Venta -->
-    <div class="venta-info">
-        <h3>Detalles de la Venta</h3>
-        <p class="info-item"><strong>Fecha:</strong> {{ venta.fecha }}</p>
-        <p class="info-item"><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
-        <p class="info-item"><strong>Subtotal:</strong> ${{ venta.idPedido.subtotal|floatformat:0|intcomma }}</p>
-        <p class="info-item"><strong>IVA:</strong> ${{ venta.idPedido.iva|floatformat:0|intcomma }}</p>
-        <p class="info-item"><strong>Total Pedido:</strong> ${{ venta.idPedido.total|floatformat:0|intcomma }}</p>
-        <p class="info-item"><strong>Descuento/Aumento:</strong> ${{ descuento_aumento|floatformat:0|intcomma }}</p>
-        <p class="total"><strong>Total Final:</strong> ${{ venta.total|floatformat:0|intcomma }}</p>
-    </div>
-    {% if venta.idPedido.productos.count %}
-
-    <!-- Detalles de los Productos Vendidos -->
-    <div class="productos">
+        {% if venta.idPedido.productos.count %}
         <h3>Productos Vendidos</h3>
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Cant</th>
-                    <th>Precio Unit</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
                     <th>Subtotal</th>
                 </tr>
             </thead>
@@ -99,20 +138,16 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    {% endif %}
+        {% endif %}
 
-    {% if venta.idPedido.servicios.count %}
-
-    <!-- Detalles de los Servicios Vendidos -->
-    <div class="servicios">
+        {% if venta.idPedido.servicios.count %}
         <h3>Servicios Vendidos</h3>
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Servicio</th>
-                    <th>Cant</th>
-                    <th>Precio Unit</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
                     <th>Subtotal</th>
                 </tr>
             </thead>
@@ -127,8 +162,10 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
+
+        <p class="note">Esta es una factura generada automáticamente. Por favor, asegúrese de que toda la información es correcta.</p>
     </div>
-    {% endif %}
 
 </body>
 
