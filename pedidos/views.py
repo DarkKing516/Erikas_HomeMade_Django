@@ -94,6 +94,7 @@ def crear_pedido_carrito(request):
 
     # Renderizar un template si no es POST
     return render(request, 'carrito.html')
+
 def creardetalleServicioPRoducti():
 
     #crea detales
@@ -265,17 +266,25 @@ def listar_pedidos(request):
                 if item['type'] == 'producto':
                     producto = Producto.objects.get(idProducto=item['id'])
                     quantity = int(item['quantity'])
-                    total_precio_productos += producto.precio * quantity
-                    descripcion_producto = f"{producto.nombre} ({quantity})"
-                    DetallePedidoProducto.objects.create(
-                        idProducto=producto,
-                        idPedido=pedido,
-                        cant_productos=quantity,
-                        nombre_productos=producto.nombre,
-                        descripcion=descripcion_producto,
-                        precio_inicial_producto=producto.precio / 2,
-                        subtotal_productos=producto.precio * quantity
-                    )
+                    if producto.cantidad < quantity:
+                        # Si no hay suficiente stock, devolver un error
+                        return JsonResponse({'success': False, 'message': f'No hay suficiente stock para el producto {producto.nombre}'})
+                    else:
+                        total_precio_productos += producto.precio * quantity
+                        descripcion_producto = f"{producto.nombre} ({quantity})"
+                        DetallePedidoProducto.objects.create(
+                            idProducto=producto,
+                            idPedido=pedido,
+                            cant_productos=quantity,
+                            nombre_productos=producto.nombre,
+                            descripcion=descripcion_producto,
+                            precio_inicial_producto=producto.precio / 2,
+                            subtotal_productos=producto.precio * quantity
+                        )
+                        # Restar la cantidad del producto del stock
+                        producto.cantidad -= quantity
+                        producto.save()
+
                 elif item['type'] == 'servicio':
                     servicio = Servicio.objects.get(idServicio=item['id'])
                     quantity = int(item['quantity'])
@@ -289,6 +298,7 @@ def listar_pedidos(request):
                         precio_inicial_servicio=servicio.precio_servicio / 2,
                         subtotal_servicios=servicio.precio_servicio * quantity
                     )
+                    
             return JsonResponse({'success': True, 'message': 'Pedido creada correctamente.'})
         else:
             errors = dict(form.errors.items())
