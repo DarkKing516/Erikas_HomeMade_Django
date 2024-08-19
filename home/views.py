@@ -12,38 +12,72 @@ from django.db.models import Sum, Count
 from django.utils.dateparse import parse_datetime
 import json
 from datetime import datetime
+from django.db.models.functions import TruncMonth
 
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
 
 
 def dashboard(request):
-    current_path = request.path
-    print(current_path)
+    # Obtener el año seleccionado del formulario, si está disponible
+    selected_year = request.GET.get('year', '')
 
-    # Obtener las fechas y totales de ventas
-    ventas = Venta.objects.all()
-    ventas_fechas = list(ventas.values_list('fecha', flat=True))
-    ventas_totales = list(ventas.values_list('total', flat=True))
+    # Generar lista de años disponibles, incluyendo 2023
+    years = sorted(set(Venta.objects.dates('fecha', 'year').values_list('fecha__year', flat=True)) | {2023})
+
+    # Filtrar ventas por año si se selecciona un año
+    if selected_year:
+        ventas = Venta.objects.filter(fecha__year=selected_year)
+    else:
+        ventas = Venta.objects.all()
+
+    # Agrupar ventas por mes y obtener el conteo de ventas por mes
+    ventas_por_mes = ventas.annotate(month=TruncMonth('fecha')).values('month').annotate(total_ventas=Count('idVenta')).order_by('month')
+
+    # Extraer nombres de meses y el conteo de ventas por mes
+    ventas_fechas = [venta['month'].strftime('%B') for venta in ventas_por_mes]
+    ventas_totales = [venta['total_ventas'] for venta in ventas_por_mes]
+
+    # Completar los meses faltantes con 0 ventas
+    meses_completos = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    ventas_por_mes_completas = [0] * 12
+
+    for venta in ventas_por_mes:
+        mes = venta['month'].month - 1  # Convertir el mes a índice (0 para Enero, 1 para Febrero, etc.)
+        ventas_por_mes_completas[mes] = venta['total_ventas']
 
     # Obtener los nombres de productos y la cantidad total vendida de cada producto
-    productos = Producto.objects.annotate(total_vendido=Sum('detallepedidoproducto__cant_productos'))
+    if selected_year:
+        productos = Producto.objects.filter(detallepedidoproducto__idPedido__fecha_pedido__year=selected_year).annotate(total_vendido=Sum('detallepedidoproducto__cant_productos'))
+    else:
+        productos = Producto.objects.annotate(total_vendido=Sum('detallepedidoproducto__cant_productos'))
+
     productos_nombres = list(productos.values_list('nombre', flat=True))
     productos_totales = list(productos.values_list('total_vendido', flat=True))
 
     # Obtener los estados de pedidos y contar la cantidad de pedidos en cada estado
-    pedidos_estados_y_totales = Pedido.objects.values('estado_pedido').annotate(total=Count('idPedido'))
+    if selected_year:
+        pedidos_estados_y_totales = Pedido.objects.filter(fecha_pedido__year=selected_year).values('estado_pedido').annotate(total=Count('idPedido'))
+    else:
+        pedidos_estados_y_totales = Pedido.objects.values('estado_pedido').annotate(total=Count('idPedido'))
+
     pedidos_estados = [item['estado_pedido'] for item in pedidos_estados_y_totales]
     pedidos_totales = [item['total'] for item in pedidos_estados_y_totales]
 
     context = {
-        'ventas_fechas_json': json.dumps(ventas_fechas, default=str),
-        'ventas_totales_json': json.dumps(ventas_totales, default=str),
+        'ventas_fechas_json': json.dumps(meses_completos, default=str),
+        'ventas_totales_json': json.dumps(ventas_por_mes_completas, default=str),
         'productos_nombres_json': json.dumps(productos_nombres, default=str),
         'productos_totales_json': json.dumps(productos_totales, default=str),
         'pedidos_estados_json': json.dumps(pedidos_estados, default=str),
         'pedidos_totales_json': json.dumps(pedidos_totales, default=str),
+        'selected_year': selected_year,
+        'years': years  # Lista de años disponibles para el selector, incluyendo 2023
     }
 
     return render(request, 'dashboard.html', context)
+
+
 # Create your views here.
 # def index(request):
 #     return HttpResponse("Pagina principal")
