@@ -189,4 +189,14 @@
     });
 </script>
 
+{% if not request.session.usuario_id %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% elif "Listar Dashboard" not in request.session.permisos %}
+<script>
+    window.location.href = "{% url 'usuarios:requestLogin' %}";
+</script>
+{% endif %}
+
 {% endblock %}
