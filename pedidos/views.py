@@ -449,8 +449,6 @@ def eliminar_pedido(request):
 def cambiar_estado(request):
     if request.method == 'POST':
         # Verifica si la solicitud es POST
-        
-        # Lee los datos del cuerpo de la solicitud JSON
         data = json.loads(request.body)
         
         # Extrae el ID del pedido y el nuevo estado del pedido
@@ -464,13 +462,21 @@ def cambiar_estado(request):
         # Recupera la instancia del pedido de la base de datos utilizando el ID del pedido
         pedido = Pedido.objects.get(pk=pedido_id)
         
-        # Verifica si el pedido ya está cancelado
-        if pedido.estado_pedido == 'Cancelado':
-            return JsonResponse({'success': False, 'message': 'No se puede cambiar el estado de un pedido cancelado.'})
+        # Verifica si el pedido ya está cancelado o entregado
+        if pedido.estado_pedido in ['Cancelado', 'Entregado']:
+            return JsonResponse({'success': False, 'message': f'No se puede cambiar el estado de un pedido {pedido.estado_pedido.lower()}.'})
         
-        if pedido.estado_pedido == 'Entregado':
-            return JsonResponse({'success': False, 'message': 'No se puede cambiar el estado de un pedido entregado.'})
-        
+        # Si se está cambiando el estado a 'Cancelado'
+        if nuevo_estado_pedido == 'Cancelado':
+            # Obtener los detalles del pedido para productos
+            detalles_productos = DetallePedidoProducto.objects.filter(idPedido=pedido)
+
+            # Devolver el stock de los productos
+            for detalle in detalles_productos:
+                producto = detalle.idProducto
+                producto.cantidad += detalle.cant_productos
+                producto.save()
+
         # Actualiza el estado del pedido
         pedido.estado_pedido = nuevo_estado_pedido
         
