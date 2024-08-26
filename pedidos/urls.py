@@ -70,7 +70,7 @@ urlpatterns = [
 
     #---------------------------------Detalle productos------------------------------
 
-    path('listar_detalle_producto/', views.listar_servicios, name='listar_servicios'),
+    # path('listar_detalle_producto/', views.listar_servicios, name='listar_servicios'),
     path('ver_carrito/', views.listar_detalle_producto, name='ver_carrito'),
 
     #-------------------------------ORDEN PEDIDO--------------
