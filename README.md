@@ -73,4 +73,8 @@ Este archivo se encuentra en la siguiente ruta:
 
 `C:\Users\UwU\Documents\python_darkking\Erikas_HomeMade_Django\home\static\js\template.js`
 
+Backup:
+
+`python manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.Permission --indent 4 > backup.json`
+
 **Recordar Siempre dejar esa línea comentada.**
