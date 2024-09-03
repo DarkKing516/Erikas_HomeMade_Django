@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -109,7 +111,6 @@
                 <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
                 <p><strong>Método de Pago:</strong> {{ venta.metodo_pago }}</p>
                 <p><strong>Subtotal:</strong> ${{ venta.idPedido.subtotal|floatformat:0|intcomma }}</p>
-                <p><strong>IVA:</strong> ${{ venta.idPedido.iva|floatformat:0|intcomma }}</p>
                 <p><strong>Total Pedido:</strong> ${{ venta.idPedido.total|floatformat:0|intcomma }}</p>
                 <p><strong>Descuento/Aumento:</strong> ${{ descuento_aumento|floatformat:0|intcomma }}</p>
                 <p class="total"><strong>Total Final:</strong> ${{ venta.total|floatformat:0|intcomma }}</p>

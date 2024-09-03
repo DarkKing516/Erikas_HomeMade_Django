@@ -55,11 +55,10 @@ def generate_invoice(request, venta_id):
     elements.append(Paragraph("Detalles de la Venta", style_heading))
     elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
     elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
-    elements.append(Paragraph(f"Subtotal: ${venta.subtotal:,.2f}", style_normal))
-    elements.append(Paragraph(f"IVA: ${venta.iva:,.2f}", style_normal))
-    elements.append(Paragraph(f"Total Pedido: ${venta.idPedido.total:,.2f}", style_normal))
-    elements.append(Paragraph(f"Descuento: ${venta.descuento:,.2f}", style_normal))
-    elements.append(Paragraph(f"Total Final: ${venta.total:,.2f}", style_heading))
+    elements.append(Paragraph(f"Subtotal: ${venta.subtotal:,.0f}", style_normal))
+    elements.append(Paragraph(f"Total Pedido: ${venta.idPedido.total:,.0f}", style_normal))
+    elements.append(Paragraph(f"Descuento: ${venta.descuento:,.0f}", style_normal))
+    elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_heading))
     elements.append(Spacer(1, 20))
 
     # Tabla de productos
@@ -70,8 +69,8 @@ def generate_invoice(request, venta_id):
             product_data.append([
                 detalle.nombre_productos,
                 str(detalle.cant_productos),
-                f"${detalle.precio_inicial_producto:,.2f}",
-                f"${detalle.subtotal_productos:,.2f}"
+                f"${detalle.precio_inicial_producto:,.0f}",
+                f"${detalle.subtotal_productos:,.0f}"
             ])
         table = Table(product_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
         table.setStyle(TableStyle([
@@ -96,8 +95,8 @@ def generate_invoice(request, venta_id):
             service_data.append([
                 detalleS.idServicio.nombre_servicio,
                 str(detalleS.cantidad_servicios),
-                f"${detalleS.precio_inicial_servicio:,.2f}",
-                f"${detalleS.subtotal_servicios:,.2f}"
+                f"${detalleS.precio_inicial_servicio:,.0f}",
+                f"${detalleS.subtotal_servicios:,.0f}"
             ])
         table = Table(service_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
         table.setStyle(TableStyle([
@@ -178,7 +177,7 @@ def crear_venta(request):
 
                 # Asignar otros valores necesarios
                 venta.subtotal = pedido.subtotal
-                venta.iva = pedido.iva
+                venta.iva = 0
                 venta.metodo_pago = form.cleaned_data['metodo_pago']
                 venta.descuento = descuento_aumento_value
                 venta.total = total_final
