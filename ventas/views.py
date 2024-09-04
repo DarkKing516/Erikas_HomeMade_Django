@@ -51,17 +51,16 @@ def generate_invoice(request, venta_id):
     elements.append(Paragraph(f"Documento: {venta.idPedido.id_Usuario.documento}", style_normal))
     elements.append(Spacer(1, 10))
 
-
     # Tabla de productos
     if detalles_productos.exists():
         elements.append(Paragraph("Productos Vendidos", style_heading))
-        product_data = [["Producto", "Cantidad", "Precio Unitario", "Subtotal"]]
+        product_data = [["Producto", "Cantidad", "Subtotal", "Total del Pedido"]]
         for detalle in detalles_productos:
             product_data.append([
                 detalle.nombre_productos,
                 str(detalle.cant_productos),
-                f"${detalle.precio_inicial_producto:,.0f}",
-                f"${detalle.subtotal_productos:,.0f}"
+                f"${detalle.subtotal_productos:,.0f}",
+                f"${venta.idPedido.total:,.0f}"
             ])
         table = Table(product_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
         table.setStyle(TableStyle([
@@ -81,8 +80,6 @@ def generate_invoice(request, venta_id):
     # Información de la venta
     elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
     elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
-    elements.append(Paragraph(f"Subtotal: ${venta.subtotal:,.0f}", style_normal))
-    elements.append(Paragraph(f"Total Pedido: ${venta.idPedido.total:,.0f}", style_normal))
     elements.append(Paragraph(f"Descuento: ${venta.descuento:,.0f}", style_normal))
     elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_normal))
     elements.append(Spacer(1, 20))
@@ -93,7 +90,6 @@ def generate_invoice(request, venta_id):
 
     # Devolver el archivo como respuesta
     return FileResponse(buffer, as_attachment=True, filename=f'factura_{venta_id}.pdf')
-
 
 def listar_ventas(request):
     ventas = Venta.objects.all()
