@@ -167,7 +167,6 @@
         <div class="summary">
           <h3>Completar pedido</h3>
           <p class="subtotal" id="subtotal">Subtotal: $0.00</p>
-          <p class="iva" id="iva">Con IVA: $0.00</p>
           <p class="total" id="abono">Abono a pagar: $0.00</p>
           <p class="total" id="total">Total: $0.00</p>
           <form id="order-form" method="POST" enctype="multipart/form-data"
@@ -251,7 +250,7 @@
     });
 
     // Calcular el IVA (19%)
-    const iva = parseInt(subtotal * 0.19); // Utilizamos parseInt y redondeamos después del cálculo
+    const iva = 0 // Utilizamos parseInt y redondeamos después del cálculo
     // Calcular el total con IVA
     const total = subtotal + iva;
 
@@ -267,7 +266,6 @@
 
     // Actualizar los campos en el resumen del pedido
     document.getElementById('subtotal').textContent = `Subtotal: $${formatNumber(subtotal)}`;
-    document.getElementById('iva').textContent = `Con IVA: $${formatNumber(iva)}`;
     document.getElementById('total').textContent = `Total: $${formatNumber(total)}`;
     document.getElementById('abono').textContent = `Abono: $${formatNumber(total2)}`;
 
