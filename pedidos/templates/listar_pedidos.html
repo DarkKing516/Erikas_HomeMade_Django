@@ -690,13 +690,13 @@
                             document.getElementById('subtotal').value = subtotal.toFixed(2);
                     
                             // Calcular IVA (asumiendo que es 19%)
-                            let iva = subtotal * 0.19;
+                            let iva = 0;
                     
                             // Actualizar campo de IVA
                             document.getElementById('iva').value = iva.toFixed(2);
                     
                             // Calcular total
-                            let total = subtotal + iva;
+                            let total = subtotal;
                     
                             // Actualizar campo de total
                             document.getElementById('total').value = total.toFixed(2);
@@ -715,13 +715,13 @@
                             document.getElementById('id_subtotal').value = subtotal.toFixed(2); // Reemplaza 'id_subtotal' con el ID correcto generado por Django
                             
                             // Calcular IVA (asumiendo que es 19%)
-                            let iva = subtotal * 0.19;
+                            let iva = 0;
 
                             // Actualizar campo de IVA en el formulario principal
                             document.getElementById('iva').value = iva.toFixed(2);
 
                             // Calcular total (subtotal + IVA)
-                            let total = subtotal + iva;
+                            let total = subtotal;
 
                             // Actualizar campo de total en el formulario principal
                             document.getElementById('total').value = total.toFixed(2);
