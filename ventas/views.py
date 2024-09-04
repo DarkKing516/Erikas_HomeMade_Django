@@ -51,15 +51,6 @@ def generate_invoice(request, venta_id):
     elements.append(Paragraph(f"Documento: {venta.idPedido.id_Usuario.documento}", style_normal))
     elements.append(Spacer(1, 10))
 
-    # Información de la venta
-    elements.append(Paragraph("Detalles de la Venta", style_heading))
-    elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
-    elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
-    elements.append(Paragraph(f"Subtotal: ${venta.subtotal:,.0f}", style_normal))
-    elements.append(Paragraph(f"Total Pedido: ${venta.idPedido.total:,.0f}", style_normal))
-    elements.append(Paragraph(f"Descuento: ${venta.descuento:,.0f}", style_normal))
-    elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_heading))
-    elements.append(Spacer(1, 20))
 
     # Tabla de productos
     if detalles_productos.exists():
@@ -87,31 +78,14 @@ def generate_invoice(request, venta_id):
         elements.append(table)
         elements.append(Spacer(1, 20))
 
-    # Tabla de servicios
-    if detalles_servicios.exists():
-        elements.append(Paragraph("Servicios Vendidos", style_heading))
-        service_data = [["Servicio", "Cantidad", "Precio Unitario", "Subtotal"]]
-        for detalleS in detalles_servicios:
-            service_data.append([
-                detalleS.idServicio.nombre_servicio,
-                str(detalleS.cantidad_servicios),
-                f"${detalleS.precio_inicial_servicio:,.0f}",
-                f"${detalleS.subtotal_servicios:,.0f}"
-            ])
-        table = Table(service_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
-        ]))
-        elements.append(table)
-        elements.append(Spacer(1, 20))
+    # Información de la venta
+    elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
+    elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
+    elements.append(Paragraph(f"Subtotal: ${venta.subtotal:,.0f}", style_normal))
+    elements.append(Paragraph(f"Total Pedido: ${venta.idPedido.total:,.0f}", style_normal))
+    elements.append(Paragraph(f"Descuento: ${venta.descuento:,.0f}", style_normal))
+    elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_normal))
+    elements.append(Spacer(1, 20))
 
     # Construir el PDF
     doc.build(elements)

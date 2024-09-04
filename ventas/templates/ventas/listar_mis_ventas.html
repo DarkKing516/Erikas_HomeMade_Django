@@ -36,7 +36,7 @@
                                     <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal{{ venta.idPedido.idPedido }}"><i class="mdi mdi-eye"></i></a>
                                 </td>
                                 <td>
-                                    <a href="{% url 'ventas:generar_factura' idVenta=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
+                                    <a href="{% url 'ventas:generate_invoice' venta_id=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
                                 </td>
                             </tr>
                             {% endfor %}
