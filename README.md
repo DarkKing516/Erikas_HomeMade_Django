@@ -77,4 +77,8 @@ Backup:
 
 `python manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.Permission --indent 4 > backup.json`
 
+`python manage.py dumpdata --format=yaml --natural-foreign --natural-primary -e contenttypes -e auth.Permission --indent 4 > backup.yaml`
+
+`python manage.py loaddata backup.yaml`
+
 **Recordar Siempre dejar esa línea comentada.**
