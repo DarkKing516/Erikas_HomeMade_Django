@@ -343,19 +343,24 @@
             <div class="modal-body">
                 <div class="d-flex align-items-center">
                     <div class="w-50">
+                        <p><strong>Usuario:</strong> {{ pedido.id_Usuario }}</p>
                         <p><strong>Descripción:</strong> {{ pedido.descripcion_pedido }}</p>
-                        <p><strong>Subtotal:</strong> ${{ pedido.subtotal|floatformat:0|intcomma }}</p>
-                        <p><strong>IVA:</strong> ${{ pedido.iva|floatformat:0|intcomma }}</p>
+                        <p><strong>Fecha de Creación:</strong> {{ pedido.fechaCreacion_pedido|date:"d M Y H:i" }}</p>
+                        <p><strong>Fecha de Pedido:</strong> {{ pedido.fecha_pedido|date:"d M Y" }}</p>
+                        <p><strong>Abono:</strong> ${{ pedido.iva|floatformat:0|intcomma }}</p>
+                        <p><strong>Total:</strong> ${{ pedido.total|floatformat:0|intcomma }}</p>
+                        <p><strong>Estado:</strong> {{ pedido.estado_pedido }}</p>
+                        <!-- Agrega más campos según sea necesario -->
                     </div>
                     <div class="w-50 text-center">
-                        <p><strong>Evidencia de Pago:</strong></br></p>
+                        <p><strong>Evidencia de Pago:</strong></p>
                         <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;">
                     </div>
                 </div>
 
                 <hr>
 
-
+                <!-- Aquí puedes agregar los detalles de los productos y servicios como lo tenías -->
                 <div class="row">
                     {% if pedido.productos.count and pedido.servicios.count %}
                     <div class="col-md-6">
@@ -363,9 +368,7 @@
                         <table id="detallesTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <center>Img</center>
-                                    </th>
+                                    <th><center>Img</center></th>
                                     <th>Nombre</th>
                                     <th>Cantidad</th>
                                     <th>Subtotal</th>
@@ -374,11 +377,7 @@
                             <tbody>
                                 {% for detalle in pedido.detallepedidoproducto_set.all %}
                                 <tr>
-                                    <td>
-                                        <center><img src="{{ detalle.idProducto.imagen.url }}"
-                                                alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50">
-                                        </center>
-                                    </td>
+                                    <td><center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center></td>
                                     <td>{{ detalle.nombre_productos }}</td>
                                     <td>{{ detalle.cant_productos }}</td>
                                     <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
@@ -392,9 +391,7 @@
                         <table id="detallesTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <center>Img</center>
-                                    </th>
+                                    <th><center>Img</center></th>
                                     <th>Nombre</th>
                                     <th>Cantidad</th>
                                     <th>Subtotal</th>
@@ -403,11 +400,7 @@
                             <tbody>
                                 {% for detalle in pedido.detallepedidoservicio_set.all %}
                                 <tr>
-                                    <td>
-                                        <center><img src="{{ detalle.idServicio.img.url }}"
-                                                alt="{{ detalle.idServicio.img.url }}" width="50" height="50">
-                                        </center>
-                                    </td>
+                                    <td><center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center></td>
                                     <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                     <td>{{ detalle.cantidad_servicios }}</td>
                                     <td>${{ detalle.subtotal_servicios|floatformat:0|intcomma }}</td>
@@ -422,9 +415,7 @@
                         <table id="detallesTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <center>Img</center>
-                                    </th>
+                                    <th><center>Img</center></th>
                                     <th>Nombre</th>
                                     <th>Cantidad</th>
                                     <th>Subtotal</th>
@@ -433,11 +424,7 @@
                             <tbody>
                                 {% for detalle in pedido.detallepedidoproducto_set.all %}
                                 <tr>
-                                    <td>
-                                        <center><img src="{{ detalle.idProducto.imagen.url }}"
-                                                alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50">
-                                        </center>
-                                    </td>
+                                    <td><center><img src="{{ detalle.idProducto.imagen.url }}" alt="{{ detalle.idProducto.imagen.url }}" width="50" height="50"></center></td>
                                     <td>{{ detalle.nombre_productos }}</td>
                                     <td>{{ detalle.cant_productos }}</td>
                                     <td>${{ detalle.subtotal_productos|floatformat:0|intcomma }}</td>
@@ -452,9 +439,7 @@
                         <table id="detallesTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <center>Img</center>
-                                    </th>
+                                    <th><center>Img</center></th>
                                     <th>Nombre</th>
                                     <th>Cantidad</th>
                                     <th>Subtotal</th>
@@ -463,11 +448,7 @@
                             <tbody>
                                 {% for detalle in pedido.detallepedidoservicio_set.all %}
                                 <tr>
-                                    <td>
-                                        <center><img src="{{ detalle.idServicio.img.url }}"
-                                                alt="{{ detalle.idServicio.img.url }}" width="50" height="50">
-                                        </center>
-                                    </td>
+                                    <td><center><img src="{{ detalle.idServicio.img.url }}" alt="{{ detalle.idServicio.img.url }}" width="50" height="50"></center></td>
                                     <td>{{ detalle.idServicio.nombre_servicio }}</td>
                                     <td>{{ detalle.cantidad_servicios }}</td>
                                     <td>${{ detalle.subtotal_servicios|floatformat:0|intcomma }}</td>
@@ -478,11 +459,12 @@
                     </div>
                     {% endif %}
                 </div>
-                    <br>
+                <br>
             </div>
         </div>
     </div>
 </div>
+
 {% endfor %}
 
 <!-- Modal Crear Pedido -->
@@ -512,14 +494,14 @@
                                 <label for="descripcion_pedido">Descripción del Pedido</label>
                                 {{ formCreate.descripcion_pedido }}
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="display: none;">
                                 <label for="subtotal">Subtotal</label>
                                 {{ formCreate.subtotal }}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="iva">IVA</label>
+                                <label for="iva">Abono</label>
                                 {{ formCreate.iva }}
                             </div>
                             <div class="form-group">
@@ -579,12 +561,12 @@
                     
                     <script>
                         let selectedItems = [];
-                    
+
                         function agregarItem(type) {
                             let selectElement = type === 'producto' ? document.getElementById('productos') : document.getElementById('servicios');
                             let selectedOption = selectElement.options[selectElement.selectedIndex];
                             let listElement = type === 'producto' ? document.getElementById('lista_productos') : document.getElementById('lista_servicios');
-                    
+                        
                             Swal.fire({
                                 title: 'Ingrese la cantidad',
                                 html: `
@@ -601,13 +583,13 @@
                                     const cantidadInput = document.getElementById('cantidadInput');
                                     const decrementarButton = document.getElementById('decrementar');
                                     const incrementarButton = document.getElementById('incrementar');
-                    
+                        
                                     decrementarButton.addEventListener('click', () => {
                                         if (cantidadInput.value > 1) {
                                             cantidadInput.value = parseInt(cantidadInput.value) - 1;
                                         }
                                     });
-                    
+                        
                                     incrementarButton.addEventListener('click', () => {
                                         cantidadInput.value = parseInt(cantidadInput.value) + 1;
                                     });
@@ -624,21 +606,21 @@
                                 if (result.isConfirmed) {
                                     let quantity = parseInt(result.value);
                                     let itemId = selectedOption.value + '_' + type;
-                    
+                        
                                     // Obtener el precio del producto o servicio seleccionado
                                     let precio = parseFloat(selectedOption.getAttribute('data-precio'));
-                    
+                        
                                     // Calcular el total por ítem
                                     let totalItem = quantity * precio;
-                    
+                        
                                     // Verificar si el elemento ya existe en el array selectedItems
                                     let existingItem = selectedItems.find(item => item.id === selectedOption.value && item.type === type);
-                    
+                        
                                     if (existingItem) {
                                         // Actualizar la cantidad del elemento existente
                                         existingItem.quantity += quantity;
                                         existingItem.total += totalItem;
-                    
+                        
                                         // Actualizar la cantidad, subtotal y el total mostrado en la lista
                                         let listItem = document.getElementById(itemId);
                                         listItem.innerHTML = `${existingItem.name} - Cantidad: ${existingItem.quantity}, Subtotal: ${existingItem.total.toFixed(2)} 
@@ -653,7 +635,7 @@
                                             precio: precio,
                                             total: totalItem
                                         });
-                    
+                        
                                         // Agregar elemento a la lista
                                         let listItem = document.createElement('li');
                                         listItem.id = itemId;
@@ -661,47 +643,25 @@
                                                             <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem('${itemId}', '${type}')">Eliminar</button>`;
                                         listElement.appendChild(listItem);
                                     }
-                    
+                        
                                     // Calcular y actualizar el subtotal y total en el formulario principal
                                     actualizarSubtotalYTotal();
                                 }
                             });
                         }
-                    
+                        
                         function removeItem(itemId, type) {
                             // Eliminar elemento de la lista
                             let listItem = document.getElementById(itemId);
                             listItem.remove();
-                    
+                        
                             // Eliminar elemento del array selectedItems
                             selectedItems = selectedItems.filter(item => !(item.id + '_' + item.type === itemId));
-                    
+                        
                             // Calcular y actualizar el subtotal y total en el formulario principal
                             actualizarSubtotalYTotal();
                         }
-                    
-                        function actualizarSubtotalYTotal() {
-                            let subtotal = 0;
-                            selectedItems.forEach(item => {
-                                subtotal += item.total;
-                            });
-                    
-                            // Actualizar subtotal
-                            document.getElementById('subtotal').value = subtotal.toFixed(2);
-                    
-                            // Calcular IVA (asumiendo que es 19%)
-                            let iva = 0;
-                    
-                            // Actualizar campo de IVA
-                            document.getElementById('iva').value = iva.toFixed(2);
-                    
-                            // Calcular total
-                            let total = subtotal;
-                    
-                            // Actualizar campo de total
-                            document.getElementById('total').value = total.toFixed(2);
-                        }
-
+                        
                         function actualizarSubtotalYTotal() {
                             let subtotal = 0;
                             selectedItems.forEach(item => {
@@ -715,22 +675,21 @@
                             document.getElementById('id_subtotal').value = subtotal.toFixed(2); // Reemplaza 'id_subtotal' con el ID correcto generado por Django
                             
                             // Calcular IVA (asumiendo que es 19%)
-                            let iva = 0;
-
+                            let iva = subtotal / 2;
+                        
                             // Actualizar campo de IVA en el formulario principal
                             document.getElementById('iva').value = iva.toFixed(2);
-
+                        
                             // Calcular total (subtotal + IVA)
                             let total = subtotal;
-
+                        
                             // Actualizar campo de total en el formulario principal
                             document.getElementById('total').value = total.toFixed(2);
-
+                        
                             // Actualizar campos ocultos de Django si es necesario (opcional)
                             document.getElementById('id_iva').value = iva.toFixed(2); // Reemplaza 'id_iva' con el ID correcto generado por Django
                             document.getElementById('id_total').value = total.toFixed(2); // Reemplaza 'id_total' con el ID correcto generado por Django
                         }
-
                         
                     </script>
                     
