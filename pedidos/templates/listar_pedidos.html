@@ -761,6 +761,14 @@
 </style>
 
 <script>
+
+$(document).ready(function () {
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('abrir_modal') === 'true') {
+        $('#myModal').modal('show');
+    }
+});
+
     function submitForm(event) {
         event.preventDefault(); // Prevent default form submission
 
