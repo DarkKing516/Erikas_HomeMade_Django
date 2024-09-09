@@ -29,13 +29,13 @@ class CreatePedidoForm(forms.ModelForm):
     )
     iva = forms.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'IVA', 'readonly': True})
     )
     total = forms.DecimalField(
         max_digits=10,
-        decimal_places=2,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Total', 'readonly': True})
+        decimal_places=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Total', 'readonly': False})
     )
     evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
     estado_pedido = forms.CharField(max_length=80, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado del Pedido'}))

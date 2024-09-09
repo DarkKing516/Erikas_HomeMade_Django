@@ -66,9 +66,9 @@ class Pedido(models.Model):
     fechaCreacion_pedido = models.DateTimeField(default=timezone.now)
     fecha_pedido = models.DateTimeField()
     descripcion_pedido = models.CharField(max_length=255)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
-    iva = models.DecimalField(max_digits=10, decimal_places=2)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=0)
+    iva = models.DecimalField(max_digits=10, decimal_places=0)
+    total = models.DecimalField(max_digits=10, decimal_places=0)
     evidencia_pago = models.ImageField(upload_to='pedidos/', blank=True, null=True)
     estado_pedido = models.CharField(max_length=80, default="Por hacer")
 

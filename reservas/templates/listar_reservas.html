@@ -282,8 +282,6 @@
         return;  // Salir de la función si no se permite la edición
     }
 
-    console.log("ID de la reserva:", reserva_id);  // Imprime el ID de la reserva en la consola
-
     Swal.fire({
         title: '¿Estás seguro de cambiar el estado?',
         html: `
@@ -311,7 +309,7 @@
                 },
                 body: JSON.stringify({
                     'estado': nuevoEstado,
-                    'reserva_id': reserva_id  // Añadir el ID de la reserva al cuerpo de la petición
+                    'reserva_id': reserva_id
                 }),
             })
             .then(response => {
@@ -326,12 +324,21 @@
         },
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire('¡Estado cambiado!', 'El estado de la reserva se ha cambiado correctamente.', 'success').then(() => {
-                location.reload();
-            });
+            var nuevoEstado = $('#estadoSelect').val();
+            if (nuevoEstado === 'Completada') {
+                Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                    // Redirigir a la vista listar_pedidos y abrir la modal
+                    window.location.href = "{% url 'pedidos:listar_pedidos' %}?reserva_id=" + reserva_id + "&abrir_modal=true";
+                });
+            } else {
+                Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
+                    location.reload();
+                });
+            }
         }
     });
 });
+
 
 
 });
