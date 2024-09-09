@@ -121,7 +121,7 @@
                                                 <div class="form-row">
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>        
+                                                            <p><strong>Evidencia de Pago Actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: 400px;"></p>        
                                                         </div>
                                                         
                                                     </div>
@@ -129,7 +129,7 @@
                                                         <div class="form-group">
                                                             <input type="file" name="evidencia_pago" class="form-control-file evidencia_pago_input" accept="image/*" data-vista-previa="imagen_vista_previa_{{ pedido.idPedido }}">
                                                             <br>
-                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: auto;">
+                                                            <img src="#" id="imagen_vista_previa_{{ pedido.idPedido }}" alt="Vista previa de la imagen" style="display: none; max-width: 100%; height: 400px;">
                                                         </div>
 
                                                     </div>
@@ -175,22 +175,44 @@
                     {% csrf_token %}
                     <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
                     <div class="form-row">
-                            <div class="form-group">
-                                <input type="hidden" class="form-control" id="subtotal"
-                                    name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
-                            </div>
-                            <div class="form-group">
-                                <input type="hidden" class="form-control" id="iva"
-                                    name="iva" value="{{ pedido.iva|floatformat:"0" }}">
-                            </div>
-                            <div class="form-group">
-                                <input type="hidden" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
-                            </div>
-                            <div class="col-md-12">
-                                <label for="descripcion_pedido">Descripción</label>
-                                <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" maxlength="255" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
-                            </div>
+                        <!-- Subtotal (Hidden) -->
+                        <div class="form-group col-md-4">
+                            <input type="hidden" class="form-control" id="subtotal" name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
+                        </div>
+                    
+                        <!-- IVA (Hidden) -->
+                        <div class="form-group col-md-4">
+                            <input type="hidden" class="form-control" id="iva" name="iva" value="{{ pedido.iva|floatformat:"0" }}">
+                        </div>
+                    
+                        <!-- Total (Hidden) -->
+                        <div class="form-group col-md-4">
+                            <input type="hidden" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
+                        </div>
                     </div>
+                    
+                    <div class="form-row">
+                        <!-- Descripción Field -->
+                        <div class="form-group col-12">
+                            <label for="descripcion_pedido">Descripción</label>
+                            <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="30" rows="5">{{ pedido.descripcion_pedido }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <!-- Fecha de Pedido Field -->
+                        <div class="form-group col-md-6">
+                            <label for="fecha_pedido">Fecha de Pedido</label>
+                            <input type="datetime-local" name="fecha_pedido" class="form-control" value="{{ pedido.fecha_pedido|date:'Y-m-d\\TH:i' }}">
+                        </div>
+                    
+                        <!-- Total Field -->
+                        <div class="form-group col-md-6">
+                            <label for="total">Total</label>
+                            <input type="text" name="total" class="form-control" value="{{ pedido.total|floatformat:"0" }}">
+                        </div>
+                    </div>
+                    
 
                     <hr>
 
@@ -353,9 +375,13 @@
                         <!-- Agrega más campos según sea necesario -->
                     </div>
                     <div class="w-50 text-center">
-                        <p><strong>Evidencia de Pago:</strong></p>
-                        <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: auto;">
+                        {% if pedido.evidencia_pago %}
+                            <p><strong>Imagen actual:</strong> <img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago" style="max-width: 100%; height: 400px;"></p>
+                        {% else %}
+                            <p><strong>Imagen actual:</strong> <img src="/media/user_images/imagendefectoNoBorrar.gif" alt="Evidencia de Pago" style="max-width: 100%; height: auto;"></p>                                                        
+                        {% endif %}
                     </div>
+                    
                 </div>
 
                 <hr>
@@ -761,6 +787,14 @@
 </style>
 
 <script>
+
+$(document).ready(function () {
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('abrir_modal') === 'true') {
+        $('#myModal').modal('show');
+    }
+});
+
     function submitForm(event) {
         event.preventDefault(); // Prevent default form submission
 

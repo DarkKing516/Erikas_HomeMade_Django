@@ -29,15 +29,15 @@ class CreatePedidoForm(forms.ModelForm):
     )
     iva = forms.DecimalField(
         max_digits=10,
-        decimal_places=0,
+        decimal_places=2,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'IVA', 'readonly': True})
     )
     total = forms.DecimalField(
         max_digits=10,
-        decimal_places=0,
+        decimal_places=2,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Total', 'readonly': False})
     )
-    evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}), required=False)
     estado_pedido = forms.CharField(max_length=80, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado del Pedido'}))
 
     class Meta:
@@ -53,7 +53,6 @@ class CreatePedidoForm(forms.ModelForm):
         if fecha_pedido and fecha_pedido.date() < datetime.now().date():
             raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
         return fecha_pedido
-
 
 class PedidoFormEditarEvidencia(forms.ModelForm):
     evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
@@ -78,9 +77,8 @@ class PedidoFormEditarEvidencia(forms.ModelForm):
 class PedidoFormEditar(forms.ModelForm):    
     class Meta:
         model = Pedido
-        fields = ['descripcion_pedido']
-
-        
+        fields = ['descripcion_pedido', 'fecha_pedido', 'subtotal', 'iva', 'total']
+      
 #------------------------------------------------------------productos---------------------------------------------------------
 
 class ProductoForm(forms.ModelForm):
