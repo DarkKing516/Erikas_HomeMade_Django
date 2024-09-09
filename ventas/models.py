@@ -1,5 +1,5 @@
 from django.db import models
-from pedidos.models import Pedido  # Importa el modelo de pedidos
+from pedidos.models import Pedido, Producto  # Importa el modelo de pedidos
 
 class Venta(models.Model):
     idVenta = models.AutoField(primary_key=True)

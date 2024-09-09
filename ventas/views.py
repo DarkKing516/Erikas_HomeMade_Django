@@ -15,6 +15,9 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from io import BytesIO  # Asegúrate de que esta línea esté incluida
+from reportlab.platypus import Image  # Asegúrate de importar Image
+from django.contrib.staticfiles import finders  # Importa finders para buscar archivos estáticos
+
 
 
 from rest_framework import viewsets
@@ -41,6 +44,19 @@ def generate_invoice(request, venta_id):
     # Elementos del PDF
     elements = []
 
+    # Buscar la ruta del logo usando `finders`
+    logo_path = finders.find('images/logo-lg.png')
+    if logo_path:
+        # Ajustar el tamaño de la imagen y crear una tabla para colocarla en la esquina superior izquierda
+        logo = Image(logo_path, width=80, height=50)  # Tamaño reducido
+        logo_table = Table([[logo]], colWidths=[70], rowHeights=[70])  # Crea una tabla pequeña
+        logo_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Alinear a la izquierda
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Alinear en la parte superior
+        ]))
+        elements.append(logo_table)  # Añadir la tabla con la imagen
+        elements.append(Spacer(1, 10))  # Añadir un pequeño espacio después del logo
+
     # Título de la factura
     elements.append(Paragraph("FACTURA DE VENTA", style_title))
     elements.append(Spacer(1, 20))
@@ -51,19 +67,22 @@ def generate_invoice(request, venta_id):
     elements.append(Paragraph(f"Documento: {venta.idPedido.id_Usuario.documento}", style_normal))
     elements.append(Spacer(1, 10))
 
-    # Tabla de productos
+    # Verificar si hay productos o servicios para mostrar
     if detalles_productos.exists():
+        # Tabla de productos
         elements.append(Paragraph("Productos Vendidos", style_heading))
-        product_data = [["Producto", "Cantidad", "Subtotal", "Total del Pedido"]]
+        product_data = [["Producto", "Cantidad", "Descripción", "Precio Unitario", "Subtotal"]]
         for detalle in detalles_productos:
             product_data.append([
                 detalle.nombre_productos,
                 str(detalle.cant_productos),
+                detalle.idProducto.descripcion,
+                f"${detalle.idProducto.precio:,.0f}",  # Precio unitario del producto
                 f"${detalle.subtotal_productos:,.0f}",
-                f"${venta.idPedido.total:,.0f}"
+
             ])
-        table = Table(product_data, colWidths=[250, 80, 90, 100], hAlign='CENTER')
-        table.setStyle(TableStyle([
+        product_table = Table(product_data, colWidths=[150, 80, 150, 100, 100], hAlign='CENTER')
+        product_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -72,15 +91,39 @@ def generate_invoice(request, venta_id):
             ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
         ]))
-        elements.append(table)
+        elements.append(product_table)
+        elements.append(Spacer(1, 20))
+
+    if detalles_servicios.exists():
+        # Tabla de servicios
+        elements.append(Paragraph("Servicios Adquiridos", style_heading))
+        service_data = [["Servicio", "Cantidad", "Precio Unitario","Subtotal"]]
+        for detalle in detalles_servicios:
+            service_data.append([
+                detalle.idServicio.nombre_servicio,
+                str(detalle.cantidad_servicios),
+                f"${detalle.idServicio.precio_servicio:,.0f}",  # Precio unitario del producto
+                f"${detalle.subtotal_servicios:,.0f}"
+            ])
+        service_table = Table(service_data, colWidths=[150, 80, 200, 100], hAlign='CENTER')
+        service_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ]))
+        elements.append(service_table)
         elements.append(Spacer(1, 20))
 
     # Información de la venta
     elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
     elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
-    elements.append(Paragraph(f"Descuento: ${venta.descuento:,.0f}", style_normal))
+    elements.append(Paragraph(f"Abono: ${venta.idPedido.iva:,.0f}", style_normal))
     elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_normal))
     elements.append(Spacer(1, 20))
 

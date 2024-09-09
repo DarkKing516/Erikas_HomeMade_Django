@@ -60,6 +60,7 @@
     </select>
     <button type="submit" class="submit-button">Aplicar</button>
 </form>
+
 <!-- Contenedor de las gráficas -->
 <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
     <!-- Gráficas de la primera fila -->
@@ -81,122 +82,138 @@
     </div>
 </div>
 
+<!-- Nuevas Gráficas -->
+<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+    <div style="flex: 1; max-width: 600px;">
+        <h3>Pedidos "Por Hacer"</h3>
+        <canvas id="pedidosPorHacerChart" style="max-width: 100%; max-height: 400px;"></canvas>
+    </div>
+    <div style="flex: 1; max-width: 600px;">
+        <h3>Ventas por Mes (Dinero)</h3>
+        <canvas id="ventasDineroChart" style="max-width: 100%; max-height: 400px;"></canvas>
+    </div>
+</div>
+
 <script>
-    // Convertir las variables de Django en objetos JSON válidos en JavaScript
-    var ventasFechas = JSON.parse('{{ ventas_fechas_json|escapejs }}');
-    var ventasTotales = JSON.parse('{{ ventas_totales_json|escapejs }}');
-    var productosNombres = JSON.parse('{{ productos_nombres_json|escapejs }}');
-    var productosTotales = JSON.parse('{{ productos_totales_json|escapejs }}');
-    var pedidosEstados = JSON.parse('{{ pedidos_estados_json|escapejs }}');
-    var pedidosTotales = JSON.parse('{{ pedidos_totales_json|escapejs }}');
-
-    // Inicializar los gráficos
-    function initializeChart(ctx, type, labels, data, label, backgroundColor, borderColor) {
-        new Chart(ctx, {
-            type: type,
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: label,
-                    data: data,
-                    backgroundColor: backgroundColor,
-                    borderColor: borderColor,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1,
-                            callback: function(value) {
-                                if (Number.isInteger(value)) {
-                                    return value;
-                                }
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true
-                    }
-                }
-            }
-        });
-    }
-
-    // Gráfico de Ventas en el Rango de Fechas (Barras Verticales)
-    var ctx1 = document.getElementById('ventasChart').getContext('2d');
-    initializeChart(
-        ctx1,
-        'bar',
-        ventasFechas,
-        ventasTotales.length ? ventasTotales : [0], // Mostrar 0 si no hay datos
-        'Total de Ventas',
-        'rgba(75, 192, 192, 0.6)',
-        'rgba(75, 192, 192, 1)'
-    );
-
-    // Gráfico de Productos más Vendidos
-    var ctx2 = document.getElementById('productosChart').getContext('2d');
-    initializeChart(
-        ctx2,
-        'bar',
-        productosNombres,
-        productosTotales.length ? productosTotales : [0], // Mostrar 0 si no hay datos
-        'Cantidad Vendida',
-        'rgba(153, 102, 255, 0.6)'
-    );
-
-    // Gráfico de Pedidos por Estado
-    var ctx3 = document.getElementById('pedidosChart').getContext('2d');
-    new Chart(ctx3, {
-        type: 'pie',
+    // Gráfica de Ventas
+    var ctxVentas = document.getElementById('ventasChart').getContext('2d');
+    var ventasChart = new Chart(ctxVentas, {
+        type: 'bar',
         data: {
-            labels: pedidosEstados,
+            labels: JSON.parse('{{ ventas_fechas_json|safe }}'),
             datasets: [{
-                label: 'Pedidos',
-                data: pedidosTotales.length ? pedidosTotales : [0], // Mostrar 0 si no hay datos
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)'
-                ]
+                label: 'Ventas por Mes',
+                data: JSON.parse('{{ ventas_totales_json|safe }}'),
+                backgroundColor: 'rgba(161, 250, 241)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
             }]
         },
         options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            const dataset = tooltipItem.dataset;
-                            const total = dataset.data.reduce((acc, curr) => acc + curr, 0);
-                            const currentValue = dataset.data[tooltipItem.dataIndex];
-                            const percentage = ((currentValue / total) * 100).toFixed(2);
-
-                            return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
-                        }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
                     }
-                },
-                legend: {
-                    display: true
+                }
+            }
+        }
+    });
+
+    // Gráfica de Productos más Vendidos
+    var ctxProductos = document.getElementById('productosChart').getContext('2d');
+    var productosChart = new Chart(ctxProductos, {
+        type: 'bar',
+        data: {
+            labels: JSON.parse('{{ productos_nombres_json|safe }}'),
+            datasets: [{
+                label: 'Cantidad Vendida',
+                data: JSON.parse('{{ productos_totales_json|safe }}'),
+                backgroundColor: 'rgba(185, 130, 250)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Gráfica de Pedidos por Estado
+    var ctxPedidos = document.getElementById('pedidosChart').getContext('2d');
+    var pedidosChart = new Chart(ctxPedidos, {
+        type: 'pie',
+        data: {
+            labels: JSON.parse('{{ pedidos_estados_json|safe }}'),
+            datasets: [{
+                label: 'Pedidos por Estado',
+                data: JSON.parse('{{ pedidos_totales_json|safe }}'),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        }
+    });
+
+    // Gráfica de Pedidos "Por Hacer"
+    var ctxPedidosPorHacer = document.getElementById('pedidosPorHacerChart').getContext('2d');
+    var pedidosPorHacerChart = new Chart(ctxPedidosPorHacer, {
+        type: 'bar',
+        data: {
+            labels: ['Por Hacer'],
+            datasets: [{
+                label: 'Cantidad de Pedidos',
+                data: [JSON.parse('{{ pedidos_por_hacer_count_json|safe }}')],
+                backgroundColor: 'rgba(192, 247, 90)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Gráfica de Ventas por Mes (Dinero)
+    var ctxVentasDinero = document.getElementById('ventasDineroChart').getContext('2d');
+    var ventasDineroChart = new Chart(ctxVentasDinero, {
+        type: 'bar',
+        data: {
+            labels: JSON.parse('{{ ventas_dinero_fechas_json|safe }}'),
+            datasets: [{
+                label: 'Dinero Ganado por Mes',
+                data: JSON.parse('{{ ventas_dinero_totales_json|safe }}'),
+                backgroundColor: 'rgba(246, 141, 89)',
+                borderColor: 'rgba(255, 205, 86, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
     });
 </script>
-
-{% if not request.session.usuario_id %}
-<script>
-    window.location.href = "{% url 'usuarios:requestLogin' %}";
-</script>
-{% elif "Listar Dashboard" not in request.session.permisos %}
-<script>
-    window.location.href = "{% url 'usuarios:requestLogin' %}";
-</script>
-{% endif %}
-
 {% endblock %}
