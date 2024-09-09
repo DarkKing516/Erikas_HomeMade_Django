@@ -22,10 +22,9 @@
                         <thead>
                             <tr>
                                 <th>Fecha de venta</th>
-                                <th>Método de pago</th>
-                                <th>Total de pedido</th>
-                                <th>Descuento / Aumento</th>
-                                <th>Total Final</th>
+                                <th>Usuario</th>
+                                <th>Abono</th>
+                                <th>Total</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
 
                             </tr>
@@ -35,17 +34,8 @@
                             {% for venta in ventas %}
                             <tr>
                                 <td>{{ venta.fecha }}</td>
-                                <td>{{ venta.metodo_pago }}</td>
-                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.total|floatformat:0|intcomma }}</td>
-                                <td class="descuento-aumento" data-value="{{ venta.descuento }}">
-                                    {% if venta.descuento > 0 %}
-                                        -$ {{ venta.descuento|floatformat:0|intcomma }}
-                                    {% elif venta.descuento < 0 %}
-                                        $ {{ venta.descuento|floatformat:0|intcomma }}
-                                    {% else %}
-                                        $0
-                                    {% endif %}
-                                </td>
+                                <td>{{ venta.idPedido.id_Usuario.nombre }}</td>
+                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.iva|floatformat:0|intcomma }}</td>
                                 <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0|intcomma }}</td>
                                 <td>
                                     <a href="{% url 'ventas:generate_invoice' venta_id=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>
@@ -294,7 +284,7 @@
         // Mover el cuadro de búsqueda al lugar deseado
         $("#ventasTable_filter").detach().appendTo(".top");
         {% if "Crear Ventas" in request.session.permisos %}
-        $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#modalCrearVenta" style="margin: 5px">Agregar Venta</button>');
+        // $(".top").append('<button type="button" class="btn btn-inverse-success btn-fw ml-2" data-toggle="modal" data-target="#modalCrearVenta" style="margin: 5px">Agregar Venta</button>');
         {% endif %}
         // También puedes personalizar el estilo del cuadro de búsqueda si es necesario
         $("#ventasTable_filter input").addClass("form-control form-control-sm");

@@ -2,6 +2,7 @@ from rest_framework.decorators import action
 from django.templatetags.static import static
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import *
+from ventas.models import *
 from .forms import *
 from django.http import JsonResponse
 import json
@@ -446,21 +447,18 @@ def eliminar_pedido(request):
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'})
     
+@csrf_exempt  # Asegúrate de añadir el decorador CSRF si estás usando AJAX
 def cambiar_estado(request):
     if request.method == 'POST':
-        # Verifica si la solicitud es POST
         data = json.loads(request.body)
-        
-        # Extrae el ID del pedido y el nuevo estado del pedido
         pedido_id = data.get('pedido_id')
         nuevo_estado_pedido = data.get('estado_pedido')
         
-        # Imprime los datos para depuración (opcional)
-        print("Pedido ID:", pedido_id)
-        print("Nuevo estado:", nuevo_estado_pedido)
-        
-        # Recupera la instancia del pedido de la base de datos utilizando el ID del pedido
-        pedido = Pedido.objects.get(pk=pedido_id)
+        # Recupera el pedido de la base de datos
+        try:
+            pedido = Pedido.objects.get(pk=pedido_id)
+        except Pedido.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Pedido no encontrado.'})
         
         # Verifica si el pedido ya está cancelado o entregado
         if pedido.estado_pedido in ['Cancelado', 'Entregado']:
@@ -468,10 +466,7 @@ def cambiar_estado(request):
         
         # Si se está cambiando el estado a 'Cancelado'
         if nuevo_estado_pedido == 'Cancelado':
-            # Obtener los detalles del pedido para productos
             detalles_productos = DetallePedidoProducto.objects.filter(idPedido=pedido)
-
-            # Devolver el stock de los productos
             for detalle in detalles_productos:
                 producto = detalle.idProducto
                 producto.cantidad += detalle.cant_productos
@@ -479,14 +474,25 @@ def cambiar_estado(request):
 
         # Actualiza el estado del pedido
         pedido.estado_pedido = nuevo_estado_pedido
-        
-        # Guarda los cambios en la base de datos
         pedido.save()
+        # Si se está cambiando el estado a 'Entregado'
+        if nuevo_estado_pedido == 'Entregado':
+            # Crear una venta con la información del pedido
+            Venta.objects.create(
+                idPedido=pedido,
+                metodo_pago='Efectivo',  # Ajusta esto según tu lógica
+                subtotal=pedido.subtotal,
+                descuento=0,  # Ajusta esto según tu lógica
+                iva=pedido.iva,
+                total=pedido.total
+            )
+            # Redirige a listar_ventas
+            return JsonResponse({'success': True, 'redirect': '/ventas/listar_ventas/'})
+        
         
         # Devuelve una respuesta JSON indicando que la operación fue exitosa
         return JsonResponse({'success': True})
     else:
-        # Si la solicitud no es POST, devuelve una respuesta JSON indicando que la operación falló
         return JsonResponse({'success': False, 'message': 'Solicitud no válida.'})
 
 # ----------------------------------------------------------PRODUCTOS--------------------------------------------------------------------------

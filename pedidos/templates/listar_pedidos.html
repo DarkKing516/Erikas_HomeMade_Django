@@ -842,70 +842,60 @@
 
     // Función para manejar el cambio de estado del pedido
     function handleChangeStatus(event) {
-        // Obtener el pedido ID
-        var pedido_id = $(this).data('pedido-id');
-    
-        // Mostrar SweetAlert con el campo de selección y el token CSRF
-        Swal.fire({
-            title: 'Cambiar Estado',
-            html: '<select class="form-control" id="estado_pedido2" name="estado_pedido">' +
-                '<option value="Por hacer">Por hacer</option>' +
-                '<option value="En proceso">En proceso</option>' +
-                '<option value="Hecho">Hecho</option>' +
-                '<option value="Entregado">Entregado</option>' +
-                '<option value="Cancelado">Cancelado</option>' +
-                '</select>',
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Cambiar',
-            preConfirm: () => {
-                // Obtener el valor seleccionado del select
-                var nuevoPedido = $('#estado_pedido2').val();
-    
-                // Enviar los datos a través de AJAX incluyendo el token CSRF
-                return fetch("{% url 'pedidos:cambiar_estado' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        'pedido_id': pedido_id,
-                        'estado_pedido': nuevoPedido,
-                    }),
-                })
-                .then(response => {
-                    return response.json();
-                })
-                .then(data => {
-                    if (!data.success) {
-                        throw new Error(data.message || 'Hubo un problema al cambiar el Estado.');
-                    }
-                    return data;
-                })
-                .catch(error => {
-                    Swal.showValidationMessage(`Request failed: ${error}`);
-                });
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var nuevoRol = $('#estado_pedido2').val();
-                if (nuevoRol === 'Entregado') {
-                    Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
-                        // Redirigir a la vista de ventas con el pedido_id
-                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id + "&abrir_modal=true";
-                    });
-                } else {
-                    Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
-                        location.reload();
-                    });
+    // Obtener el pedido ID
+    var pedido_id = $(this).data('pedido-id');
+
+    // Mostrar SweetAlert con el campo de selección y el token CSRF
+    Swal.fire({
+        title: 'Cambiar Estado',
+        html: '<select class="form-control" id="estado_pedido2" name="estado_pedido">' +
+            '<option value="Por hacer">Por hacer</option>' +
+            '<option value="En proceso">En proceso</option>' +
+            '<option value="Hecho">Hecho</option>' +
+            '<option value="Entregado">Entregado</option>' +
+            '<option value="Cancelado">Cancelado</option>' +
+            '</select>',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Cambiar',
+        preConfirm: () => {
+            // Obtener el valor seleccionado del select
+            var nuevoPedido = $('#estado_pedido2').val();
+
+            // Enviar los datos a través de AJAX incluyendo el token CSRF
+            return fetch("{% url 'pedidos:cambiar_estado' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'pedido_id': pedido_id,
+                    'estado_pedido': nuevoPedido,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Agrega esta línea para verificar la respuesta
+                if (!data.success) {
+                    throw new Error(data.message || 'Hubo un problema al cambiar el Estado.');
                 }
-            }
-        });
-    }
-    
+                // Redirigir si la respuesta contiene el campo 'redirect'
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    // Aquí reiniciamos la página después de un cambio exitoso
+                    location.reload(); // Esto recarga la página actual
+                }
+            })
+            .catch(error => {
+                Swal.showValidationMessage(`Request failed: ${error}`);
+            });
+        },
+    })
+}
 
 
     $(document).ready(function () {
