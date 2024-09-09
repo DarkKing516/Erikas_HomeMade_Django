@@ -247,8 +247,14 @@ def listar_pedidos(request):
     if request.method == 'POST':
         form = CreatePedidoForm(request.POST, request.FILES)
         if form.is_valid():
-            pedido = form.save()
-            print(f"pedido {form}")
+            pedido = form.save(commit=False)
+
+            if not pedido.evidencia_pago:
+                # Use the relative path to the default image
+                pedido.evidencia_pago = 'user_images/imagendefectoNoBorrar.gif'
+
+            pedido.save()
+
             # Imprimir la información del campo evidencia_pago
             print(pedido.evidencia_pago)
             print(pedido.evidencia_pago.name, "uwu")
@@ -320,7 +326,6 @@ def listar_pedidos(request):
             'detalles_productos': detalles_productos,
             'detalles_servicios': detalles_servicios,
         })
-
 
 def crear_pedido(request):
     if request.method == 'POST':
