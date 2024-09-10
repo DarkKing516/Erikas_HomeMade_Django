@@ -30,7 +30,7 @@ class CreatePedidoForm(forms.ModelForm):
     iva = forms.DecimalField(
         max_digits=10,
         decimal_places=2,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'IVA', 'readonly': True})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Abono', 'readonly': True})
     )
     total = forms.DecimalField(
         max_digits=10,
@@ -54,6 +54,13 @@ class CreatePedidoForm(forms.ModelForm):
             raise forms.ValidationError("La fecha del pedido no puede ser anterior a la fecha actual.")
         return fecha_pedido
 
+class PedidoFormEditar(forms.ModelForm):    
+    class Meta:
+        model = Pedido
+        fields = ['descripcion_pedido', 'fecha_pedido', 'subtotal', 'iva', 'total']
+        
+        
+        
 class PedidoFormEditarEvidencia(forms.ModelForm):
     evidencia_pago = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
 
@@ -74,10 +81,6 @@ class PedidoFormEditarEvidencia(forms.ModelForm):
         
         
         
-class PedidoFormEditar(forms.ModelForm):    
-    class Meta:
-        model = Pedido
-        fields = ['descripcion_pedido', 'fecha_pedido', 'subtotal', 'iva', 'total']
       
 #------------------------------------------------------------productos---------------------------------------------------------
 
