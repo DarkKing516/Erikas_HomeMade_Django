@@ -1133,7 +1133,7 @@ $(document).ready(function () {
                 if (nuevoRol === 'Entregado') {
                     Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
                         // Redirigir a la vista de ventas con el pedido_id
-                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id + "&abrir_modal=true";
+                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id;
                     });
                 } else {
                     Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
