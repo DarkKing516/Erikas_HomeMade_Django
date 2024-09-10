@@ -75,8 +75,24 @@ def dashboard(request):
     pedidos_estados = [item['estado_pedido'] for item in pedidos_estados_y_totales]
     pedidos_totales = [item['total'] for item in pedidos_estados_y_totales]
 
-    # Obtener el conteo de pedidos con estado "Por hacer"
-    pedidos_por_hacer_count = Pedido.objects.filter(estado_pedido='Por hacer').count()
+ # Contar los pedidos con estado "Por hacer" con filtro de año, si se aplica
+    if selected_year:
+        pedidos_por_hacer_count = Pedido.objects.filter(
+            estado_pedido='Por hacer',
+            fecha_pedido__year=selected_year
+        ).count()
+
+        # Obtener los estados de pedidos y contar la cantidad de pedidos en cada estado para el año seleccionado
+        pedidos_estados_y_totales = Pedido.objects.filter(
+            fecha_pedido__year=selected_year
+        ).values('estado_pedido').annotate(total=Count('idPedido'))
+    else:
+        pedidos_por_hacer_count = Pedido.objects.filter(
+            estado_pedido='Por hacer'
+        ).count()
+
+        # Obtener los estados de pedidos y contar la cantidad de pedidos en cada estado sin filtro de año
+        pedidos_estados_y_totales = Pedido.objects.values('estado_pedido').annotate(total=Count('idPedido'))
 
     # Agrupar ventas por mes y obtener el total de dinero ganado en cada mes
     ventas_dinero_por_mes = ventas.annotate(month=TruncMonth('fecha')).values('month').annotate(total_dinero=Sum('total')).order_by('month')
