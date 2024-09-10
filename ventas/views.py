@@ -196,6 +196,7 @@ def listar_ventas(request):
 
 def listar_mis_ventas(request):
     usuario_id = request.session.get('usuario_id')
+    
 
     # Filtra las ventas por el usuario actual
     ventas = Venta.objects.filter(idPedido__id_Usuario_id=usuario_id)
@@ -233,7 +234,7 @@ def crear_venta(request):
 
                 # Asignar otros valores necesarios
                 venta.subtotal = pedido.subtotal
-                venta.iva = 0
+                venta.iva = pedido.iva
                 venta.metodo_pago = form.cleaned_data['metodo_pago']
                 venta.descuento = descuento_aumento_value
                 venta.total = total_final

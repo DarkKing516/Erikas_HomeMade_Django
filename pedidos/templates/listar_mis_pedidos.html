@@ -180,7 +180,7 @@
                                 </div>
                                 <div class="col-md-5">
                                     <p><strong>Total:</strong> ${{ pedido.total|floatformat:"2" }}</p>
-                                    <p><strong>Abono (50%):</strong> ${{ pedido.total|divisibleby:"2"|floatformat:"2" }}</p>
+                                    <p><strong>Abono:</strong> ${{ pedido.iva|floatformat:"2" }}</p>
                                 </div>
                                 <div class="col-md-2">
                                     <p><strong>Descripción:</strong><br>{{ pedido.descripcion_pedido }}</p>
