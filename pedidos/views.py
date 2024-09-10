@@ -221,7 +221,7 @@ def listar_mis_pedidos(request):
     usuario_id = request.session.get('usuario_id')
     default_image_url = '/media/user_images/imagendefectoNoBorrar.gif'
 
-    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id).exclude(estado_pedido='entregado')
+    pedidos = Pedido.objects.filter(id_Usuario_id=usuario_id).exclude(estado_pedido='Entregado')
 
     for pedido in pedidos:
         for detalle_pedido_producto in pedido.detallepedidoproducto_set.all():

@@ -23,7 +23,7 @@
                             <tr>
                                 <th>Fecha de venta</th>
                                 <th>Usuario</th>
-                                <th>Abono</th>
+                                <!-- <th>Abono</th> -->
                                 <th>Total</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
 
@@ -35,7 +35,7 @@
                             <tr>
                                 <td>{{ venta.fecha }}</td>
                                 <td>{{ venta.idPedido.id_Usuario.nombre }}</td>
-                                <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.iva|floatformat:0|intcomma }}</td>
+                                <!-- <td class="total-pedido" data-value="{{ venta.idPedido.total }}">${{ venta.idPedido.iva|floatformat:0|intcomma }}</td> -->
                                 <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0|intcomma }}</td>
                                 <td>
                                     <a href="{% url 'ventas:generate_invoice' venta_id=venta.idVenta %}" class="btn btn-info btn-sm">Generar Factura</a>

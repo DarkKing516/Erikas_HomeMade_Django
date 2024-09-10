@@ -145,7 +145,7 @@ def generate_invoice(request, venta_id):
     elements.append(Paragraph("Información de la Venta", style_heading)),
     elements.append(Spacer(1, 20))
 
-    elements.append(Paragraph(f"Abono: ${venta.idPedido.iva:,.0f}", style_normal, bulletText=" ")),
+    # elements.append(Paragraph(f"Abono: ${venta.idPedido.iva:,.0f}", style_normal, bulletText=" ")),
     elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_normal, bulletText=" ")),
 
     elements.append(Spacer(1, 40))
@@ -197,7 +197,6 @@ def listar_ventas(request):
 def listar_mis_ventas(request):
     usuario_id = request.session.get('usuario_id')
     
-
     # Filtra las ventas por el usuario actual
     ventas = Venta.objects.filter(idPedido__id_Usuario_id=usuario_id)
 

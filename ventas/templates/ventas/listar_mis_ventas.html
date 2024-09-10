@@ -19,8 +19,7 @@
                         <thead>
                             <tr>
                                 <th>Fecha de venta</th>
-                                <th>Abono</th>
-                                <th>Total Final</th>
+                                <th>Total</th>
                                 <th>Detalle compra</th>
                                 <th>Acciones</th> <!-- Nueva columna para el botón -->
                             </tr>
@@ -30,7 +29,6 @@
                             {% for venta in ventas %}
                             <tr>
                                 <td>{{ venta.fecha }}</td>
-                                <td class="total-pedido" data-value="{{ venta.iva }}">${{ venta.iva|floatformat:0|intcomma }}</td>
                                 <td class="total-final" data-value="{{ venta.total }}">${{ venta.total|floatformat:0|intcomma }}</td>
                                 <td>
                                     <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal{{ venta.idPedido.idPedido }}"><i class="mdi mdi-eye"></i></a>
@@ -68,7 +66,7 @@
                                 <p><strong>Posible Fecha Entrega:</strong> {{ venta.idPedido.fecha_pedido|date:"d M Y H:i" }}</p>
                             </div>
                             <div class="col-md-5">
-                                <p><strong>Descuento:</strong> ${{ venta.descuento|floatformat:0|intcomma }}</p>
+                                <!-- <p><strong>Descuento:</strong> ${{ venta.descuento|floatformat:0|intcomma }}</p> -->
                                 <p><strong>Total:</strong> ${{ venta.total|floatformat:0|intcomma }}</p>
                             </div>
                             <div class="col-md-2">
