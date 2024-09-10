@@ -315,6 +315,26 @@
                     <input type="hidden" name="pedido_id" value="{{ pedido.idPedido }}">
                     <div class="form-row">
                         <div class="col">
+                            <div class="form-row">
+                                <!-- Subtotal (Hidden) -->
+                                <div class="form-group col-md-4">
+                                    <input type="hidden" class="form-control" id="subtotal" name="subtotal" value="{{ pedido.subtotal|floatformat:"0" }}">
+                                </div>
+                            
+                                <!-- IVA (Hidden) -->
+                                <div class="form-group col-md-4">
+                                    <input type="hidden" class="form-control" id="iva" name="iva" value="{{ pedido.iva|floatformat:"0" }}">
+                                </div>
+                            
+                                <!-- Total (Hidden) -->
+                                <div class="form-group col-md-4">
+                                    <input type="hidden" class="form-control" id="total" name="total" value="{{ pedido.total|floatformat:"0" }}">
+                                </div>
+                                <!-- Total (Hidden) -->
+                                <div class="form-group col-md-4">
+                                    <input type="hidden" class="form-control" id="fecha_pedido" name="fecha_pedido" value="{{ pedido.fecha_pedido|date:'d/m/Y H:i' }}">
+                                </div>
+                            </div>
                             <div class="col-md-12">
                                 <label for="descripcion_pedido">Descripción</label>
                                 <textarea name="descripcion_pedido" class="form-control" id="descripcion_pedido" cols="1000" maxlength="255" rows="5" value="{{ pedido.descripcion_pedido }}">{{ pedido.descripcion_pedido }}</textarea><br>
