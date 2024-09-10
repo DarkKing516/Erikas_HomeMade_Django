@@ -25,6 +25,10 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 
 <style>
   .container {
@@ -151,7 +155,8 @@
             <div class="cart-item">
               <img src="{{ item.imagen }}" alt="Product Image" />
               <h4>{{ item.nombre }}</h4>
-              <p class="price" data-price="{{ item.precio|floatformat:" 0" }}">${{ item.precio|floatformat:0|intcomma }}</p>
+              <p class="price" data-price="{{ item.precio|floatformat:" 0" }}">${{ item.precio|floatformat:0|intcomma }}
+              </p>
               {% comment %} <p class="quantity">1</p> {% endcomment %}
               <span class="remove"><i class="bi bi-trash" onclick="removeCartItem2('{{ item.id }}')"></i></span>
             </div>
@@ -174,12 +179,41 @@
             {% csrf_token %}
             <div class="order-details">
               <textarea name="descripcion" placeholder="Agrega una descripción para su pedido" class="form-control mb-3"
-                required /></textarea>
+                required></textarea>
 
-              <p class="iva" id="iva">Codigo QR: </p>
-              <img src="/media/pedidos/qr.png" class="container">
+              <!-- Nuevo botón para abrir la modal -->
+              <button type="button" class="btn btn-info w-100" data-bs-toggle="modal"
+                data-bs-target="#paymentInfoModal">
+                Información de pago
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="paymentInfoModal" tabindex="-1" aria-labelledby="paymentInfoModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="paymentInfoModalLabel">Información de Pago</h5>
+                    </div>
+                    <div class="modal-body text-center">
+                      <!-- Contenedor para la imagen -->
+                      <div class="mb-3">
+                        <img src="/media/pedidos/qr.jpeg" class="img-fluid" alt="Código QR">
+                      </div>
+                      <!-- Contenedor para la información adicional -->
+                      <div class="alert alert-info" role="alert">
+                        <p class="mb-1"><strong>Número de cuenta:</strong> 3127139179</p>
+                        <p class="mb-0"><strong>Nombre de cuenta:</strong> Erika Alexandra López Rámirez</p>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <p class="iva" id="iva">Comprobante de pago del abono: </p>
-
               <input type="file" name="imagen" id="imagen-input" class="form-control mb-3" required />
               <div id="image-preview-container">
                 <img id="image-preview" src="#" alt="" style="max-width: 200px; max-height: 200px;">

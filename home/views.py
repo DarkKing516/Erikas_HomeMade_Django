@@ -97,6 +97,8 @@ def dashboard(request):
         'ventas_totales_json': json.dumps(ventas_por_mes_completas, default=str),
         'productos_nombres_json': json.dumps(productos_nombres, default=str),
         'productos_totales_json': json.dumps(productos_totales, default=str),
+        'servicios_nombres_json': json.dumps(servicios_nombres, default=str),
+        'servicios_totales_json': json.dumps(servicios_totales, default=str),
         'pedidos_estados_json': json.dumps(pedidos_estados, default=str),
         'pedidos_totales_json': json.dumps(pedidos_totales, default=str),
         'pedidos_por_hacer_count_json': json.dumps(pedidos_por_hacer_count, default=str),
