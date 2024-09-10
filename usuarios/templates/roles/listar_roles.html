@@ -57,14 +57,19 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        {% if 'Editar Roles' in request.session.permisos %}
+                                        {% if 'Editar Roles' in request.session.permisos and rol.id != 1 and rol.id != 2 %}
                                         <button type="button" class="btn btn-inverse-warning edit-rol" data-toggle="modal" data-target="#editrolModal{{ rol.id }}" data-nombre="{{ rol.nombre_rol }}" data-estado="{{ rol.estado_rol }}" data-rol-id="{{ rol.id }}">
                                             <i class="mdi mdi-pencil"></i>
                                         </button>
                                         {% endif %}
-                                        {% if 'Eliminar Roles' in request.session.permisos %}
+                                        {% if 'Eliminar Roles' in request.session.permisos and rol.id != 1 and rol.id != 2 %}
                                         <a href="#" onclick="confirmarEliminar('{{ rol.id }}')"
                                             class="btn btn-inverse-danger delete-rol"><i class="mdi mdi-delete"></i></a>
+                                        {% endif %}
+                                        {% if rol.id == 1 and rol.id == 2 %}
+                                        <button type="button" class="btn btn-inverse-primary">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
                                         {% endif %}
                                         {% if 'Eliminar Roles' not in request.session.permisos and 'Editar Roles' not in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-primary">
