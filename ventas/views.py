@@ -47,29 +47,52 @@ def generate_invoice(request, venta_id):
     # Buscar la ruta del logo usando `finders`
     logo_path = finders.find('images/logo-lg.png')
     if logo_path:
-        # Ajustar el tamaño de la imagen y crear una tabla para colocarla en la esquina superior izquierda
-        logo = Image(logo_path, width=80, height=50)  # Tamaño reducido
-        logo_table = Table([[logo]], colWidths=[70], rowHeights=[70])  # Crea una tabla pequeña
+        logo = Image(logo_path, width=115, height=50)
+        logo_table = Table([[logo]], colWidths=[70], rowHeights=[70])
         logo_table.setStyle(TableStyle([
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Alinear a la izquierda
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Alinear en la parte superior
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ]))
-        elements.append(logo_table)  # Añadir la tabla con la imagen
-        elements.append(Spacer(1, 10))  # Añadir un pequeño espacio después del logo
+        elements.append(logo_table)
+        elements.append(Spacer(1, 10))
 
     # Título de la factura
     elements.append(Paragraph("FACTURA DE VENTA", style_title))
     elements.append(Spacer(1, 20))
 
-    # Información del cliente
+    # Información del cliente y venta lado a lado
     elements.append(Paragraph("Información del Cliente", style_heading))
-    elements.append(Paragraph(f"Nombre: {venta.idPedido.id_Usuario.nombre}", style_normal))
-    elements.append(Paragraph(f"Documento: {venta.idPedido.id_Usuario.documento}", style_normal))
-    elements.append(Spacer(1, 10))
+    elements.append(Spacer(1, 10))  # Espacio entre el título y la información del cliente
+
+    cliente_info = [
+        Paragraph(f"Nombre: {venta.idPedido.id_Usuario.nombre}", style_normal),
+        Paragraph(f"Documento: {venta.idPedido.id_Usuario.documento}", style_normal),
+    ]
+
+    venta_info = [
+        Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal, bulletText=" "),
+        Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal, bulletText=" "),
+
+    ]
+
+    # Colocar los elementos en una tabla para que se alineen lado a lado
+    table_data = [
+        [cliente_info, venta_info],
+    ]
+
+    info_table = Table(table_data, colWidths=[200, 300])
+    info_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+        ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+        ('LEFTPADDING', (1, 0), (1, -1), 50),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+    ]))
+
+    elements.append(info_table)
+    elements.append(Spacer(1, 20))
 
     # Verificar si hay productos o servicios para mostrar
     if detalles_productos.exists():
-        # Tabla de productos
         elements.append(Paragraph("Productos Vendidos", style_heading))
         product_data = [["Producto", "Cantidad", "Descripción", "Precio Unitario", "Subtotal"]]
         for detalle in detalles_productos:
@@ -77,11 +100,10 @@ def generate_invoice(request, venta_id):
                 detalle.nombre_productos,
                 str(detalle.cant_productos),
                 detalle.idProducto.descripcion,
-                f"${detalle.idProducto.precio:,.0f}",  # Precio unitario del producto
+                f"${detalle.idProducto.precio:,.0f}",
                 f"${detalle.subtotal_productos:,.0f}",
-
             ])
-        product_table = Table(product_data, colWidths=[150, 80, 150, 100, 100], hAlign='CENTER')
+        product_table = Table(product_data, colWidths=[150, 80, 100, 100, 100], hAlign='CENTER')
         product_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -96,14 +118,13 @@ def generate_invoice(request, venta_id):
         elements.append(Spacer(1, 20))
 
     if detalles_servicios.exists():
-        # Tabla de servicios
         elements.append(Paragraph("Servicios Adquiridos", style_heading))
-        service_data = [["Servicio", "Cantidad", "Precio Unitario","Subtotal"]]
+        service_data = [["Servicio", "Cantidad", "Precio Unitario", "Subtotal"]]
         for detalle in detalles_servicios:
             service_data.append([
                 detalle.idServicio.nombre_servicio,
                 str(detalle.cantidad_servicios),
-                f"${detalle.idServicio.precio_servicio:,.0f}",  # Precio unitario del producto
+                f"${detalle.idServicio.precio_servicio:,.0f}",
                 f"${detalle.subtotal_servicios:,.0f}"
             ])
         service_table = Table(service_data, colWidths=[150, 80, 200, 100], hAlign='CENTER')
@@ -120,12 +141,34 @@ def generate_invoice(request, venta_id):
         elements.append(service_table)
         elements.append(Spacer(1, 20))
 
-    # Información de la venta
-    elements.append(Paragraph(f"Fecha: {venta.fecha.strftime('%d/%m/%Y')}", style_normal))
-    elements.append(Paragraph(f"Método de Pago: {venta.metodo_pago}", style_normal))
-    elements.append(Paragraph(f"Abono: ${venta.idPedido.iva:,.0f}", style_normal))
-    elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_normal))
     elements.append(Spacer(1, 20))
+    elements.append(Paragraph("Información de la Venta", style_heading)),
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph(f"Abono: ${venta.idPedido.iva:,.0f}", style_normal, bulletText=" ")),
+    elements.append(Paragraph(f"Total Final: ${venta.total:,.0f}", style_normal, bulletText=" ")),
+
+    elements.append(Spacer(1, 40))
+
+    # Información de contacto del negocio con íconos
+    email_icon_path = finders.find('images/correo.png')
+    phone_icon_path = finders.find('images/celular.png')
+    address_icon_path = finders.find('images/direccion.png')
+
+    contact_info_data = [
+        [Image(email_icon_path, width=10, height=10), Paragraph("Correo Electrónico: erikashomemade.bello@gmail.com", style_normal)],
+        [Image(phone_icon_path, width=10, height=10), Paragraph("Celular: 317654837", style_normal)],
+        [Image(address_icon_path, width=10, height=10), Paragraph("Dirección: Carrera 65 A # 68 - 44", style_normal)]
+    ]
+    
+    contact_info_table = Table(contact_info_data, colWidths=[20, 400])
+    contact_info_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),  # Alinear íconos a la izquierda
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'),  # Alinear texto a la izquierda
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')  # Alinear verticalmente al centro
+    ]))
+
+    elements.append(contact_info_table)
 
     # Construir el PDF
     doc.build(elements)
