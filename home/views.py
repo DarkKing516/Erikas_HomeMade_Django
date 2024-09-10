@@ -57,6 +57,15 @@ def dashboard(request):
     productos_nombres = list(productos.values_list('nombre', flat=True))
     productos_totales = list(productos.values_list('total_vendido', flat=True))
 
+    # Obtener los nombres de servicios y la cantidad total vendida de cada servicio
+    if selected_year:
+        servicios = Servicio.objects.filter(detallepedidoservicio__idPedido__fecha_pedido__year=selected_year).annotate(total_vendido=Sum('detallepedidoservicio__cantidad_servicios'))
+    else:
+        servicios = Servicio.objects.annotate(total_vendido=Sum('detallepedidoservicio__cantidad_servicios'))
+
+    servicios_nombres = list(servicios.values_list('nombre_servicio', flat=True))
+    servicios_totales = list(servicios.values_list('total_vendido', flat=True))
+
     # Obtener los estados de pedidos y contar la cantidad de pedidos en cada estado
     if selected_year:
         pedidos_estados_y_totales = Pedido.objects.filter(fecha_pedido__year=selected_year).values('estado_pedido').annotate(total=Count('idPedido'))
