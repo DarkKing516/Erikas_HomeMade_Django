@@ -25,11 +25,13 @@ def dashboard(request):
     # Generar lista de años disponibles, incluyendo 2023
     years = sorted(set(Venta.objects.dates('fecha', 'year').values_list('fecha__year', flat=True)) | {2023})
 
-    # Filtrar ventas por año si se selecciona un año
+    # Filtrar ventas y pedidos por año si se selecciona un año
     if selected_year:
         ventas = Venta.objects.filter(fecha__year=selected_year)
+        pedidos = Pedido.objects.filter(fecha_pedido__year=selected_year)
     else:
         ventas = Venta.objects.all()
+        pedidos = Pedido.objects.all()
 
     # Agrupar ventas por mes y obtener el conteo de ventas por mes
     ventas_por_mes = ventas.annotate(month=TruncMonth('fecha')).values('month').annotate(total_ventas=Count('idVenta')).order_by('month')
@@ -64,6 +66,23 @@ def dashboard(request):
     pedidos_estados = [item['estado_pedido'] for item in pedidos_estados_y_totales]
     pedidos_totales = [item['total'] for item in pedidos_estados_y_totales]
 
+    # Obtener el conteo de pedidos con estado "Por hacer"
+    pedidos_por_hacer_count = Pedido.objects.filter(estado_pedido='Por hacer').count()
+
+    # Agrupar ventas por mes y obtener el total de dinero ganado en cada mes
+    ventas_dinero_por_mes = ventas.annotate(month=TruncMonth('fecha')).values('month').annotate(total_dinero=Sum('total')).order_by('month')
+
+    # Extraer el dinero ganado por mes
+    ventas_dinero_fechas = [venta['month'].strftime('%B') for venta in ventas_dinero_por_mes]
+    ventas_dinero_totales = [venta['total_dinero'] for venta in ventas_dinero_por_mes]
+
+    # Completar los meses faltantes con 0 dinero
+    ventas_dinero_por_mes_completas = [0] * 12
+
+    for venta in ventas_dinero_por_mes:
+        mes = venta['month'].month - 1  # Convertir el mes a índice (0 para Enero, 1 para Febrero, etc.)
+        ventas_dinero_por_mes_completas[mes] = venta['total_dinero']
+
     context = {
         'ventas_fechas_json': json.dumps(meses_completos, default=str),
         'ventas_totales_json': json.dumps(ventas_por_mes_completas, default=str),
@@ -71,6 +90,9 @@ def dashboard(request):
         'productos_totales_json': json.dumps(productos_totales, default=str),
         'pedidos_estados_json': json.dumps(pedidos_estados, default=str),
         'pedidos_totales_json': json.dumps(pedidos_totales, default=str),
+        'pedidos_por_hacer_count_json': json.dumps(pedidos_por_hacer_count, default=str),
+        'ventas_dinero_fechas_json': json.dumps(meses_completos, default=str),  # Usar meses_completos para las etiquetas de meses
+        'ventas_dinero_totales_json': json.dumps(ventas_dinero_por_mes_completas, default=str),
         'selected_year': selected_year,
         'years': years  # Lista de años disponibles para el selector, incluyendo 2023
     }
