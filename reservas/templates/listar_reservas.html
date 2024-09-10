@@ -48,7 +48,7 @@
                                 <td>
                                     <label 
                                         class="badge badge-outline-primary hover-cursor {% if 'Editar Mis Reservas' in request.session.permisos %}badge-outline-info change-estado{% endif %}" 
-                                        data-reserva-id="{{ reserva.id }}"
+                                        data-reserva-id="{{ reserva.id }}" data-reserva-id-usuario="{{ reserva.usuario.id }}" data-reserva-nombre-usuario="{{ reserva.usuario.nombre }}"  data-reserva-descripcion="{{ reserva.descripcion }}"  
                                         {% if reserva.estado == 'Completada' or reserva.estado == 'Cancelada' %}style="pointer-events: none; color: grey;"{% endif %}
                                     >
                                         {{ reserva.estado }}
@@ -56,6 +56,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
+                                        <input type="hidden" name="Reserva_id" value="{{ reserva.id }}">
                                         {% if 'Editar Reservas' in request.session.permisos %}
                                         <button type="button" class="btn btn-inverse-warning edit-reserva"
                                             data-toggle="modal" data-target="#editReservaModal{{ reserva.id }}"
@@ -81,37 +82,59 @@
                                 </td>
                             </tr>
                             <!-- Modal para editar Reserva -->
-                            <div class="modal fade" id="editReservaModal{{ reserva.id }}" tabindex="-1" role="dialog"
-                                aria-labelledby="editReservaModal{{ reserva.id }}Label" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editReservaModal{{ reserva.id }}Label">Editar Reserva</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="post" onsubmit="EditarReservaxd('{{ reserva.id }}')" id="editarReservaform{{ reserva.id }}" class="forms-sample" data-Reserva-id="{{ Reserva.id }}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="Reserva_id" value="{{ reserva.id }}">
-                                                <div class="form-group">
-                                                    <label for="descripcion">Descripción</label>
-                                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" cols="40">{{ reserva.descripcion }}</textarea>
-                                                </div>
-                                                <!-- Botones -->
-                                                <div class="form-row">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary mr-2">Editar</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Cancelar</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<div class="modal fade" id="editReservaModal{{ reserva.id }}" tabindex="-1" role="dialog"
+aria-labelledby="editReservaModal{{ reserva.id }}Label" aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editReservaModal{{ reserva.id }}Label">Editar Reserva</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" onsubmit="EditarReservaxd('{{ reserva.id }}')" id="editarReservaform{{ reserva.id }}" class="forms-sample" data-Reserva-id="{{ reserva.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="Reserva_id" value="{{ reserva.id }}">
+
+                <div class="form-group">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" value="{{ reserva.usuario.nombre }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Fecha</label>
+                    <input type="text" class="form-control" id="fecha" name="fecha" value="{{ reserva.fecha|date:'d/m/Y H:i' }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_cita">Fecha Cita</label>
+                    <input type="text" class="form-control" id="fecha_cita" name="fecha_cita" value="{{ reserva.fecha_cita|date:'d/m/Y H:i' }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <input type="text" class="form-control" id="estado" name="estado" value="{{ reserva.estado }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" cols="40">{{ reserva.descripcion }}</textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary mr-2">Editar</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
                             {% endfor %}
                         </tbody>
                     </table>
@@ -275,6 +298,9 @@
 
     $('#reservaTable').on('click', 'td .change-estado', function () {
     var reserva_id = $(this).data('reserva-id');
+    var reserva_idUsuario = $(this).data('reserva-id-usuario');
+    var nombreUsuario = $(this).data('reserva-nombre-usuario');
+    var descripcion = $(this).data('reserva-descripcion');
     var estado_actual = $(this).text().trim();
 
     // Verificar si el estado es "Completada" o "Cancelada"
@@ -328,7 +354,7 @@
             if (nuevoEstado === 'Completada') {
                 Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
                     // Redirigir a la vista listar_pedidos y abrir la modal
-                    window.location.href = "{% url 'pedidos:listar_pedidos' %}?reserva_id=" + reserva_id + "&abrir_modal=true";
+                    window.location.href = "{% url 'pedidos:listar_pedidos' %}?reserva_id=" + reserva_id + "&abrir_modal=true&idUsuario=" + reserva_idUsuario + "&descripcion="+ descripcion;
                 });
             } else {
                 Swal.fire('¡Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {

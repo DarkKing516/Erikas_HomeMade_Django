@@ -256,11 +256,6 @@ def listar_pedidos(request):
 
             pedido.save()
 
-            # Imprimir la información del campo evidencia_pago
-            print(pedido.evidencia_pago)
-            print(pedido.evidencia_pago.name, "uwu")
-            print(pedido.evidencia_pago.path)
-
             # Obtener los productos y servicios seleccionados
             selected_items = json.loads(request.POST.get('selectedItems', '[]'))
 
@@ -328,6 +323,7 @@ def listar_pedidos(request):
             'detalles_servicios': detalles_servicios,
         })
 
+
 def crear_pedido(request):
     if request.method == 'POST':
         form = CreatePedidoForm(request.POST, request.FILES)
@@ -388,32 +384,55 @@ def crear_pedido(request):
 
 @require_POST
 def editar_pedido(request):
-    pedido_id = request.POST.get('pedido_id')
-    print(pedido_id)
-    pedido = get_object_or_404(Pedido, pk=pedido_id)
+    if request.method == 'POST':
+        pedido_id = request.POST.get('pedido_id')
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
 
-    # Verificar si el estado del pedido es "Por hacer"
-    if pedido.estado_pedido != 'Por hacer':
-        return JsonResponse({
-            'success': False,
-            'errors': {'estado_pedido': 'La descripción solo se puede editar si el pedido está en estado "Por hacer".'}
-        })
+        form = PedidoFormEditar(request.POST, instance=pedido)
+        if form.is_valid():
+            instance = form.save(commit=False)
 
-    # Creamos una instancia del formulario con los datos recibidos y la instancia del usuario
-    form = PedidoFormEditar(request.POST, instance=pedido)
+            # Manejar productos y servicios
+            productos = request.POST.get('editar_selectedItems')
+            if productos:
+                productos = json.loads(productos)
+                
+                for item in productos:
+                    if item['type'] == 'producto':
+                        producto = Producto.objects.get(id=item['id'])
+                        DetallePedidoProducto.objects.update_or_create(
+                            pedido=instance,
+                            idProducto=producto,
+                            defaults={
+                                'nombre_productos': producto.nombre,
+                                'cant_productos': item['cantidad'],
+                                'subtotal_productos': producto.precio * item['cantidad']
+                            }
+                        )
+                    elif item['type'] == 'servicio':
+                        servicio = Servicio.objects.get(id=item['id'])
+                        DetallePedidoServicio.objects.update_or_create(
+                            pedido=instance,
+                            idServicio=servicio,
+                            defaults={
+                                'cantidad_servicios': item['cantidad'],
+                                'subtotal_servicios': servicio.precio * item['cantidad']
+                            }
+                        )
 
-    # Validamos el formulario
-    if form.is_valid():
-        # Guardamos los cambios en el pedido
-        saved_instance = form.save()
-        print(saved_instance)  # Esta línea imprime la instancia guardada en la consola
-        return JsonResponse({'success': True})
-    else:
-        # Si el formulario no es válido, devolvemos una respuesta con los errores
-        errors = dict(form.errors.items())
-        return JsonResponse({'success': False, 'errors': errors})
-    
-    
+            # Recalcular el total del pedido
+            total_productos = sum(detalle.subtotal_productos for detalle in instance.detallepedidoproducto_set.all())
+            total_servicios = sum(detalle.subtotal_servicios for detalle in instance.detallepedidoservicio_set.all())
+            instance.total = total_productos + total_servicios
+            instance.save()
+
+            return JsonResponse({'success': True, 'mensaje': 'Pedido actualizado correctamente.'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+
+    return redirect('listar_pedidos')
+
+
 @require_POST
 def editar_evidencia_pedido(request):
     pedido_id = request.POST.get('pedido_id')

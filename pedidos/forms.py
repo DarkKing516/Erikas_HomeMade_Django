@@ -30,7 +30,7 @@ class CreatePedidoForm(forms.ModelForm):
     iva = forms.DecimalField(
         max_digits=10,
         decimal_places=2,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Abono', 'readonly': True})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Abono', 'readonly': False})
     )
     total = forms.DecimalField(
         max_digits=10,
