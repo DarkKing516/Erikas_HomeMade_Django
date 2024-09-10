@@ -674,9 +674,58 @@
                                 {{ formCreate.fecha_pedido }}
                             </div>
                             <div class="form-group">
-                                <label for="descripcion_pedido">Descripción del Pedido</label>
-                                {{ formCreate.descripcion_pedido }}
+                                <label for="descripcion_pedido_reserva">Descripción del Pedido</label>
+                                <textarea name="descripcion_pedido" cols="40" rows="10" class="form-control" 
+                                          placeholder="Descripción del Pedido" maxlength="255" required="" 
+                                          id="id_descripcion_pedidoReserva"></textarea>
                             </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    $('#myModal').on('shown.bs.modal', function () {
+                                        // Obtener el valor de "descripcion" y "idUsuario" de los parámetros GET
+                                        const descripcion = getQueryParam('descripcion');
+                                        const idUsuario = getQueryParam('idUsuario');
+
+                                        // Verificar si el parámetro "descripcion" existe en la URL
+                                        if (descripcion) {
+                                            console.log("Descripción encontrada:", descripcion);
+                                            document.getElementById('id_descripcion_pedidoReserva').value = descripcion;
+                                        } else {
+                                            console.log("No se encontró la descripción en la URL.");
+                                        }
+
+                                        // Verificar si el parámetro "idUsuario" existe en la URL
+                                        if (idUsuario) {
+                                            console.log("ID de Usuario encontrado:", idUsuario);
+
+                                            // Cambia 'id_id_Usuario' por el ID real generado por Django
+                                            const usuarioSelect = document.getElementById('id_id_Usuario'); // Usa el ID generado por Django
+                                            if (usuarioSelect) {
+                                                console.log("Elemento select encontrado:", usuarioSelect);
+                                                
+                                                // Establecer el valor del select
+                                                usuarioSelect.value = idUsuario;
+
+                                                // Verificar si el valor se ha establecido correctamente
+                                                console.log("Valor del select después de establecer:", usuarioSelect.value);
+
+                                                // Refrescar Select2 si es necesario
+                                                $('#id_id_Usuario').trigger('change');
+                                            } else {
+                                                console.log("El elemento select con el ID esperado no se encontró.");
+                                            }
+                                        } else {
+                                            console.log("No se encontró el ID de Usuario en la URL.");
+                                        }
+                                    });
+
+                                    // Función para obtener parámetros de la URL
+                                    function getQueryParam(param) {
+                                        const urlParams = new URLSearchParams(window.location.search);
+                                        return urlParams.get(param);
+                                    }
+                                });
+                            </script>                                                   
                             <div class="form-group" style="display: none;">
                                 <label for="subtotal">Subtotal</label>
                                 {{ formCreate.subtotal }}
@@ -897,10 +946,6 @@
     </div>
 </div>
 <!-- Fin del Modal Crear Pedido -->
-
-
-
-
 <script>
     $(document).ready(function() {
         // Inicializar Select2 para productos y servicios
