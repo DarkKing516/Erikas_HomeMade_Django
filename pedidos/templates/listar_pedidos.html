@@ -14,6 +14,8 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 
 <!-- Contenido principal -->
@@ -41,59 +43,52 @@
                                 <td>{{ pedido.id_Usuario }}</td>
                                 <td>{{ pedido.fechaCreacion_pedido|date:"d M Y H:i" }}</td>
                                 <td>{{ pedido.fecha_pedido|date:"d M Y" }}</td>
-                                <td>$ {{ pedido.total|floatformat:0|intcomma  }}</td>
-                                {% comment %} <td><img src="{{ pedido.evidencia_pago.url }}" alt="Evidencia de Pago"></td> {% endcomment %}
+                                <td>$ {{ pedido.total|floatformat:0|intcomma }}</td>
                                 <td>
-                                    <!-- Aquí puedes acceder al estado del pedido -->
+                                    <!-- Estado del pedido -->
                                     {% if pedido.estado_pedido == 'Por hacer' %}
-                                    <label class="badge btn-inverse-secondary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
-                                    data-pedido-id="{{ pedido.idPedido }}">Por hacer</label>
+                                    <label class="badge btn-inverse-secondary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}" data-pedido-id="{{ pedido.idPedido }}">Por hacer</label>
                                     {% elif pedido.estado_pedido == 'En proceso' %}
-                                    <label class="badge btn-inverse-warning hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
-                                    data-pedido-id="{{ pedido.idPedido }}">En proceso</label>
+                                    <label class="badge btn-inverse-warning hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}" data-pedido-id="{{ pedido.idPedido }}">En proceso</label>
                                     {% elif pedido.estado_pedido == 'Hecho' %}
-                                    <label class="badge btn-inverse-primary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
-                                    data-pedido-id="{{ pedido.idPedido }}">Hecho</label>
+                                    <label class="badge btn-inverse-primary hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}" data-pedido-id="{{ pedido.idPedido }}">Hecho</label>
                                     {% elif pedido.estado_pedido == 'Entregado' %}
-                                    <label class="badge btn-inverse-success hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
-                                    data-pedido-id="{{ pedido.idPedido }}">Entregado</label>
+                                    <label class="badge btn-inverse-success hover-cursor" data-pedido-id="{{ pedido.idPedido }}">Entregado</label>
                                     {% else %}
-                                    <label class="badge btn-inverse-danger hover-cursor {% if "Editar Estado Pedidos" in request.session.permisos %}change-status{% endif %}"
-                                    data-pedido-id="{{ pedido.idPedido }}">Cancelado</label>
+                                    <label class="badge btn-inverse-danger hover-cursor" data-pedido-id="{{ pedido.idPedido }}">Cancelado</label>
                                     {% endif %}
                                 </td>
                                 <td>
                                     <button type="button" class="badge btn-info hover-cursor" data-toggle="modal" data-target="#detallePedidoModal{{ pedido.idPedido }}">
                                         <i class="mdi mdi-eye"></i>
                                     </button>
-                                </td>                                
+                                </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         {% if 'Editar Pedidos' in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-warning edit-pedido"
-                                        data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}"
-                                        data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}"
-                                        data-fecha-pedido="{{ pedido.fecha_pedido }}"
-                                        data-descripcion="{{ pedido.descripcion_pedido }}"
-                                        data-estado="{{ pedido.estado_pedido }}" data-pedido-id="{{ pedido.idPedido }}" 
-                                        data-subtotal="{{ pedido.subtotal }} "
-                                        data-iva=" {{ pedido.iva }} "
-                                        data-total=" {{ pedido.total }} ">
-                                        <i class="mdi mdi-pencil"></i>
+                                        <button type="button" class="btn btn-inverse-warning edit-pedido" data-toggle="modal" data-target="#editpedidoModal{{ pedido.idPedido }}" data-pedido="{{ pedido.pedido.idPedido }}" data-fecha="{{ pedido.fechaCreacion_pedido }}" data-fecha-pedido="{{ pedido.fecha_pedido }}" data-descripcion="{{ pedido.descripcion_pedido }}" data-estado="{{ pedido.estado_pedido }}" data-pedido-id="{{ pedido.idPedido }}" data-subtotal="{{ pedido.subtotal }}" data-iva="{{ pedido.iva }}" data-total="{{ pedido.total }}"
+                                            {% if pedido.estado_pedido == 'Entregado' or pedido.estado_pedido == 'Cancelado' %} disabled {% endif %}>
+                                            <i class="mdi mdi-pencil"></i>
                                         </button>
                                         {% endif %}
+                                        
                                         {% if 'Editar Evidencia Pedidos' in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}">
+                                        <button type="button" class="btn btn-inverse-primary" data-pedido-id="{{ pedido.idPedido }}" data-toggle="modal" data-target="#editevidenciapedidoModal{{ pedido.idPedido }}"
+                                            {% if pedido.estado_pedido == 'Entregado' or pedido.estado_pedido == 'Cancelado' %} disabled {% endif %}>
                                             <i class="bi bi-file-earmark-image"></i>
                                         </button>
                                         {% endif %}
+                        
                                         {% if 'Eliminar Pedidos' in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}">
+                                        <button type="button" class="btn btn-inverse-danger delete-pedido" data-pedido-id="{{ pedido.idPedido }}"
+                                            {% if pedido.estado_pedido == 'Entregado' or pedido.estado_pedido == 'Cancelado' %} disabled {% endif %}>
                                             <i class="mdi mdi-delete"></i>
                                         </button>
                                         {% endif %}
+                        
                                         {% if 'Eliminar Pedidos' not in request.session.permisos and 'Editar Pedidos' not in request.session.permisos and 'Editar Evidencia Pedidos' not in request.session.permisos %}
-                                        <button type="button" class="btn btn-inverse-primary">
+                                        <button type="button" class="btn btn-inverse-primary"
+                                            {% if pedido.estado_pedido == 'Entregado' or pedido.estado_pedido == 'Cancelado' %} disabled {% endif %}>
                                             <i class="bi bi-exclamation-circle"></i>
                                         </button>
                                         {% endif %}
@@ -203,7 +198,7 @@
                         <!-- Fecha de Pedido Field -->
                         <div class="form-group col-md-6">
                             <label for="fecha_pedido">Fecha de Pedido</label>
-                            <input type="datetime-local" name="fecha_pedido" class="form-control" value="{{ pedido.fecha_pedido|date:'Y-m-d\\TH:i' }}">
+                            <input type="text" class="form-control" id="fecha_pedido" name="fecha_pedido" value="{{ pedido.fecha_pedido|date:'d/m/Y H:i' }}">
                         </div>
                     
                         <!-- Total Field -->
@@ -212,164 +207,6 @@
                             <input type="text" name="total" class="form-control" value="{{ pedido.total|floatformat:"0" }}">
                         </div>
                     </div>
-                    <!-- Selects para productos y servicios (como antes) -->
-                    <div class="form-group">
-                        <label for="editar_productos{{ pedido.idPedido }}">Productos</label><br>
-                        <select id="editar_productos{{ pedido.idPedido }}" name="editar_productos" class="select2 form-control">
-                            {% for producto in productos %}
-                                <option value="{{ producto.idProducto }}" data-precio="{{ producto.precio }}">{{ producto.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" class="btn btn-inverse-primary" onclick="editarAgregarItem('producto', '{{ pedido.idPedido }}')">Agregar</button>
-                        <br>
-                        <ul id="editar_lista_productos{{ pedido.idPedido }}"></ul>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editar_servicios{{ pedido.idPedido }}">Servicios</label><br>
-                        <select id="editar_servicios{{ pedido.idPedido }}" name="editar_servicios" class="select2 form-control">
-                            {% for servicio in servicios %}
-                                <option value="{{ servicio.idServicio }}" data-precio="{{ servicio.precio_servicio }}">{{ servicio.nombre_servicio }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" class="btn btn-inverse-primary" onclick="editarAgregarItem('servicio', '{{ pedido.idPedido }}')">Agregar</button>
-                        <br>
-                        <ul id="editar_lista_servicios{{ pedido.idPedido }}"></ul>
-                    </div>
-
-                    <!-- Hidden input to store the selected items -->
-                    <input type="hidden" id="editar_selectedItems" name="editar_selectedItems" />
-
-                    <script>
-                        document.addEventListener('DOMContentLoaded', () => {
-                            window.editarAgregarItem = function(type, pedidoId) {
-                                let selectElement = type === 'producto' ? document.getElementById('editar_productos' + pedidoId) : document.getElementById('editar_servicios' + pedidoId);
-                                let selectedOption = selectElement.options[selectElement.selectedIndex];
-                                let listElement = type === 'producto' ? document.getElementById('editar_lista_productos' + pedidoId) : document.getElementById('editar_lista_servicios' + pedidoId);
-                            
-                                Swal.fire({
-                                    title: 'Ingrese la cantidad',
-                                    html: `
-                                        <div style="display: flex; align-items: center; justify-content: center;">
-                                            <button type="button" id="editar_decrementar" class="btn btn-outline-secondary btn-sm">-</button>
-                                            <input type="number" id="editar_cantidadInput" min="1" step="1" value="1" class="swal2-input no-spinner" style="width: 80px; margin: 0 10px; text-align: center;">
-                                            <button type="button" id="editar_incrementar" class="btn btn-outline-secondary btn-sm">+</button>
-                                        </div>
-                                    `,
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Agregar',
-                                    cancelButtonText: 'Cancelar',
-                                    didOpen: () => {
-                                        const cantidadInput = document.getElementById('editar_cantidadInput');
-                                        const decrementarButton = document.getElementById('editar_decrementar');
-                                        const incrementarButton = document.getElementById('editar_incrementar');
-                            
-                                        decrementarButton.addEventListener('click', () => {
-                                            if (cantidadInput.value > 1) {
-                                                cantidadInput.value = parseInt(cantidadInput.value) - 1;
-                                            }
-                                        });
-                            
-                                        incrementarButton.addEventListener('click', () => {
-                                            cantidadInput.value = parseInt(cantidadInput.value) + 1;
-                                        });
-                                    },
-                                    preConfirm: () => {
-                                        const cantidad = document.getElementById('editar_cantidadInput').value;
-                                        if (!cantidad || cantidad <= 0) {
-                                            Swal.showValidationMessage('Por favor, ingrese una cantidad válida');
-                                            return false;
-                                        }
-                                        return cantidad;
-                                    }
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        let quantity = parseInt(result.value);
-                                        let itemId = selectedOption.value + '_' + type;
-                            
-                                        // Obtener el precio del producto o servicio seleccionado
-                                        let precio = parseFloat(selectedOption.getAttribute('data-precio'));
-                            
-                                        // Calcular el total por ítem
-                                        let totalItem = quantity * precio;
-                            
-                                        // Crear un elemento de lista para mostrar en el modal
-                                        let listItem = document.createElement('li');
-                                        listItem.id = itemId;
-                                        listItem.innerHTML = `${selectedOption.text} - Cantidad: ${quantity}, Subtotal: ${totalItem.toFixed(2)} 
-                                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="editarRemoveItem('${itemId}', '${type}', '${pedidoId}')">Eliminar</button>`;
-                                        listElement.appendChild(listItem);
-                            
-                                        // Actualizar campos ocultos con los datos de los productos/servicios seleccionados
-                                        actualizarCamposOcultos(pedidoId, type, selectedOption.value, selectedOption.text, quantity, totalItem);
-                                    }
-                                });
-                            };
-                            
-                            window.editarRemoveItem = function(itemId, type, pedidoId) {
-                                let listItem = document.getElementById(itemId);
-                                listItem.remove();
-                            
-                                // Actualizar campos ocultos
-                                actualizarCamposOcultos(pedidoId, type, null, null, null, null, itemId);
-                            };
-                            
-                            function actualizarCamposOcultos(pedidoId, type, itemId, itemName, itemQuantity, itemTotal, removeItemId = null) {
-                                let hiddenInput = document.getElementById('editar_selectedItems' + pedidoId);
-                                let selectedItems = hiddenInput.value ? JSON.parse(hiddenInput.value) : [];
-                            
-                                if (removeItemId) {
-                                    selectedItems = selectedItems.filter(item => item.id !== removeItemId);
-                                } else {
-                                    let existingItem = selectedItems.find(item => item.id === itemId && item.type === type);
-                                    if (existingItem) {
-                                        existingItem.quantity += itemQuantity;
-                                        existingItem.total += itemTotal;
-                                    } else {
-                                        selectedItems.push({
-                                            id: itemId,
-                                            name: itemName,
-                                            type: type,
-                                            quantity: itemQuantity,
-                                            total: itemTotal
-                                        });
-                                    }
-                                }
-                            
-                                hiddenInput.value = JSON.stringify(selectedItems);
-                            
-                                // Calcular y actualizar el subtotal y total en el formulario principal
-                                editarActualizarSubtotalYTotal(pedidoId);
-                            }
-                            
-                            function editarActualizarSubtotalYTotal(pedidoId) {
-                                let hiddenInput = document.getElementById('editar_selectedItems' + pedidoId);
-                                let selectedItems = hiddenInput.value ? JSON.parse(hiddenInput.value) : [];
-                            
-                                let subtotal = 0;
-                                selectedItems.forEach(item => {
-                                    subtotal += item.total;
-                                });
-                            
-                                // Actualizar subtotal en el formulario principal
-                                document.getElementById('subtotal').value = subtotal.toFixed(2);
-                            
-                                // Calcular IVA (asumiendo que es 19%)
-                                let iva = subtotal * 0.19;
-                            
-                                // Actualizar campo de IVA en el formulario principal
-                                document.getElementById('iva').value = iva.toFixed(2);
-                            
-                                // Calcular total (subtotal + IVA)
-                                let total = subtotal + iva;
-                            
-                                // Actualizar campo de total en el formulario principal
-                                document.getElementById('total').value = total.toFixed(2);
-                            }
-                            
-                        });
-                    </script>
-                    
                     
                     <hr>
 
@@ -671,7 +508,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="fecha_pedido">Fecha de Pedido</label>
-                                {{ formCreate.fecha_pedido }}
+                                <input type="text" id="fecha_pedido" name="fecha_pedido" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="descripcion_pedido_reserva">Descripción del Pedido</label>
@@ -985,6 +822,16 @@
 
 <script>
 
+        // Inicializar Flatpickr en el campo de entrada de fecha de pedido
+        flatpickr("#fecha_pedido", {
+            enableTime: true,
+            dateFormat: 'Y-m-d H:i',
+            minDate: "today", // Evita fechas anteriores a la actual
+            minTime: "08:00",
+            maxTime: "20:00",
+            time_24hr: true,
+        });
+
 $(document).ready(function () {
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('abrir_modal') === 'true') {
@@ -1133,7 +980,7 @@ $(document).ready(function () {
                 if (nuevoRol === 'Entregado') {
                     Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
                         // Redirigir a la vista de ventas con el pedido_id
-                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id + "&abrir_modal=true";
+                        window.location.href = "{% url 'ventas:listar_ventas' %}?pedido_id=" + pedido_id;
                     });
                 } else {
                     Swal.fire('Estado cambiado!', 'El estado se ha cambiado correctamente.', 'success').then(() => {
