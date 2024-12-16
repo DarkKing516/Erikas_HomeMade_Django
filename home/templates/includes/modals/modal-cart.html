@@ -1,0 +1,100 @@
+{% load humanize %}
+<div class="modal fade" id="CarritoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Carrito de Compras</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Imagen</th>
+                            <th scope="col">Producto/Servicio</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody">
+                        {% for item in request.session.cart %}
+                        <tr id="cartItem-{{ item.id }}">
+                            <td><img src="{{ item.imagen }}" alt="{{ item.imagen }}"></td>
+                            <td>{{ item.nombre }}</td>
+                            <td>${{ item.precio|floatformat:"0"|intcomma }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="removeCartItem('{{ item.id }}')">Eliminar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary"
+                    onclick="location.href='{% url 'pedidos:ver_carrito' %}'">Procesar Compra</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function removeCartItem(itemId) {
+        $.ajax({
+            url: '{% url "pedidos:remove_cart_item" %}',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            data: JSON.stringify({
+                'item_id': itemId
+            }),
+            success: function (response) {
+                if (response.success) {
+                    // Actualizar el carrito eliminando la fila correspondiente sin recargar la página
+                    $(`#cartItem-${itemId}`).remove();
+                    // Opcional: mostrar un mensaje de éxito
+                    Swal.fire({
+                        title: '¡Artículo eliminado!',
+                        text: 'El artículo ha sido eliminado del carrito.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.message,
+                        icon: 'error',
+                        showConfirmButton: true,
+                    });
+                }
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar el artículo.',
+                    icon: 'error',
+                    showConfirmButton: true,
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // Agregar el evento de clic al botón de cerrar
+        $('.btn-close').on('click', function () {
+            $('#CarritoModal').modal('hide');
+        });
+
+        // Agregar el evento de clic al botón de "Cerrar" en el pie del modal
+        $('.btn-secondary').on('click', function () {
+            $('#CarritoModal').modal('hide');
+        });
+    });
+</script>
