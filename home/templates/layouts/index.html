@@ -4,15 +4,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    {% include 'includes/head.html' %}
+    {% include 'partials/head.html' %}
 </head>
 
 <body>
     <div class="container-scroller">
-        {% include 'includes/nav.html' %}
+        {% include 'partials/nav.html' %}
 
         <div class="container-fluid page-body-wrapper">
-        {% include 'includes/siedbar.html' %}
+        {% include 'partials/siedbar.html' %}
 
             <div class="main-panel">
                 <div class="content-wrapper">
@@ -20,7 +20,7 @@
                     {% endblock %}
                 </div>
 
-                {% include 'includes/footer.html' %}
+                {% include 'partials/footer.html' %}
             </div>
         </div>
     </div>
@@ -29,27 +29,6 @@
 <!-- Modal para el Carrito de compras -->
 {% include 'includes/modals/modal-cart.html' %}
 
-<script>
-    $(document).ready(function () {
-        // Agregar evento clic para el botón de cierre de sesión
-        $('#logout-link').on('click', function () {
-            // Mostrar SweetAlert de confirmación
-            Swal.fire({
-                title: 'Cerrar Sesión',
-                text: '¿Estás seguro de cerrar sesión?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, cerrar sesión'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '{% url "usuarios:logout" %}';
-                }
-            });
-        });
-    });
-</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 

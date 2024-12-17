@@ -1,0 +1,87 @@
+{% load static %}
+<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo mr-5" href="{% url 'home:index' %}"><img src="{% static 'images/logo-lg.png' %}" class="mr-2" alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="{% url 'home:index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" style="border-radius: 50px" /></a>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="icon-menu"></span>
+        </button>
+        <ul class="navbar-nav navbar-nav-right">
+            {% if "Listar Dashboard" in request.session.permisos %}
+            <li class="nav-item">
+                <a class="container btn-custom" href="{% url 'home:dashboard' %}" style="color: black; font-weight: bold;">Dashboard</a>
+            </li>
+            {% endif %}
+            {% if not request.session.usuario_id %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'usuarios:login' %}">
+                    <i class="icon-head menu-icon"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="nav-item nav-profile dropdown">
+                <a id="logout-link" class="dropdown-item close-session">
+                    <i class="ti-power-off text-primary"></i>
+                    <span>Bienvenido, {{ request.session.usuario }}!</span>
+                </a>
+            </li>
+            {% if request.session.cart %}
+            {% if '/catalogo/' in request.path %}
+            <li class="nav-item nav-profile dropdown">
+                <div id="logout-link" class="dropdown-item" data-toggle="modal" data-target="#CarritoModal">
+                    <span>Carrito <i class="bi bi-car-front-fill"></i></span>
+                    <i class="bi bi-cart2"></i>
+                </div>
+            </li>
+
+            {% else %}
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link" href="{% url 'home:catalogo' %}">
+                    <i class="bi bi-car-front-fill"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% endif %}
+            <li class="nav-item nav-profile dropdown">
+
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                    {% if request.session.imagen_perfil %}
+                    <img src="{{ request.session.imagen_perfil }}" alt="profile" />
+                    {% else %}
+                    <!-- Si el usuario no tiene una imagen de perfil, muestra una imagen predeterminada -->
+                    <img src="{% static 'images/iconosesion.jpg' %}" alt="profile" />
+                    {% endif %}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+            data-toggle="offcanvas">
+            <span class="icon-menu"></span>
+        </button>
+    </div>
+</nav>
+<script>
+    $(document).ready(function () {
+        // Agregar evento clic para el botón de cierre de sesión
+        $('#logout-link').on('click', function () {
+            // Mostrar SweetAlert de confirmación
+            Swal.fire({
+                title: 'Cerrar Sesión',
+                text: '¿Estás seguro de cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, cerrar sesión'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '{% url "usuarios:logout" %}';
+                }
+            });
+        });
+    });
+</script>

@@ -34,6 +34,7 @@ fi
 # Print the path to wkhtmltopdf
 which wkhtmltopdf
 
+python manage.py collectstatic --clear
 # Collect static files
 python manage.py collectstatic --no-input || true
 
