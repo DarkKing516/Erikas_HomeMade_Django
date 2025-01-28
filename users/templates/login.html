@@ -1,0 +1,23 @@
+{% extends 'layouts/login-layout.html' %}
+{% load static %}
+{% block content %}
+<div class="body">
+    <form method="post" class="form_main" id="loginForm">
+        {% csrf_token %}
+        <p class="heading">Iniciar Sesión</p>
+        {% for field in form %}
+        <div class="inputContainer">
+            <i class="bi {% if field.name == 'email' %}bi-envelope{% elif field.name == 'password' %}bi-lock-fill{% endif %} inputIcon"></i>
+            {{ field }}
+        </div>
+    {% endfor %}
+        <button type="submit" id="button">Ingresar</button>
+        <div style="z-index: 5; text-align: center">
+            <a class="forgotLink" href="#">Olvidé mi contraseña</a>
+            <a class="forgotLink" href="#">Registrarme</a>
+            <a class="btn btn-secondary" href="{% url 'home:home' %}">Atrás</a>
+        </div>
+    </form>
+</div>
+    
+{% endblock %}
