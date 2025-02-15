@@ -38,7 +38,7 @@ which wkhtmltopdf
 python manage.py collectstatic --no-input || true
 
 # Apply any outstanding database migrations
-# python manage.py migrate
+python manage.py migrate
 
 # Setear a db
 python manage.py populate_db
