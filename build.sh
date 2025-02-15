@@ -41,7 +41,7 @@ python manage.py collectstatic --no-input || true
 # python manage.py migrate
 
 # Setear a db
-python.exe .\manage.py populate_db
+python .\manage.py populate_db
 # Start the server 
 # gunicorn Erikas_HomeMade.wsgi:application --bind 0.0.0.0:$PORT
 ./paraquenosecierre.sh &
