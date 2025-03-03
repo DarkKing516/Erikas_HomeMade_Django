@@ -23,7 +23,7 @@ Instala `virtualenv` si no lo tienes: `pip install virtualenv `
 Luego, Crea el entorno virtual:
 
 ```bash
-virtualenv venv
+    virtualenv venv
 ```
 
 ### 2. Activar el Entorno Virtual
@@ -31,7 +31,7 @@ virtualenv venv
 Activa el entorno virtual:
 
 ```bash
-.\venv\Scripts\activate
+    .\venv\Scripts\activate
 ```
 
 ### 3. Instalar Dependencias
@@ -39,13 +39,24 @@ Activa el entorno virtual:
 Instala las dependencias necesarias:
 
 ```bash
-pip install -r requirements.txt
+    pip install -r requirements.txt
+```
+
+### 4. Hacer Migraciones
+
+Migraciones necesarias:
+
+```bash
+    python manage.py makemigrations logger
+```
+```bash
+    python manage.py migrate
 ```
 
 Ejecuta el proyecto:
 
 ```bash
-python .\manage.py runserver
+    python .\manage.py runserver
 ```
 
 
