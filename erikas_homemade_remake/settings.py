@@ -59,7 +59,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
-    # Otras configuraciones
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,7 +101,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
     # 'default': dj_database_url.config(
-    #     default = 'postgresql://erikas_homemade_tj5l_user:SoLzDA8sfxGOscLjKKPrwsrwK4Ncz10Q@dpg-ctrk8trtq21c738tbkbg-a.oregon-postgres.render.com/erikas_homemade_tj5l',
+    #     default = 'URL DATABASE RENDER',
     #     conn_max_age = 600
     # )
 }
